@@ -1,7 +1,7 @@
 {
-  "name": "messenger-get-started",
+  "name": "jackthebot-facebook-messenger",
   "version": "1.0.0",
-  "description": "Get started example for Messenger Platform",
+  "description": "jackthebot for Facebook Messenger",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://source.developers.google.com/p/messenger-get-started/r/default"
+    "url": "git+https://github.com/simonkofler/jackthebot-facebook-messenger.git"
   },
-  "author": "Facebook",
+  "author": "Simon Kofler",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",

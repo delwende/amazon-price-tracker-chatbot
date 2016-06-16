@@ -16,7 +16,8 @@ const
   crypto = require('crypto'),
   express = require('express'),
   https = require('https'),  
-  request = require('request');
+  request = require('request'),
+  Parse = require('parse/node');
 
 var app = express();
 
@@ -45,10 +46,30 @@ const PAGE_ACCESS_TOKEN = (process.env.MESSENGER_PAGE_ACCESS_TOKEN) ?
   (process.env.MESSENGER_PAGE_ACCESS_TOKEN) :
   config.get('pageAccessToken');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN)) {
+// Parse Application ID
+const PARSE_APPLICATION_ID = (process.env.PARSE_APPLICATION_ID) ?
+  (process.env.PARSE_APPLICATION_ID) :
+  config.get('parseApplicationId');
+
+// Parse JavaScript Key
+const PARSE_JAVASCRIPT_KEY = (process.env.PARSE_JAVASCRIPT_KEY) ?
+  (process.env.PARSE_JAVASCRIPT_KEY) :
+  config.get('parseJavaScriptKey');
+
+// Parse Server URL
+const PARSE_SERVER_URL = (process.env.PARSE_SERVER_URL) ?
+  (process.env.PARSE_SERVER_URL) :
+  config.get('parseServerUrl');
+
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && PARSE_APPLICATION_ID &&
+    PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL)) {
   console.error("Missing config values");
   process.exit(1);
 }
+
+// Initialize Parse SDK
+Parse.initialize(PARSE_APPLICATION_ID, PARSE_JAVASCRIPT_KEY);
+Parse.serverURL = PARSE_SERVER_URL;
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 

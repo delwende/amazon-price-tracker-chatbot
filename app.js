@@ -277,7 +277,8 @@ function receivedMessage(event) {
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
     if (messageText.startsWith("hilfe")) {
-      sendTextMessage(senderID, "");
+      sendTextMessage(senderID, "Hi, schreibe mir folgendes:\n\n- Z.B. \"suche iphone6\" um ein Produkt zu suchen\n" +
+        "- \"liste\" um deine aktiven Preisalarme anzuzeigen");
     } else if (messageText.startsWith("suche")) {
 
     } else {

@@ -277,9 +277,11 @@ function receivedMessage(event) {
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
     if (messageText.startsWith("hilfe")) {
-      sendTextMessage(senderID, "Hi, schreibe mir folgendes: Z.B. \"suche iphone6\" um ein Produkt zu suchen " +
+      sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um ein Produkt zu suchen " +
         "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
-    } else if (messageText.startsWith("suche")) {
+    } else if (messageText.startsWith("suche ")) {
+      var keywords = messageText.replace("suche ", "");
+
 
     } else {
       sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");

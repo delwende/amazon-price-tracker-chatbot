@@ -282,7 +282,7 @@ function receivedMessage(event) {
     } else if (messageText.startsWith("suche")) {
 
     } else {
-      sendTextMessage(senderID, );
+      sendTextMessage(senderID, "");
     }
 
   } else if (messageAttachments) {

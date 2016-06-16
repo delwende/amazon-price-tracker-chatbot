@@ -277,13 +277,13 @@ function receivedMessage(event) {
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
     if (messageText.startsWith("hilfe")) {
-      sendTextMessage(senderID, "Hi, schreibe mir folgendes:\n- z.B. \"suche iphone6\" um ein Produkt zu suchen\n" +
-        "- \"liste\" um deine aktiven Preisalarme anzuzeigen");
+      sendTextMessage(senderID, "Hi, schreibe mir folgendes: Z.B. \"suche iphone6\" um ein Produkt zu suchen " +
+        "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
     } else if (messageText.startsWith("suche")) {
 
     } else {
       sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-      sendTextMessage(senderID, "Probiere \"suche iphone6\" um ein Produkt zu suchen und einen Alarm dafür zu setzen.");
+      sendTextMessage(senderID, "Probiere \"suche iphone6\" um ein Produkt zu suchen und einen Preisalarm zu setzen.");
     }
 
   } else if (messageAttachments) {

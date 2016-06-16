@@ -244,32 +244,46 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
+  messageText = messageText.toLowerCase();
+
 
   if (messageText) {
 
     // If we receive a text message, check to see if it matches any special
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
-    switch (messageText) {
-      case 'image':
-        sendImageMessage(senderID);
-        break;
+    // switch (messageText) {
+    //   case 'image':
+    //     sendImageMessage(senderID);
+    //     break;
 
-      case 'button':
-        sendButtonMessage(senderID);
-        break;
+    //   case 'button':
+    //     sendButtonMessage(senderID);
+    //     break;
 
-      case 'generic':
-        sendGenericMessage(senderID);
-        break;
+    //   case 'generic':
+    //     sendGenericMessage(senderID);
+    //     break;
 
-      case 'receipt':
-        sendReceiptMessage(senderID);
-        break;
+    //   case 'receipt':
+    //     sendReceiptMessage(senderID);
+    //     break;
 
-      default:
-        sendTextMessage(senderID, messageText);
+    //   default:
+    //     sendTextMessage(senderID, messageText);
+    // }
+
+    // If we receive a text message, check to see if it matches any special
+    // keywords and send back the corresponding example. Otherwise, just echo
+    // the text we received.
+    if (messageText.startsWith("hilfe")) {
+      sendTextMessage(senderID, "");
+    } else if (messageText.startsWith("suche")) {
+
+    } else {
+      sendTextMessage(senderID, );
     }
+
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
   }

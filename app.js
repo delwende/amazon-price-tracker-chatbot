@@ -17,7 +17,8 @@ const
   express = require('express'),
   https = require('https'),  
   request = require('request'),
-  Parse = require('parse/node');
+  Parse = require('parse/node'),
+  amazon = require('amazon-product-api');
 
 var app = express();
 
@@ -61,8 +62,23 @@ const PARSE_SERVER_URL = (process.env.PARSE_SERVER_URL) ?
   (process.env.PARSE_SERVER_URL) :
   config.get('parseServerUrl');
 
+// AWS ID
+const AWS_ID = (process.env.AWS_ID) ?
+  (process.env.AWS_ID) :
+  config.get('awsId');
+  
+// AWS Secret
+const AWS_SECRET = (process.env.AWS_SECRET) ?
+  (process.env.AWS_SECRET) :
+  config.get('awsSecret');
+  
+// AWS Tag
+const AWS_TAG = (process.env.AWS_TAG) ?
+  (process.env.AWS_TAG) :
+  config.get('awsTag');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && PARSE_APPLICATION_ID &&
-    PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL)) {
+    PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL && AWS_ID && AWS_SECRET && AWS_TAG)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -70,6 +86,13 @@ if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && PARSE_APPLICATION_I
 // Initialize Parse SDK
 Parse.initialize(PARSE_APPLICATION_ID, PARSE_JAVASCRIPT_KEY);
 Parse.serverURL = PARSE_SERVER_URL;
+
+// Create Amazon Product Advertising API client
+var client = amazon.createClient({
+  awsId: AWS_ID,
+  awsSecret: AWS_SECRET,
+  awsTag: AWS_TAG
+});
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 

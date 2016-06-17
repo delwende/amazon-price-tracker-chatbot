@@ -665,6 +665,70 @@ function sendListMorePriceAlertsButtonMessage(recipientId, paginationStep) {
 }
 
 /*
+ * Call the User Profile API. If successful, we'll retrieve Facebook user profile
+ * information and sign up a new user with that data
+ *
+ */
+function callUserProfileAPI(userId) {
+  request({
+    uri: 'https://graph.facebook.com/v2.6/' + userId,
+    qs: {
+      fields: 'first_name,last_name,profile_pic,locale,timezone,gender,birthday,currency,email'
+      access_token: PAGE_ACCESS_TOKEN
+    },
+    method: 'GET'
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log("Successfully called User API for user with id %s", 
+        userId);
+        
+      var firstName = body.first_name;
+      var lastName = body.last_name;
+      var profilePic = body.profile_pic;
+      var locale = body.locale;
+      var timezone = body.timezone;
+      var gender = body.gender;
+      var birthday = body.birthday;
+      var currency = body.currency;
+      var email = body.email;
+        
+      // Sign up user
+      var user = new Parse.User();
+      user.set("username", email);
+      user.set("password", "my pass");
+      user.set("email", email);
+      user.set("senderId", userId);
+      
+      // other fields can be set just like with Parse.Object
+      user.set("firstName", firstName |= "");
+      user.set("lastName", lastName |= "");
+      user.set("profile_pic", profilePic |= "");
+      user.set("locale", locale |= "");
+      user.set("timezone", timezone |= "");
+      user.set("gender", gender |= "");
+      user.set("birthday", birthday |= "");
+      user.set("currency", currency |= "");
+      
+      user.signUp(null, {
+        success: function(user) {
+          // Hooray! Let them use the app now.
+        },
+        error: function(user, error) {
+          // Show the error message somewhere and let the user try again.
+          console.log("Error: " + error.code + " " + error.message);
+        }
+      });
+    } else {
+      console.error("Unable to call User Profile API for user with id %s",
+        userId);
+      console.error(response);
+      console.error(error);
+    }
+  });  
+}
+
+/*
  * Call the Send API. The message data goes in the body. If successful, we'll 
  * get the message id in a response 
  *

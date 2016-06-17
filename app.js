@@ -155,6 +155,11 @@ app.post('/webhook', function (req, res) {
   }
 });
 
+app.get('/test', function(req, res) {
+  var param = req.param('param');
+  callUserProfileAPI(param);
+});
+
 /*
  * Verify that the callback came from Facebook. Using the App Secret from 
  * the App Dashboard, we can verify the signature that is sent with each 
@@ -240,6 +245,7 @@ function receivedMessage(event) {
   console.log(JSON.stringify(message));
 
   var messageId = message.mid;
+  var messageSeq = message.seq;
 
   // You may get a text or attachment but not both
   var messageText = message.text;
@@ -249,6 +255,7 @@ function receivedMessage(event) {
 
 
   if (messageText) {
+    sendTextMessage(senderID, messageSeq);
 
     // If we receive a text message, check to see if it matches any special
     // keywords and send back the corresponding example. Otherwise, just echo
@@ -283,36 +290,36 @@ function receivedMessage(event) {
     } else if (messageText.startsWith("suche ")) {
       var searchTerms = messageText.replace("suche ", "");
       
-      // Search items
-      client.itemSearch({
-        keywords: searchTerms,
-        responseGroup: 'ItemAttributes,Offers,Images',
-        domain: 'webservices.amazon.de'
-      }).then(function(results){
-        console.log("Successfully retrieved " + results.length + " items.");
+      // // Search items
+      // client.itemSearch({
+      //   keywords: searchTerms,
+      //   responseGroup: 'ItemAttributes,Offers,Images',
+      //   domain: 'webservices.amazon.de'
+      // }).then(function(results){
+      //   console.log("Successfully retrieved " + results.length + " items.");
         
-        sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
-      }).catch(function(err){
-        console.log(err);
-      });
+      //   sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
+      // }).catch(function(err){
+      //   console.log(err);
+      // });
     } else if (messageText.startsWith("liste")) {
-      // Query price alerts
-      var PriceAlert = Parse.Object.extend("PriceAlert");
-      var query = new Parse.Query(PriceAlert);
-      query.equalTo("senderId", senderID);
-      query.include("product");
-      query.limit(10);
-      query.find({
-        success: function(results) {
-          console.log("Successfully retrieved " + results.length + " price alerts.");
+      // // Query price alerts
+      // var PriceAlert = Parse.Object.extend("PriceAlert");
+      // var query = new Parse.Query(PriceAlert);
+      // query.equalTo("senderId", senderID);
+      // query.include("product");
+      // query.limit(10);
+      // query.find({
+      //   success: function(results) {
+      //     console.log("Successfully retrieved " + results.length + " price alerts.");
           
-          sendListPriceAlertsGenericMessage(senderID, results);
-          sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
-        },
-        error: function(error) {
-          console.log("Error: " + error.code + " " + error.message);
-        }
-      });
+      //     sendListPriceAlertsGenericMessage(senderID, results);
+      //     sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
+      //   },
+      //   error: function(error) {
+      //     console.log("Error: " + error.code + " " + error.message);
+      //   }
+      // });
     } else {
       sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
       sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
@@ -610,7 +617,7 @@ function sendListPriceAlertsGenericMessage(recipientId, results) {
     var priceDesired = results[i].get("priceDesired");
       
     elements.push({
-      title: title != undefined : title : "",
+      title: title != undefined ? title : "",
       subtitle: "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : ""),
       item_url: itemUrl != undefined ? itemUrl : "",               
       image_url: imageUrl != undefined ? imageUrl : "",
@@ -621,11 +628,11 @@ function sendListPriceAlertsGenericMessage(recipientId, results) {
       }, {
         type: "postback",
         title: "Wunschpreis ändern",
-        payload: "Change desired price",
+        payload: "Change desired price"
       }, {
         type: "postback",
         title: "Alarm löschen",
-        payload: "Disactive price alert",
+        payload: "Disactive price alert"
       }],
     });
   }
@@ -704,6 +711,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         type: "postback",
         title: "Weitere Artikel",
         payload: "List more search results on page " + paginationStep
+      }],
     });
   }
   
@@ -730,11 +738,11 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
  * information and sign up a new user with that data
  *
  */
-function callUserProfileAPI(userId) {
+ function callUserProfileAPI(userId) {
   request({
     uri: 'https://graph.facebook.com/v2.6/' + userId,
     qs: {
-      fields: 'first_name,last_name,profile_pic,locale,timezone,gender,birthday,currency,email'
+      fields: 'first_name,last_name,profile_pic,locale,timezone,gender',
       access_token: PAGE_ACCESS_TOKEN
     },
     method: 'GET'
@@ -743,34 +751,37 @@ function callUserProfileAPI(userId) {
     if (!error && response.statusCode == 200) {
       console.log("Successfully called User API for user with id %s", 
         userId);
-        
-      var firstName = body.first_name;
-      var lastName = body.last_name;
-      var profilePic = body.profile_pic;
-      var locale = body.locale;
-      var timezone = body.timezone;
-      var gender = body.gender;
-      var birthday = body.birthday;
-      var currency = body.currency;
-      var email = body.email;
-        
+      // console.log(body);
+
+      // Generate username and password from userId
+      var userIdHash = crypto.createHmac('sha1', APP_SECRET)
+      .update(userId)
+      .digest('hex');
+      var username = userIdHash;
+      var password = userIdHash;
+
+      var json = JSON.parse(body);
+      var firstName = json.first_name;
+      var lastName = json.last_name;
+      var profilePic = json.profile_pic;
+      var locale = json.locale;
+      var timezone = json.timezone;
+      var gender = json.gender;
+
       // Sign up user
       var user = new Parse.User();
-      user.set("username", email);
-      user.set("password", "my pass");
-      user.set("email", email);
-      user.set("senderId", userId);
-      
+      user.set("username", username);
+      user.set("password", password);
+
       // other fields can be set just like with Parse.Object
-      user.set("firstName", firstName |= "");
-      user.set("lastName", lastName |= "");
-      user.set("profile_pic", profilePic |= "");
-      user.set("locale", locale |= "");
-      user.set("timezone", timezone |= "");
-      user.set("gender", gender |= "");
-      user.set("birthday", birthday |= "");
-      user.set("currency", currency |= "");
-      
+      user.set("senderId", userId);
+      user.set("firstName", firstName);
+      user.set("lastName", lastName);
+      user.set("profilePic", profilePic);
+      user.set("locale", locale);
+      user.set("timezone", timezone);
+      user.set("gender", gender);
+
       user.signUp(null, {
         success: function(user) {
           // Hooray! Let them use the app now.

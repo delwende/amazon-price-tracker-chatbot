@@ -281,9 +281,20 @@ function receivedMessage(event) {
       sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
         "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
     } else if (messageText.startsWith("suche ")) {
-      var keywords = messageText.replace("suche ", "");
-
-
+      var searchTerms = messageText.replace("suche ", "");
+      
+      // Search items
+      client.itemSearch({
+        keywords: searchTerms,
+        responseGroup: 'ItemAttributes,Offers,Images',
+        domain: 'webservices.amazon.de'
+      }).then(function(results){
+        console.log("Successfully retrieved " + results.length + " items.");
+        
+        sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
+      }).catch(function(err){
+        console.log(err);
+      });
     } else if (messageText.startsWith("liste")) {
       // Query price alerts
       var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -294,7 +305,7 @@ function receivedMessage(event) {
       query.find({
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " price alerts.");
-          // Do something with the returned Parse.Object values
+          
           sendListPriceAlertsGenericMessage(senderID, results);
           sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
         },
@@ -362,8 +373,8 @@ function receivedPostback(event) {
   // let them know it was successful
   // sendTextMessage(senderID, "Postback called");
   
-  if (payload.startsWith("Show mor price alerts on page ")) {
-    var paginationStep = payload.replace("Show mor price alerts on page ", "");
+  if (payload.startsWith("List more price alerts on page ")) {
+    var paginationStep = payload.replace("List more price alerts on page ", "");
     var numberToSkip = paginationStep * 10;
     
     // Query price alerts
@@ -597,11 +608,10 @@ function sendListPriceAlertsGenericMessage(recipientId, results) {
     var imageUrl = results[i].get("product").get("smallImageUrl");
     var price = 4999.99; // Temporary dummy price
     var priceDesired = results[i].get("priceDesired");
-    var subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
       
     elements.push({
       title: title != undefined : title : "",
-      subtitle: subtitle,
+      subtitle: "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : ""),
       item_url: itemUrl != undefined ? itemUrl : "",               
       image_url: imageUrl != undefined ? imageUrl : "",
       buttons: [{
@@ -654,12 +664,63 @@ function sendListMorePriceAlertsButtonMessage(recipientId, paginationStep) {
           buttons:[{
             type: "postback",
             title: "Weitere Alarme",
-            payload: "Show mor price alerts on page " + paginationStep
+            payload: "List more price alerts on page " + paginationStep
           }]
         }
       }
     }
   };  
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a List Search Results Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendListSearchResultsGenericMessage(recipientId, results, paginationStep) {
+  var elements = [];
+  
+  for (var i = 0; i < results.length; i++) {
+    var smallImageUrl = "";
+    var title = "";
+    var price = "";
+    var detailPageUrl = "";
+    
+    elements.push({
+      title: title != undefined ? title : "",
+      subtitle: "Aktueller Preis: " + accounting.formatMoney(price, "€", 2, ".", ","),
+      item_url: detailPageUrl != undefined ? detailPageUrl : "",               
+      image_url: smallImageUrl != undefined ? smallImageUrl : "",
+      buttons: [{
+        type: "postback",
+        title: "Alarm aktivieren",
+        payload: "Activate price alarm"
+      }, {
+        type: "web_url",
+        url: detailPageUrl != undefined ? detailPageUrl : "",
+        title: "Kaufen"
+      }, {
+        type: "postback",
+        title: "Weitere Artikel",
+        payload: "List more search results on page " + paginationStep
+    });
+  }
+  
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: elements
+        }
+      }
+    }
+  };
 
   callSendAPI(messageData);
 }

@@ -19,20 +19,13 @@ const
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
-  accounting = require('accounting'),
-  cookieParser = require('cookie-parser'),
-  cookieSession = require('cookie-session');
+  accounting = require('accounting');
 
 var app = express();
 
 app.set('port', process.env.PORT || 5000);
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
-app.use(cookieSession({
-  secret: '1234567890QWERTY',
-  maxAge: 15724800000
-}));
-app.use(cookieParser());
 
 /*
  * Be sure to setup your config values before running this code. You can 
@@ -128,8 +121,6 @@ app.get('/webhook', function(req, res) {
  */
 app.post('/webhook', function (req, res) {
 
-  console.log(">>>>>>>>>> " + (req.session.name != undefined ? req.session.name : "") + " <<<<<<<<<<");
-
   var data = req.body;
 
   // Make sure this is a page subscription
@@ -155,8 +146,6 @@ app.post('/webhook', function (req, res) {
         }
       });
     });
-
-    req.session.name = 'Simon';
 
     // Assume all went well.
     //

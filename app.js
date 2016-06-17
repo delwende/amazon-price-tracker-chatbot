@@ -362,8 +362,8 @@ function receivedPostback(event) {
   // let them know it was successful
   // sendTextMessage(senderID, "Postback called");
   
-  if (payload.startsWith("Zeige weitere Alarme auf Seite ")) {
-    var paginationStep = payload.replace("Zeige weitere Alarme auf Seite ");
+  if (payload.startsWith("Show mor price alerts on page ")) {
+    var paginationStep = payload.replace("Show mor price alerts on page ", "");
     var numberToSkip = paginationStep * 10;
     
     // Query price alerts
@@ -388,11 +388,9 @@ function receivedPostback(event) {
           console.log("Error: " + error.code + " " + error.message);
         }
       });
-  } else if (payload.startsWith("Artikeldetails anzeigen")) {
+  } else if (payload.startsWith("Change desired price")) {
     
-  } else if (payload.startsWith("Wunschpreis ändern")) {
-    
-  } else if (payload.startsWith("Alarm löschen")) {
+  } else if (payload.startsWith("Disactivate price alert")) {
     
   }
 }
@@ -592,15 +590,14 @@ function sendReceiptMessage(recipientId) {
  */
 function sendListPriceAlertsGenericMessage(recipientId, results) {
   var elements = [];
-  var title, subtitle, itemUrl, imageUrl, price, priceDesired;
     
   for (var i = 0; i < results.length; i++) {
-    title = results[i].get("product").get("title");
-    itemUrl = results[i].get("product").get("detailPageUrl");
-    imageUrl = results[i].get("product").get("smallImageUrl");
-    price = 4999.99; // Temporary dummy price
-    priceDesired = results[i].get("priceDesired");
-    subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
+    var title = results[i].get("product").get("title");
+    var itemUrl = results[i].get("product").get("detailPageUrl");
+    var imageUrl = results[i].get("product").get("smallImageUrl");
+    var price = 4999.99; // Temporary dummy price
+    var priceDesired = results[i].get("priceDesired");
+    var subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
       
     elements.push({
       title: title != undefined : title : "",
@@ -618,7 +615,7 @@ function sendListPriceAlertsGenericMessage(recipientId, results) {
       }, {
         type: "postback",
         title: "Alarm löschen",
-        payload: "Remove price alert",
+        payload: "Disactive price alert",
       }],
     });
   }
@@ -657,7 +654,7 @@ function sendListMorePriceAlertsButtonMessage(recipientId, paginationStep) {
           buttons:[{
             type: "postback",
             title: "Weitere Alarme",
-            payload: "Zeige weitere Alarme auf Seite " + paginationStep
+            payload: "Show mor price alerts on page " + paginationStep
           }]
         }
       }

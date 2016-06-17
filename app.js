@@ -19,21 +19,13 @@ const
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
-  accounting = require("accounting"),
-  cookieParser = require('cookie-parser'),
-  cookieSession = require('cookie-session');
+  accounting = require("accounting");
 
 var app = express();
 
 app.set('port', process.env.PORT || 5000);
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
-app.use(cookieSession({
-  name: 'cookieName',
-  secret: 'cookieSecret',
-  maxAge: 15724800000
-}));
-app.use(cookieParser('cookieSecret'));
 
 /*
  * Be sure to setup your config values before running this code. You can 
@@ -129,46 +121,38 @@ app.get('/webhook', function(req, res) {
  */
 app.post('/webhook', function (req, res) {
 
-  Parse.User.become(req.session.token ? req.session.token : "NoTokenFound").then(function (user) {
-    // Do something now that we have a Parse.User stored in the "user" var
-    console.log(">>>>>>>>>> Hi I'm " + user.get("firstName") + "!");
-  }, function (error) {
-    callUserProfileAPI(req.body.entry.messaging.sender.id, req, res);
-    console.log(error);
-  });
+  var data = req.body;
 
-  // var data = req.body;
+  // Make sure this is a page subscription
+  if (data.object == 'page') {
+    // Iterate over each entry
+    // There may be multiple if batched
+    data.entry.forEach(function(pageEntry) {
+      var pageID = pageEntry.id;
+      var timeOfEvent = pageEntry.time;
 
-  // // Make sure this is a page subscription
-  // if (data.object == 'page') {
-  //   // Iterate over each entry
-  //   // There may be multiple if batched
-  //   data.entry.forEach(function(pageEntry) {
-  //     var pageID = pageEntry.id;
-  //     var timeOfEvent = pageEntry.time;
+      // Iterate over each messaging event
+      pageEntry.messaging.forEach(function(messagingEvent) {
+        if (messagingEvent.optin) {
+          receivedAuthentication(messagingEvent);
+        } else if (messagingEvent.message) {
+          receivedMessage(messagingEvent);
+        } else if (messagingEvent.delivery) {
+          receivedDeliveryConfirmation(messagingEvent);
+        } else if (messagingEvent.postback) {
+          receivedPostback(messagingEvent);
+        } else {
+          console.log("Webhook received unknown messagingEvent: ", messagingEvent);
+        }
+      });
+    });
 
-  //     // Iterate over each messaging event
-  //     pageEntry.messaging.forEach(function(messagingEvent) {
-  //       if (messagingEvent.optin) {
-  //         receivedAuthentication(messagingEvent);
-  //       } else if (messagingEvent.message) {
-  //         receivedMessage(messagingEvent);
-  //       } else if (messagingEvent.delivery) {
-  //         receivedDeliveryConfirmation(messagingEvent);
-  //       } else if (messagingEvent.postback) {
-  //         receivedPostback(messagingEvent);
-  //       } else {
-  //         console.log("Webhook received unknown messagingEvent: ", messagingEvent);
-  //       }
-  //     });
-  //   });
-
-  //   // Assume all went well.
-  //   //
-  //   // You must send back a 200, within 20 seconds, to let us know you've 
-  //   // successfully received the callback. Otherwise, the request will time out.
-  //   res.sendStatus(200);
-  // }
+    // Assume all went well.
+    //
+    // You must send back a 200, within 20 seconds, to let us know you've 
+    // successfully received the callback. Otherwise, the request will time out.
+    res.sendStatus(200);
+  }
 });
 
 app.get('/test', function(req, res) {
@@ -752,7 +736,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
  * information and sign up a new user with that data
  *
  */
- function callUserProfileAPI(userId, req, res) {
+ function callUserProfileAPI(userId) {
   request({
     uri: 'https://graph.facebook.com/v2.6/' + userId,
     qs: {
@@ -799,8 +783,6 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
       user.signUp(null, {
         success: function(user) {
           // Hooray! Let them use the app now.
-          req.session.token = user._sessionToken;
-          res.sendStatus(200);
         },
         error: function(user, error) {
           // Show the error message somewhere and let the user try again.

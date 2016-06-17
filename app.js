@@ -251,34 +251,30 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
+  // Save message
+  var Message = Parse.Object.extend("Message");
+  var message = new Message();
+
+  message.set("senderId", senderID);
+  message.set("text", messageText);
+  message.set("sequenceNumber", messageSeq);
+
+  message.save(null, {
+    success: function(message) {
+      // Execute any logic that should take place after the object is saved.
+      console.log('New object created with objectId: ' + message.id);
+    },
+    error: function(message, error) {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      console.log('Failed to create new object, with error code: ' + error.message);
+    }
+  });
+
   messageText = messageText.toLowerCase();
 
 
   if (messageText) {
-    // If we receive a text message, check to see if it matches any special
-    // keywords and send back the corresponding example. Otherwise, just echo
-    // the text we received.
-    // switch (messageText) {
-    //   case 'image':
-    //     sendImageMessage(senderID);
-    //     break;
-
-    //   case 'button':
-    //     sendButtonMessage(senderID);
-    //     break;
-
-    //   case 'generic':
-    //     sendGenericMessage(senderID);
-    //     break;
-
-    //   case 'receipt':
-    //     sendReceiptMessage(senderID);
-    //     break;
-
-    //   default:
-    //     sendTextMessage(senderID, messageText);
-    // }
-
     // If we receive a text message, check to see if it matches any special
     // keywords and send back the corresponding message. Otherwise, just send
     // a message with help instructions.

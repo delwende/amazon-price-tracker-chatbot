@@ -133,7 +133,7 @@ app.post('/webhook', function (req, res) {
     // Do something now that we have a Parse.User stored in the "user" var
     console.log(">>>>>>>>>> Hi I'm " + user.get("firstName") + "!");
   }, function (error) {
-    callUserProfileAPI()
+    callUserProfileAPI(req.body.entry.messaging.sender.id, req, res);
     console.log(error);
   });
 

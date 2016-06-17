@@ -293,7 +293,7 @@ function receivedMessage(event) {
       query.limit(10);
       query.find({
         success: function(results) {
-          console.log("Successfully retrieved " + results.length + " pricealerts.");
+          console.log("Successfully retrieved " + results.length + " price alerts.");
           // Do something with the returned Parse.Object values
           sendListPriceAlertsGenericMessage(senderID, results);
           sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
@@ -375,10 +375,14 @@ function receivedPostback(event) {
       query.skip(numberToSkip);
       query.find({
         success: function(results) {
-          console.log("Successfully retrieved " + results.length + " pricealerts.");
+          console.log("Successfully retrieved " + results.length + " price alerts.");
           // Do something with the returned Parse.Object values
-          sendListPriceAlertsGenericMessage(senderID, results);
-          sendListMorePriceAlertsButtonMessage(senderID, paginationStep);
+          if (results.length > 0) {
+            sendListPriceAlertsGenericMessage(senderID, results);
+            sendListMorePriceAlertsButtonMessage(senderID, paginationStep);
+          } else {
+            
+          }
         },
         error: function(error) {
           console.log("Error: " + error.code + " " + error.message);
@@ -587,59 +591,52 @@ function sendReceiptMessage(recipientId) {
  *
  */
 function sendListPriceAlertsGenericMessage(recipientId, results) {
-  if (results.length > 0) {
-    var elements = [];
-    var title, subtitle, itemUrl, imageUrl, price, priceDesired;
+  var elements = [];
+  var title, subtitle, itemUrl, imageUrl, price, priceDesired;
     
-    for (var i = 0; i < results.length; i++) {
-      title = results[i].get("product").get("title");
-      itemUrl = results[i].get("product").get("detailPageUrl");
-      imageUrl = results[i].get("product").get("smallImageUrl");
-      price = 4999.99; // Temporary dummy price
-      priceDesired = results[i].get("priceDesired");
-      subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
+  for (var i = 0; i < results.length; i++) {
+    title = results[i].get("product").get("title");
+    itemUrl = results[i].get("product").get("detailPageUrl");
+    imageUrl = results[i].get("product").get("smallImageUrl");
+    price = 4999.99; // Temporary dummy price
+    priceDesired = results[i].get("priceDesired");
+    subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
       
-      elements.push({
-        title: title != undefined : title : "",
-        subtitle: subtitle,
-        item_url: itemUrl != undefined ? itemUrl : "",               
-        image_url: imageUrl != undefined ? imageUrl : "",
-        buttons: [{
-          type: "web_url",
-          url: "https://www.jackthebot.com",
-          title: "Artikeldetails anzeigen"
-        }, {
-          type: "postback",
-          title: "Wunschpreis ändern",
-          payload: "Change desired price",
-        }, {
-          type: "postback",
-          title: "Alarm löschen",
-          payload: "Remove price alert",
-        }],
-      });
-    }
+    elements.push({
+      title: title != undefined : title : "",
+      subtitle: subtitle,
+      item_url: itemUrl != undefined ? itemUrl : "",               
+      image_url: imageUrl != undefined ? imageUrl : "",
+      buttons: [{
+        type: "web_url",
+        url: "https://www.jackthebot.com",
+        title: "Artikeldetails anzeigen"
+      }, {
+        type: "postback",
+        title: "Wunschpreis ändern",
+        payload: "Change desired price",
+      }, {
+        type: "postback",
+        title: "Alarm löschen",
+        payload: "Remove price alert",
+      }],
+    });
+  }
     
-    var messageData = {
-      recipient: {
-        id: recipientId
-      },
-      message: {
-        attachment: {
-          type: "template",
-          payload: {
-            template_type: "generic",
-            elements: elements
-          }
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: elements
         }
       }
-    };  
-
-  callSendAPI(messageData);
-  } else {
-    sendTextMessage(recipientId, "Es sind keine weiteren Alarme verfügbar.");
-  }
-  
+    }
+  };
 }
 
 /*

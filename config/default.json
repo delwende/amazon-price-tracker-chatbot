@@ -7,5 +7,17 @@
     "parseServerUrl": "https://jackthebot-parse.herokuapp.com/parse",
     "awsId": "AKIAJQQTUCOF4RJC5RMQ",
     "awsSecret": "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",
-    "awsTag": "wwwjackthebot-21"
+    "awsTag": "wwwjackthebot-21",
+    "awsLocale_pt_BR": "webservices.amazon.com.br",
+    "awsLocale_zh_CN": "webservices.amazon.cn",
+    "awsLocale_zh_HK": "webservices.amazon.cn",
+    "awsLocale_fr_FR": "webservices.amazon.fr",
+    "awsLocale_de_DE": "webservices.amazon.de",
+    "awsLocale_en_IN": "webservices.amazon.in",
+    "awsLocale_it_IT": "webservices.amazon.it",
+    "awsLocale_ja_JP": "webservices.amazon.co.jp",
+    "awsLocale_es_MX": "webservices.amazon.com.mx",
+    "awsLocale_es_ES": "webservices.amazon.es",
+    "awsLocale_en_GB": "webservices.amazon.co.uk",
+    "awsLocale_en_US": "webservices.amazon.com"
 }

@@ -277,12 +277,44 @@ function receivedMessage(event) {
       if (results.length > 0) {
         if (messageText) {
           switch (user.get("locale")) {
-            case 'de_DE':
-              sendTextMessage(senderID, "Hi! Du kommst aus Deutschland.");
+            // case 'pt_BR': // Portuguese (Brazil)
+            //   break;
+
+            // case 'zh_CN': // Simplified Chinese (China)
+            //   break;
+
+            // case 'zh_HK': // Traditional Chinese (Hong Kong)
+            //   break;
+
+            // case 'fr_FR': // French (France)
+            //   break;
+
+            case 'de_DE': // German
               break;
 
+            // case 'en_IN': // English (India)
+            //   break;
+
+            // case 'it_IT': // Italian
+            //   break;
+
+            // case 'ja_JP': // Japanese
+            //   break;
+
+            // case 'es_MX': // Spanish (Mexico)
+            //   break;
+
+            // case 'es_ES': // Spanish (Spain)
+            //   break;
+
+            // case 'en_GB': // English (UK)
+            //   break;
+
+            // case 'en_US': // English (US)
+            //   break;
+
             default:
-              sendTextMessage(senderID, "Hi! Du kommst aus einem Land das mir nicht bekannt ist.");
+              sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
           }
 
           // // If we receive a text message, check to see if it matches any special

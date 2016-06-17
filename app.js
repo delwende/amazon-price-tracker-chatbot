@@ -157,7 +157,19 @@ app.post('/webhook', function (req, res) {
 
 app.get('/test', function(req, res) {
   var param = req.param('param');
-  callUserProfileAPI(param);
+  
+  // Search items
+  client.itemSearch({
+    keywords: param,
+    responseGroup: 'ItemAttributes,Offers,Images',
+    domain: 'webservices.amazon.de'
+  }).then(function(results){
+    console.log("Successfully retrieved " + results.length + " items.");
+    console.log(results);
+
+  }).catch(function(err){
+    console.log(err);
+  });
 });
 
 /*
@@ -245,83 +257,90 @@ function receivedMessage(event) {
   console.log(JSON.stringify(message));
 
   var messageId = message.mid;
-  var messageSeq = message.seq;
 
   // You may get a text or attachment but not both
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
-  // Save message
-  var Message = Parse.Object.extend("Message");
-  var message = new Message();
+  messageText = messageText.toLowerCase();
 
-  message.set("senderId", senderID);
-  message.set("text", messageText);
-  message.set("sequenceNumber", messageSeq);
+  // Query users
+  var query = new Parse.Query(Parse.User);
+  query.equalTo("senderId", senderID);  // find user with appropriate senderId
+  query.find({
+    success: function(results) {
+      console.log("Successfully retrieved " + results.length + " users.");
 
-  message.save(null, {
-    success: function(message) {
-      // Execute any logic that should take place after the object is saved.
-      console.log('New object created with objectId: ' + message.id);
+      var user = results[0];
+      
+      // Check if user exists
+      if (results.length > 0) {
+        if (user.get("locale")) {
+          switch (messageText) {
+            case 'de_DE':
+              sendTextMessage(senderID, "Hi! Du kommst aus Deutschland.");
+              break;
+
+            default:
+              sendTextMessage(senderID, "Hi! Du kommst aus einem Land das mir nicht bekannt ist.");
+          }
+
+          // // If we receive a text message, check to see if it matches any special
+          // // keywords and send back the corresponding message. Otherwise, just send
+          // // a message with help instructions.
+          // if (messageText.startsWith("hilfe")) {
+          //   sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
+          //     "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
+          // } else if (messageText.startsWith("suche ")) {
+          //   var searchTerms = messageText.replace("suche ", "");
+            
+          //   // // Search items
+          //   // client.itemSearch({
+          //   //   keywords: searchTerms,
+          //   //   responseGroup: 'ItemAttributes,Offers,Images',
+          //   //   domain: 'webservices.amazon.de'
+          //   // }).then(function(results){
+          //   //   console.log("Successfully retrieved " + results.length + " items.");
+              
+          //   //   sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
+          //   // }).catch(function(err){
+          //   //   console.log(err);
+          //   // });
+          // } else if (messageText.startsWith("liste")) {
+          //   // // Query price alerts
+          //   // var PriceAlert = Parse.Object.extend("PriceAlert");
+          //   // var query = new Parse.Query(PriceAlert);
+          //   // query.equalTo("senderId", senderID);
+          //   // query.include("product");
+          //   // query.limit(10);
+          //   // query.find({
+          //   //   success: function(results) {
+          //   //     console.log("Successfully retrieved " + results.length + " price alerts.");
+                
+          //   //     sendListPriceAlertsGenericMessage(senderID, results);
+          //   //     sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
+          //   //   },
+          //   //   error: function(error) {
+          //   //     console.log("Error: " + error.code + " " + error.message);
+          //   //   }
+          //   // });
+          // } else {
+          //   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
+          //   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
+          // }
+
+        } else if (messageAttachments) {
+          sendTextMessage(senderID, "Message with attachment received");
+        }
+      } else {
+        callUserProfileAPI(senderID);
+      }
     },
-    error: function(message, error) {
-      // Execute any logic that should take place if the save fails.
-      // error is a Parse.Error with an error code and message.
-      console.log('Failed to create new object, with error code: ' + error.message);
+    error: function(error) {
+      console.log("Error: " + error.code + " " + error.message);
     }
   });
 
-  messageText = messageText.toLowerCase();
-
-
-  if (messageText) {
-    // If we receive a text message, check to see if it matches any special
-    // keywords and send back the corresponding message. Otherwise, just send
-    // a message with help instructions.
-    if (messageText.startsWith("hilfe")) {
-      sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
-        "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
-    } else if (messageText.startsWith("suche ")) {
-      var searchTerms = messageText.replace("suche ", "");
-      
-      // // Search items
-      // client.itemSearch({
-      //   keywords: searchTerms,
-      //   responseGroup: 'ItemAttributes,Offers,Images',
-      //   domain: 'webservices.amazon.de'
-      // }).then(function(results){
-      //   console.log("Successfully retrieved " + results.length + " items.");
-        
-      //   sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
-      // }).catch(function(err){
-      //   console.log(err);
-      // });
-    } else if (messageText.startsWith("liste")) {
-      // // Query price alerts
-      // var PriceAlert = Parse.Object.extend("PriceAlert");
-      // var query = new Parse.Query(PriceAlert);
-      // query.equalTo("senderId", senderID);
-      // query.include("product");
-      // query.limit(10);
-      // query.find({
-      //   success: function(results) {
-      //     console.log("Successfully retrieved " + results.length + " price alerts.");
-          
-      //     sendListPriceAlertsGenericMessage(senderID, results);
-      //     sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
-      //   },
-      //   error: function(error) {
-      //     console.log("Error: " + error.code + " " + error.message);
-      //   }
-      // });
-    } else {
-      sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-      sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
-    }
-
-  } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
-  }
 }
 
 
@@ -778,10 +797,9 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
       user.signUp(null, {
         success: function(user) {
-          // Hooray! Let them use the app now.
+          alert('New user created with objectId: ' + user.id);
         },
         error: function(user, error) {
-          // Show the error message somewhere and let the user try again.
           console.log("Error: " + error.code + " " + error.message);
         }
       });

@@ -18,7 +18,8 @@ const
   https = require('https'),  
   request = require('request'),
   Parse = require('parse/node'),
-  amazon = require('amazon-product-api');
+  amazon = require('amazon-product-api'),
+  accounting = require("accounting");
 
 var app = express();
 
@@ -274,18 +275,36 @@ function receivedMessage(event) {
     // }
 
     // If we receive a text message, check to see if it matches any special
-    // keywords and send back the corresponding example. Otherwise, just echo
-    // the text we received.
+    // keywords and send back the corresponding message. Otherwise, just send
+    // a message with help instructions.
     if (messageText.startsWith("hilfe")) {
-      sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um ein Produkt zu suchen " +
+      sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
         "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
     } else if (messageText.startsWith("suche ")) {
       var keywords = messageText.replace("suche ", "");
 
 
+    } else if (messageText.startsWith("liste")) {
+      // Query price alerts
+      var PriceAlert = Parse.Object.extend("PriceAlert");
+      var query = new Parse.Query(PriceAlert);
+      query.equalTo("senderId", senderID);
+      query.include("product");
+      query.limit(10);
+      query.find({
+        success: function(results) {
+          console.log("Successfully retrieved " + results.length + " pricealerts.");
+          // Do something with the returned Parse.Object values
+          sendListPriceAlertsGenericMessage(senderID, results);
+          sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
+        },
+        error: function(error) {
+          console.log("Error: " + error.code + " " + error.message);
+        }
+      });
     } else {
       sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-      sendTextMessage(senderID, "Probiere \"suche iphone6\" um ein Produkt zu suchen und einen Preisalarm zu setzen.");
+      sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
     }
 
   } else if (messageAttachments) {
@@ -341,7 +360,37 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to 
   // let them know it was successful
-  sendTextMessage(senderID, "Postback called");
+  // sendTextMessage(senderID, "Postback called");
+  
+  if (payload.startsWith("Zeige weitere Alarme auf Seite ")) {
+    var paginationStep = payload.replace("Zeige weitere Alarme auf Seite ");
+    var numberToSkip = paginationStep * 10;
+    
+    // Query price alerts
+      var PriceAlert = Parse.Object.extend("PriceAlert");
+      var query = new Parse.Query(PriceAlert);
+      query.equalTo("senderId", senderID);
+      query.include("product");
+      query.limit(10);
+      query.skip(numberToSkip);
+      query.find({
+        success: function(results) {
+          console.log("Successfully retrieved " + results.length + " pricealerts.");
+          // Do something with the returned Parse.Object values
+          sendListPriceAlertsGenericMessage(senderID, results);
+          sendListMorePriceAlertsButtonMessage(senderID, paginationStep);
+        },
+        error: function(error) {
+          console.log("Error: " + error.code + " " + error.message);
+        }
+      });
+  } else if (payload.startsWith("Artikeldetails anzeigen")) {
+    
+  } else if (payload.startsWith("Wunschpreis ändern")) {
+    
+  } else if (payload.startsWith("Alarm löschen")) {
+    
+  }
 }
 
 
@@ -529,6 +578,94 @@ function sendReceiptMessage(recipientId) {
       }
     }
   };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Show Price Alerts Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendListPriceAlertsGenericMessage(recipientId, results) {
+  if (results.length > 0) {
+    var elements = [];
+    var title, subtitle, itemUrl, imageUrl, price, priceDesired;
+    
+    for (var i = 0; i < results.length; i++) {
+      title = results[i].get("product").get("title");
+      itemUrl = results[i].get("product").get("detailPageUrl");
+      imageUrl = results[i].get("product").get("smallImageUrl");
+      price = 4999.99; // Temporary dummy price
+      priceDesired = results[i].get("priceDesired");
+      subtitle = "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : "");
+      
+      elements.push({
+        title: title != undefined : title : "",
+        subtitle: subtitle,
+        item_url: itemUrl != undefined ? itemUrl : "",               
+        image_url: imageUrl != undefined ? imageUrl : "",
+        buttons: [{
+          type: "web_url",
+          url: "https://www.jackthebot.com",
+          title: "Artikeldetails anzeigen"
+        }, {
+          type: "postback",
+          title: "Wunschpreis ändern",
+          payload: "Change desired price",
+        }, {
+          type: "postback",
+          title: "Alarm löschen",
+          payload: "Remove price alert",
+        }],
+      });
+    }
+    
+    var messageData = {
+      recipient: {
+        id: recipientId
+      },
+      message: {
+        attachment: {
+          type: "template",
+          payload: {
+            template_type: "generic",
+            elements: elements
+          }
+        }
+      }
+    };  
+
+  callSendAPI(messageData);
+  } else {
+    sendTextMessage(recipientId, "Es sind keine weiteren Alarme verfügbar.");
+  }
+  
+}
+
+/*
+ * Send a List More Price Alerts button message using the Send API.
+ *
+ */
+function sendListMorePriceAlertsButtonMessage(recipientId, paginationStep) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: "",
+          buttons:[{
+            type: "postback",
+            title: "Weitere Alarme",
+            payload: "Zeige weitere Alarme auf Seite " + paginationStep
+          }]
+        }
+      }
+    }
+  };  
 
   callSendAPI(messageData);
 }

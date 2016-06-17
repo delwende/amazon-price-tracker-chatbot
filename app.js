@@ -275,8 +275,8 @@ function receivedMessage(event) {
       
       // Check if user exists
       if (results.length > 0) {
-        if (user.get("locale")) {
-          switch (messageText) {
+        if (messageText) {
+          switch (user.get("locale")) {
             case 'de_DE':
               sendTextMessage(senderID, "Hi! Du kommst aus Deutschland.");
               break;

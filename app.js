@@ -920,8 +920,18 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
             'locale': user.get("locale")
           }, function(error, reply) {
 
-              // Recall receivedMessage() with existing user
-              receivedMessage(event);
+            // Save user to redis (key equals user:senderID)
+            redisClient.hmset('user:' + userId, {
+              'objectId': user.id,
+              'locale': user.get("locale")
+            }, function(error, reply) {
+
+                if (error == null) {
+                  // Recall receivedMessage() with existing user
+                  receivedMessage(event);
+                }
+                
+            });
               
           });
 

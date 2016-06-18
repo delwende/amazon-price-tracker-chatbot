@@ -319,7 +319,7 @@ function receivedMessage(event) {
                 
                 if (messageText.startsWith("hilfe")) {
                   sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
-                    "oder \"liste\" um deine aktiven Preisalarme verwalten.");
+                    "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
                 } else if (messageText.startsWith("suche ")) {
                   var searchTerms = messageText.replace("suche ", "");
 
@@ -665,11 +665,11 @@ function sendListSearchResultsGenericMessage(recipientId, results) {
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
 
-    var asin = results[0].ASIN[0];
-    var title = results[0].ItemAttributes[0].Title[0];
-    var price = results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
-    var url = results[0].DetailPageURL[0];
-    var imageUrl = results[0].SmallImage[0].URL[0];
+    var asin = results[i].ASIN[0];
+    var title = results[i].ItemAttributes[0].Title[0];
+    var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+    var url = results[i].DetailPageURL[0];
+    var imageUrl = results[i].MediumImage[0].URL[0];
     
     elements.push({
       title: title,

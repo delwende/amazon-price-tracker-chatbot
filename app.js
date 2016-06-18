@@ -299,6 +299,8 @@ function receivedMessage(event) {
       // Retrieve value of key (user:senderID)
       redisClient.hgetall("user:" + senderID, function(error, object) {
 
+        console.log(object);
+
         if (error == null) {
 
           var parseUserLocale = object.locale;
@@ -876,7 +878,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("Successfully called User Profile API for user with id %s.", 
+      console.log("Successfully called User Profile API for user with id %s", 
         userId);
       // console.log(body);
 
@@ -919,8 +921,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
             'locale': user.get("locale")
           }, function(error, reply) {
 
-              console.log(">>>>> reply: " + reply);
-              console.log(">>>>> reply: " + reply);
+              console.log("test");
 
               // if (error == null) {
               //   // Recall receivedMessage() with existing user
@@ -928,13 +929,15 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
               // }
               
           });
+
+          console.log("test1");
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);
         }
       });
     } else {
-      console.error("Unable to call User Profile API for user with id %s.",
+      console.error("Unable to call User Profile API for user with id %s",
         userId);
       console.error(response);
       console.error(error);

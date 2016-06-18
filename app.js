@@ -309,6 +309,7 @@ function receivedMessage(event) {
             //   break;
 
             case 'de_DE': // German
+              sendTextMessage(senderID, "Hi! Your are german speaking, right?.");
               break;
 
             // case 'en_IN': // English (India)

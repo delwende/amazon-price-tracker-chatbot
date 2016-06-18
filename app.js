@@ -288,13 +288,11 @@ function receivedMessage(event) {
 
   messageText = messageText.toLowerCase();
 
-  // Check existence of key (user:senderID)
+  // Determine if key user:senderID exists
   redisClient.exists("user:" + senderID, function(error, reply) {
 
-    console.log(">>>>> reply: " + reply);
-
     if (reply === 1) {
-      // Retrieve value of key (user:senderID)
+      // Get all the fields and values in hash for key user:senderID
       redisClient.hgetall("user:" + senderID, function(error, object) {
 
         if (error == null) {
@@ -353,9 +351,9 @@ function receivedMessage(event) {
       });
 
     } else {
-      // Check if user exists on Backend
+      // Check if user exists on the Backend
       var query = new Parse.Query(Parse.User);
-      query.equalTo("senderId", senderID);  // find user where senderId equals senderID
+      query.equalTo("senderId", senderID);  // find user by senderId
       query.find({
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " users.");
@@ -363,7 +361,7 @@ function receivedMessage(event) {
           if (results.length === 1) {
             var user = results[0];
 
-            // Save user to redis (key equals user:senderID)
+            // Save relevant user data to redis (key equals user:senderID)
             redisClient.hmset('user:' + senderID, {
               'objectId': user.id,
               'locale': user.get("locale")
@@ -376,7 +374,7 @@ function receivedMessage(event) {
                 
             });
           } else {
-            // Sign up user
+            // Get Facebook user profile information and sign up a user on the Backend
             callUserProfileAPI(senderID, event);
           }
         },
@@ -859,8 +857,8 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 }
 
 /*
- * Call the User Profile API. If successful, we'll retrieve Facebook user profile
- * information and sign up a new user with that data
+ * Call User Profile API. If successful, we'll get Facebook user profile
+ * information and sign up a new user on the Backend
  *
  */
  function callUserProfileAPI(userId, event) {
@@ -871,7 +869,6 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
       access_token: PAGE_ACCESS_TOKEN
     },
     method: 'GET'
-
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       console.log("Successfully called User Profile API for user with id %s", 
@@ -911,7 +908,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         success: function(user) {
           console.log("New user created with objectId: " + user.id);
 
-          // Save user to redis (key equals user:senderID)
+          // Save relevant user data to redis (key equals user:senderID)
           redisClient.hmset('user:' + userId, {
             'objectId': user.id,
             'locale': user.get("locale")

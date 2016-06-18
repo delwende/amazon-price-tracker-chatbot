@@ -186,7 +186,7 @@ app.get('/test', function(req, res) {
 
   redisClient.exists(param, function(err, reply) {
     if (reply === 1) {
-        console.log('exists');
+        console.log(reply);
     } else {
         console.log('doesn\'t exist');
     }
@@ -295,7 +295,7 @@ function receivedMessage(event) {
       if (reply === 1) {
         
         if (messageText) {
-          switch (user.get("locale")) {
+          switch ('de_DE') {
             // case 'pt_BR': // Portuguese (Brazil)
             //   break;
 

@@ -8,6 +8,7 @@
     "awsId": "AKIAJQQTUCOF4RJC5RMQ",
     "awsSecret": "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",
     "awsTag": "wwwjackthebot-21",
+    "redisUrl": "redis://h:p16mf45bc5v80ka25r70fb7tlf0@ec2-54-246-90-12.eu-west-1.compute.amazonaws.com:14969",
     "awsLocale_pt_BR": "webservices.amazon.com.br",
     "awsLocale_zh_CN": "webservices.amazon.cn",
     "awsLocale_zh_HK": "webservices.amazon.cn",

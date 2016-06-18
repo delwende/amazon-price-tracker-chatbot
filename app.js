@@ -79,8 +79,14 @@ const AWS_TAG = (process.env.AWS_TAG) ?
   (process.env.AWS_TAG) :
   config.get('awsTag');
 
+// Redis URL
+const REDIS_URL = (process.env.REDIS_URL) ?
+  (process.env.REDIS_URL) :
+  config.get('redisUrl');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && PARSE_APPLICATION_ID &&
-    PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL && AWS_ID && AWS_SECRET && AWS_TAG)) {
+    PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL && AWS_ID && AWS_SECRET && AWS_TAG &&
+    REDIS_URL)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -97,10 +103,7 @@ var amazonClient = amazon.createClient({
 });
 
 // Initialize redis client
-var redisClient = redis.createClient();
-redisClient.on("error", function (err) {
-    console.log("Error " + err);
-});
+var redisClient = redis.createClient(REDIS_URL);
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -270,6 +273,14 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
 
   messageText = messageText.toLowerCase();
+
+
+
+
+
+
+
+
 
   // Query users
   var query = new Parse.Query(Parse.User);

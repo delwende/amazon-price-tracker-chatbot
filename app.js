@@ -109,10 +109,6 @@ redisClient.on('connect', function() {
     console.log("Connected to server running on " + REDIS_URL);
 });
 
-redisClient.on('error', function (error) {
-    console.log("Error: " + error);
-});
-
 /*
  * Use your own validation token. Check that the token used in the Webhook 
  * setup is the same token used here.
@@ -295,11 +291,14 @@ function receivedMessage(event) {
   // Check existence of key (user:senderID)
   redisClient.exists("user:" + senderID, function(error, reply) {
 
+    console.log(">>>>> reply: " + reply);
+
     if (reply === 1) {
       // Retrieve value of key (user:senderID)
       redisClient.hgetall("user:" + senderID, function(error, object) {
 
-        console.log(object);
+        console.log(">>>>> object: " + object);
+        console.log(">>>>> error: " + error);
 
         if (error == null) {
 
@@ -921,16 +920,11 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
             'locale': user.get("locale")
           }, function(error, reply) {
 
-              console.log("test");
-
-              // if (error == null) {
-              //   // Recall receivedMessage() with existing user
-              //   receivedMessage(event);
-              // }
+              // Recall receivedMessage() with existing user
+              receivedMessage(event);
               
           });
 
-          console.log("test1");
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);

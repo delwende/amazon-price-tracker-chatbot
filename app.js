@@ -876,7 +876,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("Successfully called User API for user with id %s", 
+      console.log("Successfully called User Profile API for user with id %s.", 
         userId);
       // console.log(body);
 
@@ -911,17 +911,22 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
       user.signUp(null, {
         success: function(user) {
-          console.log('New user created with objectId: ' + user.id);
+          console.log("New user created with objectId: " + user.id);
 
           // Save user to redis (key equals user:senderID)
           redisClient.hmset('user:' + senderID, {
             'objectId': user.id,
             'locale': user.get("locale")
           }, function(error, reply) {
-              if (error == null) {
-                // Recall receivedMessage() with existing user
-                receivedMessage(event);
-              }
+
+              console.log(">>>>> reply: " + reply);
+              console.log(">>>>> reply: " + reply);
+
+              // if (error == null) {
+              //   // Recall receivedMessage() with existing user
+              //   receivedMessage(event);
+              // }
+              
           });
         },
         error: function(user, error) {
@@ -929,7 +934,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         }
       });
     } else {
-      console.error("Unable to call User Profile API for user with id %s",
+      console.error("Unable to call User Profile API for user with id %s.",
         userId);
       console.error(response);
       console.error(error);

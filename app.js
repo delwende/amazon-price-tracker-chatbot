@@ -292,6 +292,8 @@ function receivedMessage(event) {
   redisClient.exists("user:" + senderID, function(error, reply) {
 
     if (reply === 1) {
+      console.log("A key exists that equals: user:" + senderID);
+
       // Get all the fields and values in hash for key user:senderID
       redisClient.hgetall("user:" + senderID, function(error, object) {
 
@@ -351,6 +353,8 @@ function receivedMessage(event) {
       });
 
     } else {
+      console.log("No key exists that equals: user:" + senderID);
+
       // Check if user exists on the Backend
       var query = new Parse.Query(Parse.User);
       query.equalTo("senderId", senderID);  // find user by senderId
@@ -368,6 +372,8 @@ function receivedMessage(event) {
             }, function(error, reply) {
 
                 if (error == null) {
+                  console.log("Saved relevant user data to redis under key: user:" + userId);
+
                   // Recall receivedMessage() with existing user
                   receivedMessage(event);
                 }
@@ -915,6 +921,8 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
           }, function(error, reply) {
 
               if (error == null) {
+                console.log("Saved relevant user data to redis under key: user:" + userId);
+
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);
               }

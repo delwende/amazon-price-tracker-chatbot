@@ -306,7 +306,7 @@ function receivedMessage(event) {
               var user = results[0];
 
               // Store user to redis (key equals senderID)
-              redisClient.hmset(senderID, 'objectId', user.id, 'locale', user.get("locale"));
+              redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
             } else {
               // Sign up user
               callUserProfileAPI(senderID);
@@ -889,7 +889,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
           console.log('New user created with objectId: ' + user.id);
 
           // Store user to redis (key equals senderID)
-          redisClient.hmset(senderID, 'objectId', user.id, 'locale', user.get("locale"));
+          redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);

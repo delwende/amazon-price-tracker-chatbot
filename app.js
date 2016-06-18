@@ -104,8 +104,13 @@ var amazonClient = amazon.createClient({
 
 // Initialize redis client
 var redisClient = redis.createClient(REDIS_URL);
+
 redisClient.on('connect', function() {
-    console.log('REDIS > Connected to server running on ' + REDIS_URL);
+    console.log("Connected to server running on " + REDIS_URL);
+});
+
+redisClient.on('error', function (error) {
+    console.log("Error: " + error);
 });
 
 /*
@@ -184,9 +189,11 @@ app.get('/test', function(req, res) {
   //   console.log(err);
   // });
 
-  redisClient.exists(param, function(err, reply) {
+  redisClient.exists(param, function(error, reply) {
     if (reply === 1) {
-        console.log(reply);
+        redisClient.hgetall(param, function(error, object) {
+            console.log(object.locale);
+        });
     } else {
         console.log('doesn\'t exist');
     }
@@ -275,7 +282,7 @@ function receivedMessage(event) {
 
   console.log("Received message for user %d and page %d at %d with message:", 
     senderID, recipientID, timeOfMessage);
-  console.log(JSON.stringify(message));
+  // console.log(JSON.stringify(message));
 
   var messageId = message.mid;
 
@@ -286,94 +293,99 @@ function receivedMessage(event) {
   messageText = messageText.toLowerCase();
 
   // Check existence of key (user:senderID)
-  redisClient.exists("user:" + senderID, function(err, reply) {
+  redisClient.exists("user:" + senderID, function(error, reply) {
 
-    // Check if operation failed
-    if (err) {
-      console.log(err);
-    } else {
-      if (reply === 1) {
-        
-        if (messageText) {
-          switch ('de_DE') {
-            // case 'pt_BR': // Portuguese (Brazil)
-            //   break;
+    if (reply === 1) {
+      // Retrieve value of key (user:senderID)
+      redisClient.hgetall("user:" + senderID, function(error, object) {
 
-            // case 'zh_CN': // Simplified Chinese (China)
-            //   break;
+        if (error == null) {
 
-            // case 'zh_HK': // Traditional Chinese (Hong Kong)
-            //   break;
+          var parseUserLocale = object.locale;
+          var parseUserObjectId = object.objectId;
 
-            // case 'fr_FR': // French (France)
-            //   break;
+          if (messageText) {
+            switch (parseUserLocale) {
+              // case 'pt_BR': // Portuguese (Brazil)
+              //   break;
 
-            case 'de_DE': // German
-              sendTextMessage(senderID, "Hi! Your are german speaking, right?.");
-              break;
+              // case 'zh_CN': // Simplified Chinese (China)
+              //   break;
 
-            // case 'en_IN': // English (India)
-            //   break;
+              // case 'zh_HK': // Traditional Chinese (Hong Kong)
+              //   break;
 
-            // case 'it_IT': // Italian
-            //   break;
+              // case 'fr_FR': // French (France)
+              //   break;
 
-            // case 'ja_JP': // Japanese
-            //   break;
+              case 'de_DE': // German
+                sendTextMessage(senderID, "Hi! Your are german speaking, right?.");
+                break;
 
-            // case 'es_MX': // Spanish (Mexico)
-            //   break;
+              // case 'en_IN': // English (India)
+              //   break;
 
-            // case 'es_ES': // Spanish (Spain)
-            //   break;
+              // case 'it_IT': // Italian
+              //   break;
 
-            // case 'en_GB': // English (UK)
-            //   break;
+              // case 'ja_JP': // Japanese
+              //   break;
 
-            // case 'en_US': // English (US)
-            //   break;
+              // case 'es_MX': // Spanish (Mexico)
+              //   break;
 
-            default:
-              sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+              // case 'es_ES': // Spanish (Spain)
+              //   break;
+
+              // case 'en_GB': // English (UK)
+              //   break;
+
+              // case 'en_US': // English (US)
+              //   break;
+
+              default:
+                sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+            }
+
+          } else if (messageAttachments) {
+            sendTextMessage(senderID, "Message with attachment received");
           }
-
-        } else if (messageAttachments) {
-          sendTextMessage(senderID, "Message with attachment received");
         }
 
-      } else {
-        // Check if user exists in Backend
-        var query = new Parse.Query(Parse.User);
-        query.equalTo("senderId", senderID);  // find user with appropriate senderId
-        query.find({
-          success: function(results) {
-            console.log("PARSE > Successfully retrieved " + results.length + " users.");
+      });
 
-            if (results.length === 1) {
-              var user = results[0];
+    } else {
+      // Check if user exists on Backend
+      var query = new Parse.Query(Parse.User);
+      query.equalTo("senderId", senderID);  // find user where senderId equals senderID
+      query.find({
+        success: function(results) {
+          console.log("Successfully retrieved " + results.length + " users.");
 
-              // Store user to redis (key equals user:senderID)
-              redisClient.hmset('user:' + senderID, {
-                'objectId': user.id,
-                'locale': user.get("locale")
-              }, function(err, reply) {
-                  if (err) {
-                    console.log("REDIS > Error: " + err);
-                  } else {
-                    // Recall receivedMessage() with valid user
-                    receivedMessage(event);
-                  }
-              });
-            } else {
-              // Sign up user
-              callUserProfileAPI(senderID, event);
-            }
-          },
-          error: function(error) {
-            console.log("PARSE > Error: " + error.code + " " + error.message);
+          if (results.length === 1) {
+            var user = results[0];
+
+            // Save user to redis (key equals user:senderID)
+            redisClient.hmset('user:' + senderID, {
+              'objectId': user.id,
+              'locale': user.get("locale")
+            }, function(error, reply) {
+
+                if (error == null) {
+                  // Recall receivedMessage() with existing user
+                  receivedMessage(event);
+                }
+                
+            });
+          } else {
+            // Sign up user
+            callUserProfileAPI(senderID, event);
           }
-        });
-      }
+        },
+        error: function(error) {
+          console.log("Error: " + error.code + " " + error.message);
+        }
+      });
     }
 
   });
@@ -864,7 +876,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("FACEBOOK GRAPH API > Successfully called User API for user with id %s", 
+      console.log("Successfully called User API for user with id %s", 
         userId);
       // console.log(body);
 
@@ -876,6 +888,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
       var password = userIdHash;
 
       var json = JSON.parse(body);
+
       var firstName = json.first_name;
       var lastName = json.last_name;
       var profilePic = json.profile_pic;
@@ -888,7 +901,6 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
       user.set("username", username);
       user.set("password", password);
 
-      // other fields can be set just like with Parse.Object
       user.set("senderId", userId);
       user.set("firstName", firstName);
       user.set("lastName", lastName);
@@ -899,27 +911,25 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
       user.signUp(null, {
         success: function(user) {
-          console.log('PARSE > New user created with objectId: ' + user.id);
+          console.log('New user created with objectId: ' + user.id);
 
-          // Store user to redis (key equals user:senderID)
+          // Save user to redis (key equals user:senderID)
           redisClient.hmset('user:' + senderID, {
             'objectId': user.id,
             'locale': user.get("locale")
-          }, function(err, reply) {
-              if (err) {
-                console.log("REDIS > Error: " + err);
-              } else {
-                // Recall receivedMessage() with valid user
+          }, function(error, reply) {
+              if (error == null) {
+                // Recall receivedMessage() with existing user
                 receivedMessage(event);
               }
           });
         },
         error: function(user, error) {
-          console.log("PARSE > Error: " + error.code + " " + error.message);
+          console.log("Error: " + error.code + " " + error.message);
         }
       });
     } else {
-      console.error("FACEBOOK GRAPH API > Unable to call User Profile API for user with id %s",
+      console.error("Unable to call User Profile API for user with id %s",
         userId);
       console.error(response);
       console.error(error);

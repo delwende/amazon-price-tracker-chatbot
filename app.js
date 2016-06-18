@@ -104,6 +104,9 @@ var amazonClient = amazon.createClient({
 
 // Initialize redis client
 var redisClient = redis.createClient(REDIS_URL);
+redisClient.on('connect', function() {
+    console.log('Connected to redis server running on ' + REDIS_URL);
+});
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -168,17 +171,25 @@ app.post('/webhook', function (req, res) {
 app.get('/test', function(req, res) {
   var param = req.param('param');
   
-  // Search items
-  amazonClient.itemSearch({
-    keywords: param,
-    responseGroup: 'ItemAttributes,Offers,Images',
-    domain: 'webservices.amazon.de'
-  }).then(function(results){
-    console.log("Successfully retrieved " + results.length + " items.");
-    console.log(results);
+  // // Search items
+  // amazonClient.itemSearch({
+  //   keywords: param,
+  //   responseGroup: 'ItemAttributes,Offers,Images',
+  //   domain: 'webservices.amazon.de'
+  // }).then(function(results){
+  //   console.log("Successfully retrieved " + results.length + " items.");
+  //   console.log(results);
 
-  }).catch(function(err){
-    console.log(err);
+  // }).catch(function(err){
+  //   console.log(err);
+  // });
+
+  redisClient.exists(param, function(err, reply) {
+    if (reply === 1) {
+        console.log('exists');
+    } else {
+        console.log('doesn\'t exist');
+    }
   });
 });
 
@@ -274,122 +285,150 @@ function receivedMessage(event) {
 
   messageText = messageText.toLowerCase();
 
+  // Check existence of key (senderID)
+  redisClient.exists(senderID, function(err, reply) {
 
-
-
-
-
-
-
-
-  // Query users
-  var query = new Parse.Query(Parse.User);
-  query.equalTo("senderId", senderID);  // find user with appropriate senderId
-  query.find({
-    success: function(results) {
-      console.log("Successfully retrieved " + results.length + " users.");
-
-      var user = results[0];
-      
-      // Check if user exists
-      if (results.length > 0) {
-        if (messageText) {
-          switch (user.get("locale")) {
-            // case 'pt_BR': // Portuguese (Brazil)
-            //   break;
-
-            // case 'zh_CN': // Simplified Chinese (China)
-            //   break;
-
-            // case 'zh_HK': // Traditional Chinese (Hong Kong)
-            //   break;
-
-            // case 'fr_FR': // French (France)
-            //   break;
-
-            case 'de_DE': // German
-              break;
-
-            // case 'en_IN': // English (India)
-            //   break;
-
-            // case 'it_IT': // Italian
-            //   break;
-
-            // case 'ja_JP': // Japanese
-            //   break;
-
-            // case 'es_MX': // Spanish (Mexico)
-            //   break;
-
-            // case 'es_ES': // Spanish (Spain)
-            //   break;
-
-            // case 'en_GB': // English (UK)
-            //   break;
-
-            // case 'en_US': // English (US)
-            //   break;
-
-            default:
-              sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-          }
-
-          // // If we receive a text message, check to see if it matches any special
-          // // keywords and send back the corresponding message. Otherwise, just send
-          // // a message with help instructions.
-          // if (messageText.startsWith("hilfe")) {
-          //   sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
-          //     "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
-          // } else if (messageText.startsWith("suche ")) {
-          //   var searchTerms = messageText.replace("suche ", "");
-            
-          //   // // Search items
-          //   // client.itemSearch({
-          //   //   keywords: searchTerms,
-          //   //   responseGroup: 'ItemAttributes,Offers,Images',
-          //   //   domain: 'webservices.amazon.de'
-          //   // }).then(function(results){
-          //   //   console.log("Successfully retrieved " + results.length + " items.");
-              
-          //   //   sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
-          //   // }).catch(function(err){
-          //   //   console.log(err);
-          //   // });
-          // } else if (messageText.startsWith("liste")) {
-          //   // // Query price alerts
-          //   // var PriceAlert = Parse.Object.extend("PriceAlert");
-          //   // var query = new Parse.Query(PriceAlert);
-          //   // query.equalTo("senderId", senderID);
-          //   // query.include("product");
-          //   // query.limit(10);
-          //   // query.find({
-          //   //   success: function(results) {
-          //   //     console.log("Successfully retrieved " + results.length + " price alerts.");
-                
-          //   //     sendListPriceAlertsGenericMessage(senderID, results);
-          //   //     sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
-          //   //   },
-          //   //   error: function(error) {
-          //   //     console.log("Error: " + error.code + " " + error.message);
-          //   //   }
-          //   // });
-          // } else {
-          //   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-          //   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
-          // }
-
-        } else if (messageAttachments) {
-          sendTextMessage(senderID, "Message with attachment received");
-        }
+    // Check if operation failed
+    if (err) {
+      console.log(err);
+    } else {
+      if (reply === 1) {
+        // Key exists
       } else {
-        callUserProfileAPI(senderID);
+        // Check if user exists
+        var query = new Parse.Query(Parse.User);
+        query.equalTo("senderId", senderID);  // find user with appropriate senderId
+        query.find({
+          success: function(results) {
+            console.log("Successfully retrieved " + results.length + " users.");
+
+            if (results.length === 1) {
+              var user = results[0];
+
+              // Store user to redis (key equals senderID)
+              redisClient.hmset(senderID, 'objectId', user.id, 'locale', user.get("locale"));
+            } else {
+              // Sign up user
+              callUserProfileAPI(senderID);
+            }
+          },
+          error: function(error) {
+            console.log("Error: " + error.code + " " + error.message);
+          }
+        });
       }
-    },
-    error: function(error) {
-      console.log("Error: " + error.code + " " + error.message);
     }
+
   });
+
+  // // Query users
+  // var query = new Parse.Query(Parse.User);
+  // query.equalTo("senderId", senderID);  // find user with appropriate senderId
+  // query.find({
+  //   success: function(results) {
+  //     console.log("Successfully retrieved " + results.length + " users.");
+
+  //     var user = results[0];
+      
+  //     // Check if user exists
+  //     if (results.length > 0) {
+  //       if (messageText) {
+  //         switch (user.get("locale")) {
+  //           // case 'pt_BR': // Portuguese (Brazil)
+  //           //   break;
+
+  //           // case 'zh_CN': // Simplified Chinese (China)
+  //           //   break;
+
+  //           // case 'zh_HK': // Traditional Chinese (Hong Kong)
+  //           //   break;
+
+  //           // case 'fr_FR': // French (France)
+  //           //   break;
+
+  //           case 'de_DE': // German
+  //             break;
+
+  //           // case 'en_IN': // English (India)
+  //           //   break;
+
+  //           // case 'it_IT': // Italian
+  //           //   break;
+
+  //           // case 'ja_JP': // Japanese
+  //           //   break;
+
+  //           // case 'es_MX': // Spanish (Mexico)
+  //           //   break;
+
+  //           // case 'es_ES': // Spanish (Spain)
+  //           //   break;
+
+  //           // case 'en_GB': // English (UK)
+  //           //   break;
+
+  //           // case 'en_US': // English (US)
+  //           //   break;
+
+  //           default:
+  //             sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+  //         }
+
+  //         // // If we receive a text message, check to see if it matches any special
+  //         // // keywords and send back the corresponding message. Otherwise, just send
+  //         // // a message with help instructions.
+  //         // if (messageText.startsWith("hilfe")) {
+  //         //   sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
+  //         //     "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
+  //         // } else if (messageText.startsWith("suche ")) {
+  //         //   var searchTerms = messageText.replace("suche ", "");
+            
+  //         //   // // Search items
+  //         //   // client.itemSearch({
+  //         //   //   keywords: searchTerms,
+  //         //   //   responseGroup: 'ItemAttributes,Offers,Images',
+  //         //   //   domain: 'webservices.amazon.de'
+  //         //   // }).then(function(results){
+  //         //   //   console.log("Successfully retrieved " + results.length + " items.");
+              
+  //         //   //   sendListSearchResultsGenericMessage(senderID, results, 1); // 1 means pagination step one
+  //         //   // }).catch(function(err){
+  //         //   //   console.log(err);
+  //         //   // });
+  //         // } else if (messageText.startsWith("liste")) {
+  //         //   // // Query price alerts
+  //         //   // var PriceAlert = Parse.Object.extend("PriceAlert");
+  //         //   // var query = new Parse.Query(PriceAlert);
+  //         //   // query.equalTo("senderId", senderID);
+  //         //   // query.include("product");
+  //         //   // query.limit(10);
+  //         //   // query.find({
+  //         //   //   success: function(results) {
+  //         //   //     console.log("Successfully retrieved " + results.length + " price alerts.");
+                
+  //         //   //     sendListPriceAlertsGenericMessage(senderID, results);
+  //         //   //     sendListMorePriceAlertsButtonMessage(senderID, 1); // 1 means pagination step one
+  //         //   //   },
+  //         //   //   error: function(error) {
+  //         //   //     console.log("Error: " + error.code + " " + error.message);
+  //         //   //   }
+  //         //   // });
+  //         // } else {
+  //         //   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
+  //         //   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu setzen.");
+  //         // }
+
+  //       } else if (messageAttachments) {
+  //         sendTextMessage(senderID, "Message with attachment received");
+  //       }
+  //     } else {
+  //       callUserProfileAPI(senderID);
+  //     }
+  //   },
+  //   error: function(error) {
+  //     console.log("Error: " + error.code + " " + error.message);
+  //   }
+  // });
 
 }
 
@@ -847,7 +886,10 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
 
       user.signUp(null, {
         success: function(user) {
-          alert('New user created with objectId: ' + user.id);
+          console.log('New user created with objectId: ' + user.id);
+
+          // Store user to redis (key equals senderID)
+          redisClient.hmset(senderID, 'objectId', user.id, 'locale', user.get("locale"));
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);

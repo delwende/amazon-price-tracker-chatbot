@@ -297,9 +297,6 @@ function receivedMessage(event) {
       // Retrieve value of key (user:senderID)
       redisClient.hgetall("user:" + senderID, function(error, object) {
 
-        console.log(">>>>> object: " + object);
-        console.log(">>>>> error: " + error);
-
         if (error == null) {
 
           var parseUserLocale = object.locale;
@@ -915,23 +912,15 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
           console.log("New user created with objectId: " + user.id);
 
           // Save user to redis (key equals user:senderID)
-          redisClient.hmset('user:' + senderID, {
+          redisClient.hmset('user:' + userId, {
             'objectId': user.id,
             'locale': user.get("locale")
           }, function(error, reply) {
 
-            // Save user to redis (key equals user:senderID)
-            redisClient.hmset('user:' + userId, {
-              'objectId': user.id,
-              'locale': user.get("locale")
-            }, function(error, reply) {
-
-                if (error == null) {
-                  // Recall receivedMessage() with existing user
-                  receivedMessage(event);
-                }
-                
-            });
+              if (error == null) {
+                // Recall receivedMessage() with existing user
+                receivedMessage(event);
+              }
               
           });
 

@@ -109,6 +109,10 @@ redisClient.on('connect', function() {
     console.log("Connected to server running on " + REDIS_URL);
 });
 
+redisClient.on("error", function (error) {
+    console.log("Error: " + error);
+});
+
 /*
  * Use your own validation token. Check that the token used in the Webhook 
  * setup is the same token used here.
@@ -184,16 +188,6 @@ app.get('/test', function(req, res) {
   // }).catch(function(err){
   //   console.log(err);
   // });
-
-  redisClient.exists(param, function(error, reply) {
-    if (reply === 1) {
-        redisClient.hgetall(param, function(error, object) {
-            console.log(object.locale);
-        });
-    } else {
-        console.log('doesn\'t exist');
-    }
-  });
 });
 
 /*
@@ -278,7 +272,7 @@ function receivedMessage(event) {
 
   console.log("Received message for user %d and page %d at %d with message:", 
     senderID, recipientID, timeOfMessage);
-  // console.log(JSON.stringify(message));
+  console.log(JSON.stringify(message));
 
   var messageId = message.mid;
 
@@ -289,18 +283,18 @@ function receivedMessage(event) {
   messageText = messageText.toLowerCase();
 
   // Determine if key user:senderID exists
-  redisClient.exists("user:" + senderID, function(error, reply) {
+  redisClient.exists('user:' + senderID, function(error, reply) {
 
     if (reply === 1) {
-      console.log("A key exists that equals: user:" + senderID);
+      console.log("Key-value pair with key user:" + senderID + " exists.");
 
       // Get all the fields and values in hash for key user:senderID
-      redisClient.hgetall("user:" + senderID, function(error, object) {
+      redisClient.hgetall("user:" + senderID, function(error, reply) {
 
         if (error == null) {
 
-          var parseUserLocale = object.locale;
-          var parseUserObjectId = object.objectId;
+          var parseUserLocale = reply.locale;
+          var parseUserObjectId = reply.objectId;
 
           if (messageText) {
             switch (parseUserLocale) {
@@ -353,7 +347,7 @@ function receivedMessage(event) {
       });
 
     } else {
-      console.log("No key exists that equals: user:" + senderID);
+      console.log("Key-value pair with key user:" + senderID + " doesn't exist.");
 
       // Check if user exists on the Backend
       var query = new Parse.Query(Parse.User);
@@ -365,14 +359,14 @@ function receivedMessage(event) {
           if (results.length === 1) {
             var user = results[0];
 
-            // Save relevant user data to redis (key equals user:senderID)
+            // Create new key-value pair with key user:senderID
             redisClient.hmset('user:' + senderID, {
               'objectId': user.id,
               'locale': user.get("locale")
             }, function(error, reply) {
 
                 if (error == null) {
-                  console.log("Saved relevant user data to redis under key: user:" + userId);
+                  console.log("New key-value pair created with key: user:" + senderID);
 
                   // Recall receivedMessage() with existing user
                   receivedMessage(event);
@@ -914,14 +908,14 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         success: function(user) {
           console.log("New user created with objectId: " + user.id);
 
-          // Save relevant user data to redis (key equals user:senderID)
+          // Create new key-value pair with key user:senderID
           redisClient.hmset('user:' + userId, {
             'objectId': user.id,
             'locale': user.get("locale")
           }, function(error, reply) {
 
               if (error == null) {
-                console.log("Saved relevant user data to redis under key: user:" + userId);
+                console.log("New key-value pair created with key: user:" + userId);
 
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);

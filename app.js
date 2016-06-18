@@ -19,7 +19,8 @@ const
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
-  accounting = require('accounting');
+  accounting = require('accounting'),
+  redis = require("redis");
 
 var app = express();
 
@@ -89,10 +90,16 @@ Parse.initialize(PARSE_APPLICATION_ID, PARSE_JAVASCRIPT_KEY);
 Parse.serverURL = PARSE_SERVER_URL;
 
 // Create Amazon Product Advertising API client
-var client = amazon.createClient({
+var amazonClient = amazon.createClient({
   awsId: AWS_ID,
   awsSecret: AWS_SECRET,
   awsTag: AWS_TAG
+});
+
+// Initialize redis client
+var redisClient = redis.createClient();
+redisClient.on("error", function (err) {
+    console.log("Error " + err);
 });
 
 /*
@@ -159,7 +166,7 @@ app.get('/test', function(req, res) {
   var param = req.param('param');
   
   // Search items
-  client.itemSearch({
+  amazonClient.itemSearch({
     keywords: param,
     responseGroup: 'ItemAttributes,Offers,Images',
     domain: 'webservices.amazon.de'

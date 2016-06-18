@@ -285,8 +285,8 @@ function receivedMessage(event) {
 
   messageText = messageText.toLowerCase();
 
-  // Check existence of key (senderID)
-  redisClient.exists(senderID, function(err, reply) {
+  // Check existence of key (user:senderID)
+  redisClient.exists("user:" + senderID, function(err, reply) {
 
     // Check if operation failed
     if (err) {
@@ -295,7 +295,7 @@ function receivedMessage(event) {
       if (reply === 1) {
         // Key exists
       } else {
-        // Check if user exists
+        // Check if user exists in Backend
         var query = new Parse.Query(Parse.User);
         query.equalTo("senderId", senderID);  // find user with appropriate senderId
         query.find({
@@ -305,11 +305,20 @@ function receivedMessage(event) {
             if (results.length === 1) {
               var user = results[0];
 
-              // Store user to redis (key equals senderID)
-              redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
+              // Store user to redis (key equals user:senderID)
+              // redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
+              redisClient.hmset('user:' + senderID, {
+                'objectId': user.id,
+                'locale': user.get("locale")
+              }, function(err, reply) {
+                  console.log(">>>>>>>>>> reply: " + reply);
+                  if (err) {
+                    console.log(">>>>>>>>>> err: " + err);
+                  }
+              });
             } else {
               // Sign up user
-              callUserProfileAPI(senderID);
+              callUserProfileAPI(senderID, event);
             }
           },
           error: function(error) {
@@ -840,7 +849,7 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
  * information and sign up a new user with that data
  *
  */
- function callUserProfileAPI(userId) {
+ function callUserProfileAPI(userId, event) {
   request({
     uri: 'https://graph.facebook.com/v2.6/' + userId,
     qs: {
@@ -855,11 +864,11 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         userId);
       // console.log(body);
 
-      // Generate username and password from userId
+      var username = userId;
+      // Generate password from userId
       var userIdHash = crypto.createHmac('sha1', APP_SECRET)
       .update(userId)
       .digest('hex');
-      var username = userIdHash;
       var password = userIdHash;
 
       var json = JSON.parse(body);
@@ -888,8 +897,17 @@ function sendListSearchResultsGenericMessage(recipientId, results, paginationSte
         success: function(user) {
           console.log('New user created with objectId: ' + user.id);
 
-          // Store user to redis (key equals senderID)
-          redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
+          // Store user to redis (key equals user:senderID)
+          // redisClient.hmset('user:' + senderID, 'objectId', user.id, 'locale', user.get("locale"));
+          redisClient.hmset('user:' + senderID, {
+            'objectId': user.id,
+            'locale': user.get("locale")
+          }, function(err, reply) {
+              console.log(">>>>>>>>>> reply: " + reply);
+              if (err) {
+                console.log(">>>>>>>>>> err: " + err);
+              }
+          });
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);

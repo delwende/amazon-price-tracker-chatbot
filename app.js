@@ -176,18 +176,23 @@ app.post('/webhook', function (req, res) {
 app.get('/test', function(req, res) {
   var param = req.param('param');
   
-  // // Search items
-  // amazonClient.itemSearch({
-  //   keywords: param,
-  //   responseGroup: 'ItemAttributes,Offers,Images',
-  //   domain: 'webservices.amazon.de'
-  // }).then(function(results){
-  //   console.log("Successfully retrieved " + results.length + " items.");
-  //   console.log(results);
+  // Search items
+  amazonClient.itemSearch({
+    keywords: param,
+    responseGroup: 'ItemAttributes,Offers,Images',
+    domain: 'webservices.amazon.de'
+  }).then(function(results){
+    console.log("Successfully retrieved " + results.length + " items.");
+    // console.log(results);
+    console.log(results[0].ASIN[0]);
+    console.log(results[0].DetailPageURL[0]);
+    console.log(results[0].SmallImage[0].URL[0]);
+    console.log(results[0].ItemAttributes[0].Title[0]);
+    console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
-  // }).catch(function(err){
-  //   console.log(err);
-  // });
+  }).catch(function(error){
+    console.log("Error: " + error);
+  });
 });
 
 /*
@@ -311,7 +316,31 @@ function receivedMessage(event) {
               //   break;
 
               case 'de_DE': // German
-                sendTextMessage(senderID, "Hi! Your are german speaking, right?.");
+                
+                if (messageText.startsWith("hilfe")) {
+                  sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
+                    "oder \"liste\" um deine aktiven Preisalarme verwalten.");
+                } else if (messageText.startsWith("suche ")) {
+                  var searchTerms = messageText.replace("suche ", "");
+
+                  // Search items
+                  amazonClient.itemSearch({
+                    keywords: searchTerms,
+                    responseGroup: 'ItemAttributes,Offers,Images',
+                    domain: config.get('awsLocale_de_DE')
+                  }).then(function(results){
+                    console.log("Successfully retrieved " + results.length + " items.");
+                    // console.log(results);
+
+                    sendListSearchResultsGenericMessage(senderID, results);
+                  }).catch(function(error){
+                    console.log("Error: " + error);
+                  });
+                } else {
+                  sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
+                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                }
+
                 break;
 
               // case 'en_IN': // English (India)
@@ -383,74 +412,7 @@ function receivedMessage(event) {
         }
       });
     }
-
   });
-
-  // // Query users
-  // var query = new Parse.Query(Parse.User);
-  // query.equalTo("senderId", senderID);  // find user with appropriate senderId
-  // query.find({
-  //   success: function(results) {
-  //     console.log("Successfully retrieved " + results.length + " users.");
-
-  //     var user = results[0];
-      
-  //     // Check if user exists
-  //     if (results.length > 0) {
-  //       if (messageText) {
-  //         switch (user.get("locale")) {
-  //           // case 'pt_BR': // Portuguese (Brazil)
-  //           //   break;
-
-  //           // case 'zh_CN': // Simplified Chinese (China)
-  //           //   break;
-
-  //           // case 'zh_HK': // Traditional Chinese (Hong Kong)
-  //           //   break;
-
-  //           // case 'fr_FR': // French (France)
-  //           //   break;
-
-  //           case 'de_DE': // German
-  //             break;
-
-  //           // case 'en_IN': // English (India)
-  //           //   break;
-
-  //           // case 'it_IT': // Italian
-  //           //   break;
-
-  //           // case 'ja_JP': // Japanese
-  //           //   break;
-
-  //           // case 'es_MX': // Spanish (Mexico)
-  //           //   break;
-
-  //           // case 'es_ES': // Spanish (Spain)
-  //           //   break;
-
-  //           // case 'en_GB': // English (UK)
-  //           //   break;
-
-  //           // case 'en_US': // English (US)
-  //           //   break;
-
-  //           default:
-  //             sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-  //         }
-
-  //       } else if (messageAttachments) {
-  //         sendTextMessage(senderID, "Message with attachment received");
-  //       }
-  //     } else {
-  //       callUserProfileAPI(senderID);
-  //     }
-  //   },
-  //   error: function(error) {
-  //     console.log("Error: " + error.code + " " + error.message);
-  //   }
-  // });
-
 }
 
 
@@ -501,39 +463,7 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to 
   // let them know it was successful
-  // sendTextMessage(senderID, "Postback called");
-  
-  if (payload.startsWith("List more price alerts on page ")) {
-    var paginationStep = payload.replace("List more price alerts on page ", "");
-    var numberToSkip = paginationStep * 10;
-    
-    // Query price alerts
-      var PriceAlert = Parse.Object.extend("PriceAlert");
-      var query = new Parse.Query(PriceAlert);
-      query.equalTo("senderId", senderID);
-      query.include("product");
-      query.limit(10);
-      query.skip(numberToSkip);
-      query.find({
-        success: function(results) {
-          console.log("Successfully retrieved " + results.length + " price alerts.");
-          // Do something with the returned Parse.Object values
-          if (results.length > 0) {
-            sendListPriceAlertsGenericMessage(senderID, results);
-            sendListMorePriceAlertsButtonMessage(senderID, paginationStep);
-          } else {
-            
-          }
-        },
-        error: function(error) {
-          console.log("Error: " + error.code + " " + error.message);
-        }
-      });
-  } else if (payload.startsWith("Change desired price")) {
-    
-  } else if (payload.startsWith("Disactivate price alert")) {
-    
-  }
+  sendTextMessage(senderID, "Postback called");
 }
 
 
@@ -726,40 +656,38 @@ function sendReceiptMessage(recipientId) {
 }
 
 /*
- * Send a Show Price Alerts Structured Message (Generic Message type) using the Send API.
+ * Send a List Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListPriceAlertsGenericMessage(recipientId, results) {
+function sendListSearchResultsGenericMessage(recipientId, results) {
   var elements = [];
-    
+
   for (var i = 0; i < results.length; i++) {
-    var title = results[i].get("product").get("title");
-    var itemUrl = results[i].get("product").get("detailPageUrl");
-    var imageUrl = results[i].get("product").get("smallImageUrl");
-    var price = 4999.99; // Temporary dummy price
-    var priceDesired = results[i].get("priceDesired");
-      
+    var item = results[i];
+
+    var asin = results[0].ASIN[0];
+    var title = results[0].ItemAttributes[0].Title[0];
+    var price = results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+    var url = results[0].DetailPageURL[0];
+    var imageUrl = results[0].SmallImage[0].URL[0];
+    
     elements.push({
-      title: title != undefined ? title : "",
-      subtitle: "Aktueller Preis: " + (price != undefined ? accounting.formatMoney(price, "€", 2, ".", ",") : "") + " | Dein Wunschpreis. " + (priceDesired != undefined ? accounting.formatMoney(priceDesired, "€", 2, ".", ",") : ""),
-      item_url: itemUrl != undefined ? itemUrl : "",               
-      image_url: imageUrl != undefined ? imageUrl : "",
+      title: title,
+      subtitle: "Aktueller Preis: " + price,
+      item_url: url,               
+      image_url: imageUrl,
       buttons: [{
+        type: "postback",
+        title: "Alarm aktivieren",
+        payload: "Activate price alert for product with ASIN: " + asin
+      }, {
         type: "web_url",
-        url: "https://www.jackthebot.com",
-        title: "Artikeldetails anzeigen"
-      }, {
-        type: "postback",
-        title: "Wunschpreis ändern",
-        payload: "Change desired price"
-      }, {
-        type: "postback",
-        title: "Alarm löschen",
-        payload: "Disactive price alert"
+        url: url,
+        title: "Kaufen"
       }],
     });
   }
-    
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -770,88 +698,10 @@ function sendListPriceAlertsGenericMessage(recipientId, results) {
         payload: {
           template_type: "generic",
           elements: elements
-        }
-      }
-    }
-  };
-}
-
-/*
- * Send a List More Price Alerts button message using the Send API.
- *
- */
-function sendListMorePriceAlertsButtonMessage(recipientId, paginationStep) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "button",
-          text: "",
-          buttons:[{
-            type: "postback",
-            title: "Weitere Alarme",
-            payload: "List more price alerts on page " + paginationStep
-          }]
         }
       }
     }
   };  
-
-  callSendAPI(messageData);
-}
-
-/*
- * Send a List Search Results Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendListSearchResultsGenericMessage(recipientId, results, paginationStep) {
-  var elements = [];
-  
-  for (var i = 0; i < results.length; i++) {
-    var smallImageUrl = "";
-    var title = "";
-    var price = "";
-    var detailPageUrl = "";
-    
-    elements.push({
-      title: title != undefined ? title : "",
-      subtitle: "Aktueller Preis: " + accounting.formatMoney(price, "€", 2, ".", ","),
-      item_url: detailPageUrl != undefined ? detailPageUrl : "",               
-      image_url: smallImageUrl != undefined ? smallImageUrl : "",
-      buttons: [{
-        type: "postback",
-        title: "Alarm aktivieren",
-        payload: "Activate price alarm"
-      }, {
-        type: "web_url",
-        url: detailPageUrl != undefined ? detailPageUrl : "",
-        title: "Kaufen"
-      }, {
-        type: "postback",
-        title: "Weitere Artikel",
-        payload: "List more search results on page " + paginationStep
-      }],
-    });
-  }
-  
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: elements
-        }
-      }
-    }
-  };
 
   callSendAPI(messageData);
 }

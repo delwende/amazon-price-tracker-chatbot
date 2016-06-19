@@ -305,8 +305,8 @@ function receivedMessage(event) {
 
           var userInfo = reply;
 
-          var parseUserLocale = userInfo.locale;
-          // var parseUserObjectId = reply.objectId;
+          var parseUserLocale = userInfo.parseUserLocale;
+          // var parseUserObjectId = reply.parseUserObjectId;
 
           if (messageText) {
             switch (parseUserLocale) {
@@ -404,8 +404,8 @@ function receivedMessage(event) {
 
             // Create new key-value pair with key user:senderID
             redisClient.hmset('user:' + senderID, {
-              'objectId': user.id,
-              'locale': user.get("locale")
+              'parseUserObjectId': user.id,
+              'parseUserLocale': user.get("locale")
             }, function(error, reply) {
 
                 if (error == null) {
@@ -488,8 +488,6 @@ function receivedPostback(event) {
     var parseUserObjectId = json.entities.parseUserObjectId;
     var parseUserLocale = json.entities.parseUserLocale;
     var asin = json.entities.asin;
-
-    console.log("Postback called with intent: " + intent);
 
     // Query products
     var Product = Parse.Object.extend("Product");
@@ -840,8 +838,8 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
 
           // Create new key-value pair with key user:senderID
           redisClient.hmset('user:' + userId, {
-            'objectId': user.id,
-            'locale': user.get("locale")
+            'parseUserObjectId': user.id,
+            'parseUserLocale': user.get("locale")
           }, function(error, reply) {
 
               if (error == null) {

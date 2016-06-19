@@ -682,7 +682,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
         title: title,
         subtitle: "Aktueller Preis: " + price,
         item_url: "",               
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/resize/1200/" + imageUrl,
+        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl,
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",

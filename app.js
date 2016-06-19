@@ -504,8 +504,30 @@ function receivedPostback(event) {
           // Check if the corresponding product already exists on the Backend,
           // otherwise get product information from Amazon Product Advertising API
           // and save it to the Backend
-          if (results === 1) {
+          if (results.length === 1) {
+
+            var product = results[0];
             
+            // Save price alert for existing product to the Backend
+            var PriceAlert = Parse.Object.extend("PriceAlert");
+            var priceAlert = new PriceAlert();
+
+            priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+            priceAlert.set("active", true);
+            // Not required now, but maby helpful later for price drop calculation
+            priceAlert.set("locale", parseUserLocale);
+            priceAlert.set("asin", asin);
+
+            priceAlert.save(null, {
+              success: function(priceAlert) {
+                console.log('New object created with objectId: ' + priceAlert.id);
+              },
+              error: function(priceAlert, error) {
+                console.log('Failed to create new object, with error code: ' + error.message);
+              }
+            });
+
           } else {
             // Look up item
             amazonClient.itemLookup({
@@ -536,7 +558,7 @@ function receivedPostback(event) {
                   success: function(product) {
                     console.log('New object created with objectId: ' + product.id);
 
-                    // Save price alert to the Backend
+                    // Save price alert for existing product to the Backend
                     var PriceAlert = Parse.Object.extend("PriceAlert");
                     var priceAlert = new PriceAlert();
 
@@ -817,31 +839,30 @@ function sendReceiptMessage(recipientId) {
           title: "Kaufen"
         }],
       });
-    }
-    catch (exception) {
+    } catch (exception) {
      console.log("Exception: " + exception);
      console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
       price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
    }
 
- }
+  }
 
- var messageData = {
-  recipient: {
-    id: recipientId
-  },
-  message: {
-    attachment: {
-      type: "template",
-      payload: {
-        template_type: "generic",
-        elements: elements
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: elements
+        }
       }
     }
-  }
-};  
+  };  
 
-callSendAPI(messageData);
+  callSendAPI(messageData);
 }
 
 /*

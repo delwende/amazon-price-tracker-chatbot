@@ -524,7 +524,7 @@ function receivedPostback(event) {
               product.set("asin", asin);
               product.set("title", title);
               product.set("detailPageURL", detailPageURL);
-              product.set("largeImageUrl", imageUrl);
+              product.set("largeImageUrl", largeImageUrl);
 
               product.save(null, {
                 success: function(product) {

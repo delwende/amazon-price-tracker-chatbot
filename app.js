@@ -523,7 +523,7 @@ function receivedPostback(event) {
 
               product.set("asin", asin);
               product.set("title", title);
-              product.set("detailPageURL", detailPageURL);
+              product.set("detailPageUrl", detailPageURL);
               product.set("largeImageUrl", largeImageUrl);
 
               product.save(null, {
@@ -535,7 +535,7 @@ function receivedPostback(event) {
                   var priceAlert = new PriceAlert();
 
                   priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                  priceAlert.set("user", {__type: "Pointer", className: "User", objectId: parseUserObjectId});
+                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                   priceAlert.set("locale", parseUserLocale);
 
                   priceAlert.save(null, {

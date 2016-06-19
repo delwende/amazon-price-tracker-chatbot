@@ -493,11 +493,11 @@ function receivedPostback(event) {
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
-      var price = json.entities.price;
-      var priceFormatted = json.entities.priceFormatted;
+      // var price = json.entities.price;
+      // var priceFormatted = json.entities.priceFormatted;
 
       // Inform user about the current lowest price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
+      // sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
 
       // Query products from Backend
       var Product = Parse.Object.extend("Product");
@@ -521,7 +521,7 @@ function receivedPostback(event) {
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
             priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
-            priceAlert.set("price", amout); // Price at the time of the price alert activation
+            // priceAlert.set("price", amout); // Price at the time of the price alert activation
             // Not required now, but maby helpful later for price drop calculation
             priceAlert.set("locale", parseUserLocale);
             priceAlert.set("asin", asin);
@@ -531,9 +531,9 @@ function receivedPostback(event) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
                 // Ask the user to enter a desired price for that article
-                var nintyPercentPrice = (price / 100) * 90; // Calculate ninty percent price as an example
-                var examplePrice = accounting.formatMoney(price, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format the price according to the user's locale
-                sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+                // var nintyPercentPrice = (price / 100) * 90; // Calculate ninty percent price
+                // var examplePrice = accounting.formatMoney(price, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format the price according to the user's locale
+                // sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
               error: function(priceAlert, error) {
                 console.log('Failed to create new object, with error code: ' + error.message);
@@ -846,9 +846,7 @@ function sendReceiptMessage(recipientId) {
             "entities": {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
-              "asin": asin,
-              "price": price,
-              "priceFormatted": priceFormatted
+              "asin": asin
             }
           })
         }, {

@@ -322,6 +322,7 @@ function receivedMessage(event) {
               case 'de_DE': // German
                 
                 if (messageText.startsWith("hilfe")) {
+                  // Give to the user some help instructions
                   sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
                     "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
                 } else if (messageText.startsWith("suche ")) {
@@ -332,21 +333,23 @@ function receivedMessage(event) {
                     searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
                     keywords: keywords,
-                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set the correct Product Advertising API locale
+                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set the corresponding Product Advertising API locale
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
+                    // Inform the user that search results are displayed
                     sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-
+                    // Show to the user a list of 10 search results
                     sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
-
+                    // Inform the user that the search for his keywords was not successful
                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
                   });
                 } else {
+                  // Apologize to the user and him some help instructions 
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
                   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
@@ -479,96 +482,106 @@ function receivedPostback(event) {
 
   var intent = json.intent;
 
-  if (intent === "setPriceAlert") {
+  // Check intent in order to decide the next step
+  switch (intent) {
 
-    var parseUserObjectId = json.entities.parseUserObjectId;
-    var parseUserLocale = json.entities.parseUserLocale;
-    var asin = json.entities.asin;
+    case 'activatePriceAlert':
+      var parseUserObjectId = json.entities.parseUserObjectId;
+      var parseUserLocale = json.entities.parseUserLocale;
+      var asin = json.entities.asin;
 
-    // Query products
-    var Product = Parse.Object.extend("Product");
-    var query = new Parse.Query(Product);
-    query.equalTo("asin", asin);
-    query.find({
-      success: function(results) {
-        console.log("Successfully retrieved " + results.length + " products.");
+      // Inform the user about the current lowest price of the product
 
-        if (results === 1) {
+
+      // Query products from the Backend
+      var Product = Parse.Object.extend("Product");
+      var query = new Parse.Query(Product);
+      query.equalTo("asin", asin);
+      query.find({
+        success: function(results) {
+          console.log("Successfully retrieved " + results.length + " products.");
+
+          // Check if the corresponding product already exists on the Backend,
+          // otherwise get product information from Amazon Product Advertising API
+          // and save it to the Backend
+          if (results === 1) {
+            
+          } else {
+            // Look up item
+            amazonClient.itemLookup({
+              searchIndex: 'All',
+              responseGroup: 'ItemAttributes,Offers,Images',
+              idType: 'ASIN',
+              itemId: asin,
+              domain: config.get('awsLocale_' + parseUserLocale) // Set the corresponding Product Advertising API locale
+            }).then(function(result) {
+              // console.log(JSON.stringify(result));
+
+              try {
+                var asin = result[0].ASIN[0];
+                var title = result[0].ItemAttributes[0].Title[0];
+                var detailPageURL = result[0].DetailPageURL[0];
+                var largeImageUrl = result[0].LargeImage[0].URL[0];
+
+                // Save product to the Backend
+                var Product = Parse.Object.extend("Product");
+                var product = new Product();
+
+                product.set("asin", asin);
+                product.set("title", title);
+                product.set("detailPageUrl", detailPageURL);
+                product.set("largeImageUrl", largeImageUrl);
+
+                product.save(null, {
+                  success: function(product) {
+                    console.log('New object created with objectId: ' + product.id);
+
+                    // Save price alert to the Backend
+                    var PriceAlert = Parse.Object.extend("PriceAlert");
+                    var priceAlert = new PriceAlert();
+
+                    priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                    priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                    priceAlert.set("locale", parseUserLocale);
+                    priceAlert.set("active", true);
+
+                    priceAlert.save(null, {
+                      success: function(priceAlert) {
+                        console.log('New object created with objectId: ' + priceAlert.id);
+                      },
+                      error: function(priceAlert, error) {
+                        console.log('Failed to create new object, with error code: ' + error.message);
+                      }
+                    });
+                  },
+                  error: function(product, error) {
+                    console.log('Failed to create new object, with error code: ' + error.message);
+                  }
+                });
+              }
+              catch (exception) {
+                 console.log("Exception: " + exception);
+                 console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
+                  price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
+              }
+
+            }).catch(function(error) {
+              console.log("Error: " + JSON.stringify(error));
+            });
+          }
           
-        } else {
-          // Look up item
-          amazonClient.itemLookup({
-            searchIndex: 'All',
-            responseGroup: 'ItemAttributes,Offers,Images',
-            idType: 'ASIN',
-            itemId: asin,
-            domain: config.get('awsLocale_' + parseUserLocale)
-          }).then(function(result) {
-            // console.log(JSON.stringify(result));
-
-            try {
-              var asin = result[0].ASIN[0];
-              var title = result[0].ItemAttributes[0].Title[0];
-              var detailPageURL = result[0].DetailPageURL[0];
-              var largeImageUrl = result[0].LargeImage[0].URL[0];
-
-              // Save product
-              var Product = Parse.Object.extend("Product");
-              var product = new Product();
-
-              product.set("asin", asin);
-              product.set("title", title);
-              product.set("detailPageUrl", detailPageURL);
-              product.set("largeImageUrl", largeImageUrl);
-
-              product.save(null, {
-                success: function(product) {
-                  console.log('New object created with objectId: ' + product.id);
-
-                  // Save price alert
-                  var PriceAlert = Parse.Object.extend("PriceAlert");
-                  var priceAlert = new PriceAlert();
-
-                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                  priceAlert.set("locale", parseUserLocale);
-                  priceAlert.set("active", true);
-
-                  priceAlert.save(null, {
-                    success: function(priceAlert) {
-                      // Execute any logic that should take place after the object is saved.
-                      console.log('New object created with objectId: ' + priceAlert.id);
-                    },
-                    error: function(priceAlert, error) {
-                      // Execute any logic that should take place if the save fails.
-                      // error is a Parse.Error with an error code and message.
-                      console.log('Failed to create new object, with error code: ' + error.message);
-                    }
-                  });
-                },
-                error: function(product, error) {
-                  // Execute any logic that should take place if the save fails.
-                  // error is a Parse.Error with an error code and message.
-                  console.log('Failed to create new object, with error code: ' + error.message);
-                }
-              });
-            }
-            catch (exception) {
-               console.log("Exception: " + exception);
-               console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
-                price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
-            }
-
-          }).catch(function(error) {
-            console.log("Error: " + JSON.stringify(error));
-          });
+        },
+        error: function(error) {
+          console.log("Error: " + error.code + " " + error.message);
         }
-        
-      },
-      error: function(error) {
-        console.log("Error: " + error.code + " " + error.message);
-      }
-    });
+      });
+      break;
+
+    case 'disactivatePriceAlert':
+      break;
+
+
+    default:
   }
 }
 
@@ -765,7 +778,7 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
+ function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -776,8 +789,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
       var title = results[i].ItemAttributes[0].Title[0];
       var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       var url = results[i].DetailPageURL[0];
-      var imageUrl = results[i].LargeImage[0].URL[0];
-    
+
+      // Check if large image is available (otherwise take the medium one)
+      var largeImageUrl = results[i].LargeImage[0].URL[0];
+      var mediumImageUrl = results[i].MediumImage[0].URL[0];
+      var imageUrl = largeImageUrl != undefined ? largeImageUrl : mediumImageUrl;
+
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + price,
@@ -787,7 +804,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
           type: "postback",
           title: "Alarm aktivieren",
           payload: JSON.stringify({
-            "intent": "setPriceAlert",
+            "intent": "activatePriceAlert",
             "entities": {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
@@ -802,29 +819,29 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
       });
     }
     catch (exception) {
-       console.log("Exception: " + exception);
-       console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
-        price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
-    }
+     console.log("Exception: " + exception);
+     console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
+      price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
+   }
 
-  }
+ }
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: elements
-        }
+ var messageData = {
+  recipient: {
+    id: recipientId
+  },
+  message: {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "generic",
+        elements: elements
       }
     }
-  };  
+  }
+};  
 
-  callSendAPI(messageData);
+callSendAPI(messageData);
 }
 
 /*
@@ -862,7 +879,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
       var timezone = json.timezone;
       var gender = json.gender;
 
-      // Sign up user
+      // Sign up user on the Backend
       var user = new Parse.User();
       user.set("username", username);
       user.set("password", password);

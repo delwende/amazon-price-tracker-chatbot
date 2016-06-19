@@ -303,8 +303,10 @@ function receivedMessage(event) {
 
         if (error == null) {
 
-          var parseUserLocale = reply.locale;
-          var parseUserObjectId = reply.objectId;
+          var userInfo = reply;
+
+          var parseUserLocale = userInfo.locale;
+          // var parseUserObjectId = reply.objectId;
 
           if (messageText) {
             switch (parseUserLocale) {
@@ -341,9 +343,10 @@ function receivedMessage(event) {
                     sendTextMessage(senderID, "Ok, mal schauen was ich dazu finde...");
                     sendTextMessage(senderID, "Hier sind " + results.length + " Suchergebnisse dazu");
 
-                    sendListArticleSearchResultsGenericMessage(senderID, results, parseUserObjectId);
+                    sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
+
                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
                       "Treffer. Versuche allgemeinere Begriffe, wie z.B. \"suche iphone6\" zu verwenden.");
                   });
@@ -483,9 +486,10 @@ function receivedPostback(event) {
   if (intent === "setPriceAlert") {
 
     var parseUserObjectId = json.entities.parseUserObjectId;
+    var parseUserLocale = json.entities.parseUserLocale;
     var asin = json.entities.asin;
 
-    console.log(">>>>> intent: " + intent + ", parseUserObjectId: " + parseUserObjectId + ", asin: " + asin);
+    console.log("Postback called with intent: " intent);
 
     // Query products
     var Product = Parse.Object.extend("Product");
@@ -496,10 +500,25 @@ function receivedPostback(event) {
         console.log("Successfully retrieved " + results.length + " products.");
 
         if (results === 1) {
-          console.log(">>>>> Product exists.");
+          
         } else {
-          console.log(">>>>> Product doesn't exist.");
-        }
+          // Look up item
+          client.itemLookup({
+            searchIndex: 'All',
+            responseGroup: 'ItemAttributes,Offers,Images',
+            idType: 'ASIN',
+            itemId: asin,
+            domain: config.get('awsLocale_' + parseUserLocale)
+          }).then(function(results) {
+            console.log(JSON.stringify(results));
+
+            
+          }).catch(function(error) {
+            console.log("Error: " + JSON.stringify(error));
+
+
+          });
+          }
         
       },
       error: function(error) {
@@ -702,7 +721,7 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListArticleSearchResultsGenericMessage(recipientId, results, parseUserObjectId) {
+function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -718,11 +737,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, parseU
       var setPriceAlertPayload = {
         "intent": "setPriceAlert",
         "entities": {
-          "parseUserObjectId": parseUserObjectId,
+          "parseUserObjectId": userInfo.parseUserObjectId,
+          "parseUserLocale": userInfo.parseUserLocale,
           "asin": asin
         }
       };
-      console.log(">>>>> " + JSON.stringify(setPriceAlertPayload));
+      // console.log(JSON.stringify(setPriceAlertPayload));
     
       elements.push({
         title: title,

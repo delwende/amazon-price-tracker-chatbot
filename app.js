@@ -474,7 +474,39 @@ function receivedPostback(event) {
 
   // When a postback is called, we'll send a message back to the sender to 
   // let them know it was successful
-  sendTextMessage(senderID, "Postback called");
+  // sendTextMessage(senderID, "Postback called");
+
+  var json = JSON.parse(payload);
+
+  var intent = json.intent;
+
+  if (intent.equals("setPriceAlert")) {
+
+    var parseUserObjectId = json.entities.parseUserObjectId;
+    var asin = json.entities.asin;
+
+    console.log(">>>>> intent: " + intent + ", parseUserObjectId: " + parseUserObjectId + ", asin: " + asin);
+
+    // Query products
+    var Product = Parse.Object.extend("Product");
+    var query = new Parse.Query(Product);
+    query.equalTo("asin", asin);
+    query.find({
+      success: function(results) {
+        console.log("Successfully retrieved " + results.length + " products.");
+
+        if (results === 1) {
+          console.log(">>>>> Product exists.");
+        } else {
+          console.log(">>>>> Product doesn't exist.");
+        }
+        
+      },
+      error: function(error) {
+        console.log("Error: " + error.code + " " + error.message);
+      }
+    });
+  }
 }
 
 
@@ -687,11 +719,11 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
         title: title,
         subtitle: "Aktueller Preis: " + price,
         item_url: "",               
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl,
+        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 pixels using cloudimage.io
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",
-          payload: "Activate price alert for product with ASIN: " + asin
+          payload: "\{ \"intent\": \"setPriceAlert\", \"entities\": \{ \"parseUserObjectId\": \"" + parseUserObjectId + "\", \"asin\": \"" + asin + "\" \} \}"
         }, {
           type: "web_url",
           url: url,

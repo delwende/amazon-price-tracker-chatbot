@@ -192,11 +192,15 @@ app.get('/test', function(req, res) {
   // }).then(function(results){
   //   console.log("Successfully retrieved " + results.length + " items.");
   //   // console.log(results);
-  //   console.log(results[0].ASIN[0]);
-  //   console.log(results[0].DetailPageURL[0]);
-  //   console.log(results[0].LargeImage[0].URL[0]);
-  //   console.log(results[0].ItemAttributes[0].Title[0]);
-  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
+  //   for (var i=0; i<results.length; i++) {
+  //     console.log("FormattedPrice" in results[i]);
+  //   }
+    
+  //   // console.log(results[0].ASIN[0]);
+  //   // console.log(results[0].DetailPageURL[0]);
+  //   // console.log(results[0].LargeImage[0].URL[0]);
+  //   // console.log(results[0].ItemAttributes[0].Title[0]);
+  //   // console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
   // }).catch(function(error){
   //   console.log("Error: " + error);

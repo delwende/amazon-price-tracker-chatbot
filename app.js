@@ -186,7 +186,7 @@ app.get('/test', function(req, res) {
     // console.log(results);
     console.log(results[0].ASIN[0]);
     console.log(results[0].DetailPageURL[0]);
-    console.log(results[0].ImageSets[0].ImageSet[0].SwatchImage[0].URL[0]);
+    console.log(results[0].LargeImage[0].URL[0]);
     console.log(results[0].ItemAttributes[0].Title[0]);
     console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
@@ -671,7 +671,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
       var title = results[i].ItemAttributes[0].Title[0];
       var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       var url = results[i].DetailPageURL[0];
-      var imageUrl = results[i].ImageSets[0].ImageSet[0].SwatchImage[0].URL[0];
+      var imageUrl = results[i].LargeImage[0].URL[0];
     
       elements.push({
         title: title,

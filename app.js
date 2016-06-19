@@ -196,7 +196,7 @@ app.get('/test', function(req, res) {
   //   console.log(results[0].DetailPageURL[0]);
   //   console.log(results[0].LargeImage[0].URL[0]);
   //   console.log(results[0].ItemAttributes[0].Title[0]);
-  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
+  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].priceFormatted[0]);
 
   // }).catch(function(error){
   //   console.log("Error: " + error);
@@ -824,7 +824,7 @@ function sendReceiptMessage(recipientId) {
     try {
       var asin = results[i].ASIN[0];
       var title = results[i].ItemAttributes[0].Title[0];
-      var formattedPrice = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+      var priceFormatted = results[i].OfferSummary[0].LowestNewPrice[0].priceFormatted[0];
       var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
       var url = results[i].DetailPageURL[0];
 
@@ -835,7 +835,7 @@ function sendReceiptMessage(recipientId) {
 
       elements.push({
         title: title,
-        subtitle: "Aktueller Preis: " + formattedPrice,
+        subtitle: "Aktueller Preis: " + priceFormatted,
         item_url: "",               
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 pixels using cloudimage.io
         buttons: [{

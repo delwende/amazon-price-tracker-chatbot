@@ -196,7 +196,7 @@ app.get('/test', function(req, res) {
   //   console.log(results[0].DetailPageURL[0]);
   //   console.log(results[0].LargeImage[0].URL[0]);
   //   console.log(results[0].ItemAttributes[0].Title[0]);
-  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].priceFormatted[0]);
+  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
   // }).catch(function(error){
   //   console.log("Error: " + error);
@@ -328,7 +328,7 @@ function receivedMessage(event) {
                 if (messageText.startsWith("hilfe")) {
                   // Give to the user some help instructions
                   sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
-                    "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
+                    "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
                 } else if (messageText.startsWith("suche ")) {
                   var keywords = messageText.replace("suche ", "");
 
@@ -824,8 +824,8 @@ function sendReceiptMessage(recipientId) {
     try {
       var asin = results[i].ASIN[0];
       var title = results[i].ItemAttributes[0].Title[0];
-      var priceFormatted = results[i].OfferSummary[0].LowestNewPrice[0].priceFormatted[0];
-      var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
+      var priceFormatted = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+      // var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
       var url = results[i].DetailPageURL[0];
 
       // Check if large image is available (otherwise take the medium one)

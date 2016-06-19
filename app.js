@@ -19,7 +19,8 @@ const
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
-  redis = require("redis");
+  redis = require('redis'),
+  accounting = require('accounting'); // A simple and advanced number, money and currency formatting library
 
 var app = express();
 
@@ -113,9 +114,12 @@ redisClient.on('connect', function() {
     console.log("Connected to server running on " + REDIS_URL);
 });
 
-redisClient.on("error", function (error) {
+redisClient.on('error', function (error) {
     console.log("Error: " + error);
 });
+
+// Configure accounting.js settings
+accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -489,11 +493,13 @@ function receivedPostback(event) {
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
+      var price = json.entities.price;
+      var priceFormatted = json.entities.priceFormatted;
 
-      // Inform the user about the current lowest price of the product
+      // Inform user about the current lowest price
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
 
-
-      // Query products from the Backend
+      // Query products from Backend
       var Product = Parse.Object.extend("Product");
       var query = new Parse.Query(Product);
       query.equalTo("asin", asin);
@@ -514,7 +520,8 @@ function receivedPostback(event) {
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-            priceAlert.set("active", true);
+            priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
+            priceAlert.set("price", amout); // Price at the time of the price alert activation
             // Not required now, but maby helpful later for price drop calculation
             priceAlert.set("locale", parseUserLocale);
             priceAlert.set("asin", asin);
@@ -522,6 +529,11 @@ function receivedPostback(event) {
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New object created with objectId: ' + priceAlert.id);
+
+                // Ask the user to enter a desired price for that article
+                var nintyPercentPrice = (price / 100) * 90; // Calculate ninty percent price as an example
+                var examplePrice = accounting.formatMoney(price, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format the price according to the user's locale
+                sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
               error: function(priceAlert, error) {
                 console.log('Failed to create new object, with error code: ' + error.message);
@@ -564,8 +576,11 @@ function receivedPostback(event) {
 
                     priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                     priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                    priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
+                    priceAlert.set("price", amout); // Price at the time of the price alert activation
+                    // Not required now, but maby helpful later for price drop calculation
                     priceAlert.set("locale", parseUserLocale);
-                    priceAlert.set("active", true);
+                    priceAlert.set("asin", asin);
 
                     priceAlert.save(null, {
                       success: function(priceAlert) {
@@ -809,7 +824,8 @@ function sendReceiptMessage(recipientId) {
     try {
       var asin = results[i].ASIN[0];
       var title = results[i].ItemAttributes[0].Title[0];
-      var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+      var formattedPrice = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+      var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
       var url = results[i].DetailPageURL[0];
 
       // Check if large image is available (otherwise take the medium one)
@@ -819,7 +835,7 @@ function sendReceiptMessage(recipientId) {
 
       elements.push({
         title: title,
-        subtitle: "Aktueller Preis: " + price,
+        subtitle: "Aktueller Preis: " + formattedPrice,
         item_url: "",               
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 pixels using cloudimage.io
         buttons: [{
@@ -830,7 +846,9 @@ function sendReceiptMessage(recipientId) {
             "entities": {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
-              "asin": asin
+              "asin": asin,
+              "price": price,
+              "priceFormatted": priceFormatted
             }
           })
         }, {

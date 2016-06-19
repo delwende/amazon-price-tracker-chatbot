@@ -181,23 +181,24 @@ app.post('/webhook', function (req, res) {
 app.get('/test', function(req, res) {
   var param = req.param('param');
   
-  // Search items
-  amazonClient.itemSearch({
-    keywords: param,
-    responseGroup: 'ItemAttributes,Offers,Images',
-    domain: 'webservices.amazon.de'
-  }).then(function(results){
-    console.log("Successfully retrieved " + results.length + " items.");
-    // console.log(results);
-    console.log(results[0].ASIN[0]);
-    console.log(results[0].DetailPageURL[0]);
-    console.log(results[0].LargeImage[0].URL[0]);
-    console.log(results[0].ItemAttributes[0].Title[0]);
-    console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
+  // // Search items
+  // amazonClient.itemSearch({
+  //   keywords: param,
+  //   responseGroup: 'ItemAttributes,Offers,Images',
+  //   domain: 'webservices.amazon.de'
+  // }).then(function(results){
+  //   console.log("Successfully retrieved " + results.length + " items.");
+  //   // console.log(results);
+  //   console.log(results[0].ASIN[0]);
+  //   console.log(results[0].DetailPageURL[0]);
+  //   console.log(results[0].LargeImage[0].URL[0]);
+  //   console.log(results[0].ItemAttributes[0].Title[0]);
+  //   console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
-  }).catch(function(error){
-    console.log("Error: " + error);
-  });
+  // }).catch(function(error){
+  //   console.log("Error: " + error);
+  // });
+  
 });
 
 /*
@@ -501,7 +502,7 @@ function receivedPostback(event) {
           
         } else {
           // Look up item
-          client.itemLookup({
+          amazonClient.itemLookup({
             searchIndex: 'All',
             responseGroup: 'ItemAttributes,Offers,Images',
             idType: 'ASIN',

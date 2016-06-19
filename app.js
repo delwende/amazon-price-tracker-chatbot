@@ -84,9 +84,14 @@ const REDIS_URL = (process.env.REDIS_URL) ?
   (process.env.REDIS_URL) :
   config.get('redisUrl');
 
+// cloudimage.io Token
+const CLOUD_IMAGE_IO_TOKEN = (process.env.CLOUD_IMAGE_IO_TOKEN) ?
+  (process.env.CLOUD_IMAGE_IO_TOKEN) :
+  config.get('cloudImageIoToken');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && PARSE_APPLICATION_ID &&
     PARSE_JAVASCRIPT_KEY && PARSE_SERVER_URL && AWS_ID && AWS_SECRET && AWS_TAG &&
-    REDIS_URL)) {
+    REDIS_URL && CLOUD_IMAGE_IO_TOKEN)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -677,7 +682,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
         title: title,
         subtitle: "Aktueller Preis: " + price,
         item_url: "",               
-        image_url: imageUrl,
+        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/crop/1200x900/" + imageUrl,
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",
@@ -691,7 +696,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
     }
     catch (exception) {
        console.log("Exception: " + exception);
-       console.log("asin: " + asin + "\nsubtitle: " + "\nprice: " +
+       console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
         price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
     }
 

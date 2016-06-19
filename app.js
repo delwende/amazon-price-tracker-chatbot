@@ -512,10 +512,10 @@ function receivedPostback(event) {
             // console.log(JSON.stringify(result));
 
             try {
-              var asin = result.ASIN[0];
-              var title = result.ItemAttributes[0].Title[0];
-              var detailPageURL = result.DetailPageURL[0];
-              var largeImageUrl = result.LargeImage[0].URL[0];
+              var asin = result[0].ASIN[0];
+              var title = result[0].ItemAttributes[0].Title[0];
+              var detailPageURL = result[0].DetailPageURL[0];
+              var largeImageUrl = result[0].LargeImage[0].URL[0];
 
               // Save product
               var Product = Parse.Object.extend("Product");

@@ -338,7 +338,7 @@ function receivedMessage(event) {
                   });
                 } else {
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                  // sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
 
                 break;
@@ -665,16 +665,17 @@ function sendListSearchResultsGenericMessage(recipientId, results) {
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
 
-    var asin = results[i].ASIN[0];
-    var title = results[i].ItemAttributes[0].Title[0];
-    var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
-    var url = results[i].DetailPageURL[0];
-    var imageUrl = results[i].MediumImage[0].URL[0];
+    try {
+      var asin = results[i].ASIN[0];
+      var title = results[i].ItemAttributes[0].Title[0];
+      var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
+      var url = results[i].DetailPageURL[0];
+      var imageUrl = results[i].MediumImage[0].URL[0];
     
     elements.push({
       title: title,
       subtitle: "Aktueller Preis: " + price,
-      item_url: url,               
+      item_url: "",               
       image_url: imageUrl,
       buttons: [{
         type: "postback",
@@ -686,6 +687,11 @@ function sendListSearchResultsGenericMessage(recipientId, results) {
         title: "Kaufen"
       }],
     });
+    }
+    catch (exception) {
+       console.log("Exception: " + exception);
+    }
+
   }
 
   var messageData = {

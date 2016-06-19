@@ -508,16 +508,65 @@ function receivedPostback(event) {
             idType: 'ASIN',
             itemId: asin,
             domain: config.get('awsLocale_' + parseUserLocale)
-          }).then(function(results) {
-            console.log(JSON.stringify(results));
+          }).then(function(result) {
+            // console.log(JSON.stringify(result));
 
+            try {
+              var asin = result.ASIN[0];
+              var title = result.ItemAttributes[0].Title[0];
+              var detailPageURL = result.DetailPageURL[0];
+              var largeImageUrl = result.LargeImage[0].URL[0];
+
+              // Save product
+              var Product = Parse.Object.extend("Product");
+              var product = new Product();
+
+              product.set("asin", asin);
+              product.set("title", title);
+              product.set("detailPageURL", detailPageURL);
+              product.set("largeImageUrl", imageUrl);
+
+              product.save(null, {
+                success: function(product) {
+                  console.log('New object created with objectId: ' + product.id);
+
+                  // Save price alert
+                  var PriceAlert = Parse.Object.extend("PriceAlert");
+                  var priceAlert = new PriceAlert();
+
+                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                  priceAlert.set("user", {__type: "Pointer", className: "User", objectId: parseUserObjectId});;
+                  priceAlert.set("locale", parseUserLocale);
+
+                  priceAlert.save(null, {
+                    success: function(priceAlert) {
+                      // Execute any logic that should take place after the object is saved.
+                      alert('New object created with objectId: ' + priceAlert.id);
+                    },
+                    error: function(priceAlert, error) {
+                      // Execute any logic that should take place if the save fails.
+                      // error is a Parse.Error with an error code and message.
+                      alert('Failed to create new object, with error code: ' + error.message);
+                    }
+                  });
+                },
+                error: function(product, error) {
+                  // Execute any logic that should take place if the save fails.
+                  // error is a Parse.Error with an error code and message.
+                  console.log('Failed to create new object, with error code: ' + error.message);
+                }
+              });
+            }
+            catch (exception) {
+               console.log("Exception: " + exception);
+               console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
+                price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
+            }
 
           }).catch(function(error) {
             console.log("Error: " + JSON.stringify(error));
-
-
           });
-          }
+        }
         
       },
       error: function(error) {

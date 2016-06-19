@@ -186,7 +186,7 @@ app.get('/test', function(req, res) {
     // console.log(results);
     console.log(results[0].ASIN[0]);
     console.log(results[0].DetailPageURL[0]);
-    console.log(results[0].SmallImage[0].URL[0]);
+    console.log(results[0].ImageSets[0].ImageSet[0].SwatchImage[0].URL[0]);
     console.log(results[0].ItemAttributes[0].Title[0]);
     console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
 
@@ -318,27 +318,28 @@ function receivedMessage(event) {
               case 'de_DE': // German
                 
                 if (messageText.startsWith("hilfe")) {
-                  sendTextMessage(senderID, "Hi, schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
+                  sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
                     "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
                 } else if (messageText.startsWith("suche ")) {
                   var searchTerms = messageText.replace("suche ", "");
 
                   // Search items
                   amazonClient.itemSearch({
-                    keywords: searchTerms,
+                    searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
+                    keywords: searchTerms,
                     domain: config.get('awsLocale_de_DE')
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
-                    sendListSearchResultsGenericMessage(senderID, results);
+                    sendListArticleSearchResultsGenericMessage(senderID, results);
                   }).catch(function(error){
                     console.log("Error: " + error);
                   });
                 } else {
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-                  // sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
 
                 break;
@@ -656,10 +657,10 @@ function sendReceiptMessage(recipientId) {
 }
 
 /*
- * Send a List Search Results Structured Message (Generic Message type) using the Send API.
+ * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListSearchResultsGenericMessage(recipientId, results) {
+function sendListArticleSearchResultsGenericMessage(recipientId, results) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -670,26 +671,28 @@ function sendListSearchResultsGenericMessage(recipientId, results) {
       var title = results[i].ItemAttributes[0].Title[0];
       var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       var url = results[i].DetailPageURL[0];
-      var imageUrl = results[i].MediumImage[0].URL[0];
+      var imageUrl = results[i].ImageSets[0].ImageSet[0].SwatchImage[0].URL[0];
     
-    elements.push({
-      title: title,
-      subtitle: "Aktueller Preis: " + price,
-      item_url: "",               
-      image_url: imageUrl,
-      buttons: [{
-        type: "postback",
-        title: "Alarm aktivieren",
-        payload: "Activate price alert for product with ASIN: " + asin
-      }, {
-        type: "web_url",
-        url: url,
-        title: "Kaufen"
-      }],
-    });
+      elements.push({
+        title: title,
+        subtitle: "Aktueller Preis: " + price,
+        item_url: "",               
+        image_url: imageUrl,
+        buttons: [{
+          type: "postback",
+          title: "Alarm aktivieren",
+          payload: "Activate price alert for product with ASIN: " + asin
+        }, {
+          type: "web_url",
+          url: url,
+          title: "Kaufen"
+        }],
+      });
     }
     catch (exception) {
        console.log("Exception: " + exception);
+       console.log("asin: " + asin + "\nsubtitle: " + "\nprice: " +
+        price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
     }
 
   }

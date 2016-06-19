@@ -829,9 +829,10 @@ function sendReceiptMessage(recipientId) {
       var url = results[i].DetailPageURL[0];
 
       // Check if large image is available (otherwise take the medium one)
-      var largeImageUrl = results[i].LargeImage[0].URL[0];
-      var mediumImageUrl = results[i].MediumImage[0].URL[0];
-      var imageUrl = largeImageUrl != undefined ? largeImageUrl : mediumImageUrl;
+      // var largeImageUrl = results[i].LargeImage[0].URL[0];
+      // var mediumImageUrl = results[i].MediumImage[0].URL[0];
+      // var imageUrl = largeImageUrl != undefined ? largeImageUrl : mediumImageUrl;
+      var imageUrl = results[i].LargeImage[0].URL[0];
 
       elements.push({
         title: title,

@@ -337,7 +337,7 @@ function receivedMessage(event) {
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
-                    sendTextMessage(senderID, "Ergebnisse für \"" + keywords "\" werden angezeigt.");
+                    sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
 
                     sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
                   }).catch(function(error){
@@ -777,16 +777,6 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
       var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       var url = results[i].DetailPageURL[0];
       var imageUrl = results[i].LargeImage[0].URL[0];
-
-      var setPriceAlertPayload = {
-        "intent": "setPriceAlert",
-        "entities": {
-          "parseUserObjectId": userInfo.parseUserObjectId,
-          "parseUserLocale": userInfo.parseUserLocale,
-          "asin": asin
-        }
-      };
-      // console.log(JSON.stringify(setPriceAlertPayload));
     
       elements.push({
         title: title,
@@ -796,7 +786,14 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, userIn
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",
-          payload: JSON.stringify(setPriceAlertPayload)
+          payload: JSON.stringify({
+            "intent": "setPriceAlert",
+            "entities": {
+              "parseUserObjectId": userInfo.parseUserObjectId,
+              "parseUserLocale": userInfo.parseUserLocale,
+              "asin": asin
+            }
+          })
         }, {
           type: "web_url",
           url: url,

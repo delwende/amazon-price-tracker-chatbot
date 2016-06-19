@@ -326,8 +326,6 @@ function receivedMessage(event) {
                   sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
                     "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
                 } else if (messageText.startsWith("suche ")) {
-                  sendTextMessage(senderID, "Ok, mal schauen was ich dazu finde...");
-
                   var keywords = messageText.replace("suche ", "");
 
                   // Search items
@@ -340,8 +338,10 @@ function receivedMessage(event) {
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
+                    sendTextMessage(senderID, "Ok, mal schauen was ich dazu finde...");
                     sendTextMessage(senderID, "Hier sind " + results.length + " Suchergebnisse dazu");
-                    sendListArticleSearchResultsGenericMessage(senderID, results);
+
+                    sendListArticleSearchResultsGenericMessage(senderID, results, parseUserObjectId);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
@@ -702,7 +702,7 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListArticleSearchResultsGenericMessage(recipientId, results) {
+function sendListArticleSearchResultsGenericMessage(recipientId, results, parseUserObjectId) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -714,6 +714,15 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
       var price = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       var url = results[i].DetailPageURL[0];
       var imageUrl = results[i].LargeImage[0].URL[0];
+
+      var setPriceAlertPayload = {
+        "intent": "setPriceAlert",
+        "entities": {
+          "parseUserObjectId": parseUserObjectId,
+          "asin": asin
+        }
+      };
+      console.log(">>>>> " + JSON.stringify(setPriceAlertPayload));
     
       elements.push({
         title: title,
@@ -723,7 +732,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results) {
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",
-          payload: "\{ \"intent\": \"setPriceAlert\", \"entities\": \{ \"parseUserObjectId\": \"" + parseUserObjectId + "\", \"asin\": \"" + asin + "\" \} \}"
+          payload: JSON.stringify(setPriceAlertPayload)
         }, {
           type: "web_url",
           url: url,

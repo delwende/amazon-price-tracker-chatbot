@@ -489,7 +489,7 @@ function receivedPostback(event) {
     var parseUserLocale = json.entities.parseUserLocale;
     var asin = json.entities.asin;
 
-    console.log("Postback called with intent: " intent);
+    console.log("Postback called with intent: " + intent);
 
     // Query products
     var Product = Parse.Object.extend("Product");
@@ -512,7 +512,7 @@ function receivedPostback(event) {
           }).then(function(results) {
             console.log(JSON.stringify(results));
 
-            
+
           }).catch(function(error) {
             console.log("Error: " + JSON.stringify(error));
 

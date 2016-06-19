@@ -480,7 +480,7 @@ function receivedPostback(event) {
 
   var intent = json.intent;
 
-  if (intent.equals("setPriceAlert")) {
+  if (intent === "setPriceAlert") {
 
     var parseUserObjectId = json.entities.parseUserObjectId;
     var asin = json.entities.asin;

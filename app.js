@@ -19,7 +19,6 @@ const
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
-  accounting = require('accounting'),
   redis = require("redis");
 
 var app = express();
@@ -306,11 +305,8 @@ function receivedMessage(event) {
 
           var userInfo = reply;
 
-          var parseUserLocale = userInfo.parseUserLocale;
-          // var parseUserObjectId = reply.parseUserObjectId;
-
           if (messageText) {
-            switch (parseUserLocale) {
+            switch (userInfo.parseUserLocale) {
               // case 'pt_BR': // Portuguese (Brazil)
               //   break;
 
@@ -336,20 +332,19 @@ function receivedMessage(event) {
                     searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
                     keywords: keywords,
-                    domain: config.get('awsLocale_de_DE')
+                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set the correct Product Advertising API locale
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
-                    sendTextMessage(senderID, "Ok, mal schauen was ich dazu finde...");
-                    sendTextMessage(senderID, "Hier sind " + results.length + " Suchergebnisse dazu");
+                    sendTextMessage(senderID, "Ergebnisse für \"" + keywords "\" werden angezeigt.");
 
                     sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
 
                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
-                      "Treffer. Versuche allgemeinere Begriffe, wie z.B. \"suche iphone6\" zu verwenden.");
+                      "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
                   });
                 } else {
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
@@ -537,6 +532,7 @@ function receivedPostback(event) {
                   priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                   priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                   priceAlert.set("locale", parseUserLocale);
+                  priceAlert.set("active", true);
 
                   priceAlert.save(null, {
                     success: function(priceAlert) {

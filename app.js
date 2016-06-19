@@ -326,21 +326,26 @@ function receivedMessage(event) {
                   sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
                     "oder \"liste\" um deine aktiven Preisalarme zu verwalten.");
                 } else if (messageText.startsWith("suche ")) {
-                  var searchTerms = messageText.replace("suche ", "");
+                  sendTextMessage(senderID, "Ok, mal schauen was ich dazu finde...");
+
+                  var keywords = messageText.replace("suche ", "");
 
                   // Search items
                   amazonClient.itemSearch({
                     searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
-                    keywords: searchTerms,
+                    keywords: keywords,
                     domain: config.get('awsLocale_de_DE')
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
+                    sendTextMessage(senderID, "Hier sind " + results.length + " Suchergebnisse dazu");
                     sendListArticleSearchResultsGenericMessage(senderID, results);
                   }).catch(function(error){
-                    console.log("Error: " + error);
+                    console.log("Error: " + JSON.stringify(error));
+                    sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
+                      "Treffer. Versuche allgemeinere Begriffe, wie z.B. \"suche iphone6\" zu verwenden.");
                   });
                 } else {
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");

@@ -784,6 +784,7 @@ function sendReceiptMessage(recipientId) {
  */
  function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
   var elements = [];
+  console.log(results);
 
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
@@ -795,8 +796,8 @@ function sendReceiptMessage(recipientId) {
     var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
-    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
-      lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
+    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && title !== undefined
+      lowestNewPrice.amount !== undefined && lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,

@@ -820,8 +820,8 @@ function sendReceiptMessage(recipientId) {
       // var imageUrl = results[i].LargeImage[0].URL[0];
 
       elements.push({
-        title: title,
-        subtitle: "Aktueller Preis: " + priceFormatted,
+        title: title !== undefined ? title : "",
+        subtitle: "Aktueller Preis: " + priceFormatted !== undefined ? priceFormatted : "",
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{

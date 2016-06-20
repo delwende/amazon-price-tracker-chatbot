@@ -470,20 +470,22 @@ function receivedPostback(event) {
   switch (intent) {
 
     case 'activatePriceAlert':
+      var userInfo = json.entities.userInfo;
+      var itemInfo = json.entities.itemInfo;
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
       var lowestNewPrice = json.entities.lowestNewPrice;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPrice.formattedPrice);
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + itemInfo.lowestNewPrice.formattedPrice);
 
       // Check if the product already exists on the Backend, otherwise get
       // the product information from Amazon Product Advertising API and
       // save it to the Backend
       var Product = Parse.Object.extend("Product");
       var query = new Parse.Query(Product);
-      query.equalTo("asin", asin);
+      query.equalTo("asin", itemInfo.asin);
       query.find({
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " products.");
@@ -497,20 +499,20 @@ function receivedPostback(event) {
             var priceAlert = new PriceAlert();
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-            priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
+            priceAlert.set("lowestNewPrice", itemInfo.lowestNewPrice); // Lowest new price (at the time of the price alert activation)
             // Currently not required, but maby helpful later for the price drop calculation
-            priceAlert.set("userLocale", parseUserLocale);
-            priceAlert.set("asin", asin);
+            priceAlert.set("userLocale", userInfo.parseUserLocale);
+            priceAlert.set("asin", itemInfo.asin);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
                 // Ask the user to enter a desired price for that article
-                var nintyPercentPrice = (lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
-                var examplePrice = accounting.formatMoney(nintyPercentPrice, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format price according to the user's locale
+                var nintyPercentPrice = (itemInfo.lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
+                var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
                 sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
               error: function(priceAlert, error) {
@@ -569,7 +571,7 @@ function receivedPostback(event) {
       
                       // Ask the user to enter a desired price for that article
                       var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
-                      var examplePrice = accounting.formatMoney(nintyPercentPrice, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format price according to the user's locale
+                      var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
                       sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                     },
                     error: function(priceAlert, error) {
@@ -824,10 +826,11 @@ function sendReceiptMessage(recipientId) {
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "parseUserObjectId": userInfo.parseUserObjectId,
-              "parseUserLocale": userInfo.parseUserLocale,
-              "asin": asin,
-              "lowestNewPrice": lowestNewPrice
+              "userInfo": userInfo,
+              "itemInfo": {
+                "asin": asin,
+                "lowestNewPrice": lowestNewPrice
+              }
             }
           })
         }, {

@@ -474,10 +474,10 @@ function receivedPostback(event) {
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
       var lowestNewPriceAmount = json.entities.lowestNewPriceAmount;
-      var formattedPrice = json.entities.formattedPrice;
+      var lowestNewPriceFormattedPrice = json.entities.lowestNewPriceFormattedPrice;
 
-      // Inform the user about the current lowest price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + formattedPrice);
+      // Inform the user about the current lowest new price
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPriceFormattedPrice);
 
       // Check if the product already exists on the Backend, otherwise get
       // the product information from Amazon Product Advertising API and
@@ -534,7 +534,7 @@ function receivedPostback(event) {
               
               var asin = objectPath.get(item, "ASIN.0");
               var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-              var formattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
+              var lowestNewPriceFormattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
               var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
               var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
               var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
@@ -803,17 +803,17 @@ function sendReceiptMessage(recipientId) {
 
     var asin = objectPath.get(item, "ASIN.0");
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-    var formattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
+    var lowestNewPriceFormattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
     var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
     // Check that required properties for the item are available, otherwise exclude the item from the result list
-    if (asin !== undefined && title !== undefined && formattedPrice !== undefined && imageUrl !== undefined &&
+    if (asin !== undefined && title !== undefined && lowestNewPriceFormattedPrice !== undefined && imageUrl !== undefined &&
       detailPageUrl !== undefined && lowestNewPriceAmount !== undefined) {
       elements.push({
         title: title,
-        subtitle: "Aktueller Preis: " + formattedPrice,
+        subtitle: "Aktueller Preis: " + lowestNewPriceFormattedPrice,
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
@@ -825,7 +825,7 @@ function sendReceiptMessage(recipientId) {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
               "asin": asin,
-              "formattedPrice": formattedPrice,
+              "lowestNewPriceFormattedPrice": lowestNewPriceFormattedPrice,
               "lowestNewPriceAmount": lowestNewPriceAmount
             }
           })

@@ -529,65 +529,57 @@ function receivedPostback(event) {
               domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
             }).then(function(result) {
               // console.log(JSON.stringify(result));
+              
+              var asin = objectPath.get(item, "ASIN.0");
+              var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+              var formattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
+              var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
+              var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
+              var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
-              try {
-                var asin = objectPath.get(item, "ASIN.0");
-                var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-                var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-                var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
-                var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-                var amount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
-                
-                var asin = result[0].ASIN[0];
-                var title = result[0].ItemAttributes[0].Title[0];
-                var detailPageURL = result[0].DetailPageURL[0];
-                var largeImageUrl = result[0].LargeImage[0].URL[0];
+              // Save product to the Backend
+              var Product = Parse.Object.extend("Product");
+              var product = new Product();
 
-                // Save product to the Backend
-                var Product = Parse.Object.extend("Product");
-                var product = new Product();
+              product.set("asin", asin);
+              product.set("title", title);
+              product.set("detailPageUrl", detailPageUrl);
+              product.set("imageUrl", imageUrl);
 
-                product.set("asin", asin);
-                product.set("title", title);
-                product.set("detailPageUrl", detailPageURL);
-                product.set("largeImageUrl", largeImageUrl);
+              product.save(null, {
+                success: function(product) {
+                  console.log('New object created with objectId: ' + product.id);
 
-                product.save(null, {
-                  success: function(product) {
-                    console.log('New object created with objectId: ' + product.id);
-
-                    // Save price alert for the product to the Backend
-                    var PriceAlert = Parse.Object.extend("PriceAlert");
-                    var priceAlert = new PriceAlert();
-
-                    priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                    priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                    priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
-                    // priceAlert.set("price", amout); // Price at the time of the price alert activation
-                    // Not required now, but maby helpful later for price drop calculation
-                    priceAlert.set("locale", parseUserLocale);
-                    priceAlert.set("asin", asin);
-
-                    priceAlert.save(null, {
-                      success: function(priceAlert) {
-                        console.log('New object created with objectId: ' + priceAlert.id);
-                      },
-                      error: function(priceAlert, error) {
-                        console.log('Failed to create new object, with error code: ' + error.message);
-                      }
-                    });
-                  },
-                  error: function(product, error) {
-                    console.log('Failed to create new object, with error code: ' + error.message);
-                  }
-                });
-              }
-              catch (exception) {
-                 console.log("Exception: " + exception);
-                 console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
-                  price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
-              }
-
+                  // Save price alert for the product to the Backend
+                  var PriceAlert = Parse.Object.extend("PriceAlert");
+                  var priceAlert = new PriceAlert();
+      
+                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                  priceAlert.set("active", false); // Indicates if the price alert is active or inactive
+                  priceAlert.set("lowestNewPriceAmount", lowestNewPriceAmount); // Lowest new price amount (at the time of the price alert activation)
+                  // Currently not required, but maby helpful later for the price drop calculation
+                  priceAlert.set("userLocale", parseUserLocale);
+                  priceAlert.set("asin", asin);
+      
+                  priceAlert.save(null, {
+                    success: function(priceAlert) {
+                      console.log('New object created with objectId: ' + priceAlert.id);
+      
+                      // Ask the user to enter a desired price for that article
+                      var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
+                      var examplePrice = accounting.formatMoney(nintyPercentPrice, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format price according to the user's locale
+                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+                    },
+                    error: function(priceAlert, error) {
+                      console.log('Failed to create new object, with error code: ' + error.message);
+                    }
+                  });
+                },
+                error: function(product, error) {
+                  console.log('Failed to create new object, with error code: ' + error.message);
+                }
+              });
             }).catch(function(error) {
               console.log("Error: " + JSON.stringify(error));
             });

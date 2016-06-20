@@ -183,27 +183,35 @@ app.post('/webhook', function (req, res) {
 });
 
 app.get('/test', function(req, res) {
-  // // Search items
-  // amazonClient.itemSearch({
-  //   searchIndex: 'All',
-  //   responseGroup: 'ItemAttributes,Offers,Images',
-  //   keywords: 'iphone6',
-  //   domain: config.get('awsLocale_de_DE') // Set Product Advertising API locale according to user locale
-  // }).then(function(results){
-  //   console.log("Successfully retrieved " + results.length + " items.");
-  //   // console.log(results);
+  // Search items
+  amazonClient.itemSearch({
+    searchIndex: 'All',
+    responseGroup: 'ItemAttributes,Offers,Images',
+    keywords: 'iphone6',
+    domain: config.get('awsLocale_de_DE') // Set Product Advertising API locale according to user locale
+  }).then(function(results){
+    console.log("Successfully retrieved " + results.length + " items.");
+    // console.log(results);
 
-  //   var asin = objectPath.get(results[0], "ASIN.0");
-  //   var detailPageUrl = objectPath.get(results[0], "DetailPageURL.0");
-  //   var imageUrl = objectPath.coalesce(results[0], ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-  //   var title = objectPath.get(results[0], "ItemAttributes.0.Title.0");
-  //   var lowestNewPrice = objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0");
+    var asin = objectPath.get(results[0], "ASIN.0");
+    var detailPageUrl = objectPath.get(results[0], "DetailPageURL.0");
+    var imageUrl = objectPath.coalesce(results[0], ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+    var title = objectPath.get(results[0], "ItemAttributes.0.Title.0");
+    var lowestNewPrice = {
+      "amount": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+      "currencyCode": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+      "formattedPrice": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+    };
 
-  //   console.log(lowestNewPrice);
+    console.log(asin);
+    console.log(detailPageUrl);
+    console.log(imageUrl);
+    console.log(title);
+    console.log(lowestNewPrice.amount);
 
-  // }).catch(function(error){
-  //   console.log("Error: " + JSON.stringify(error));
-  // });
+  }).catch(function(error){
+    console.log("Error: " + JSON.stringify(error));
+  });
 });
 
 /*
@@ -826,7 +834,7 @@ function sendReceiptMessage(recipientId) {
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
-    if (true) {
+    if (detailPageUrl !== undefined) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,

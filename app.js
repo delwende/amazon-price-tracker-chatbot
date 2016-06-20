@@ -846,8 +846,7 @@ function sendReceiptMessage(recipientId) {
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "userInfo": userInfo,
-              "item": item
+              "userInfo": userInfo
             }
           })
         }, {

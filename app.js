@@ -530,6 +530,8 @@ function receivedPostback(event) {
             }).then(function(result) {
               // console.log(JSON.stringify(result));
               
+              var item = result;
+              
               var asin = objectPath.get(item, "ASIN.0");
               var title = objectPath.get(item, "ItemAttributes.0.Title.0");
               var formattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");

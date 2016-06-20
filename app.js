@@ -472,10 +472,6 @@ function receivedPostback(event) {
     case 'activatePriceAlert':
       var userInfo = json.entities.userInfo;
       var itemInfo = json.entities.itemInfo;
-      var parseUserObjectId = json.entities.parseUserObjectId;
-      var parseUserLocale = json.entities.parseUserLocale;
-      var asin = json.entities.asin;
-      var lowestNewPrice = json.entities.lowestNewPrice;
 
       // Inform the user about the current lowest new price
       sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + itemInfo.lowestNewPrice.formattedPrice);
@@ -534,11 +530,10 @@ function receivedPostback(event) {
               var item = result;
               
               var asin = objectPath.get(item, "ASIN.0");
-              var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-              var lowestNewPriceFormattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-              var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
               var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-              var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
+              var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+              var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+              var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
               // Save product to the Backend
               var Product = Parse.Object.extend("Product");
@@ -805,12 +800,8 @@ function sendReceiptMessage(recipientId) {
     var asin = objectPath.get(item, "ASIN.0");
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-    var lowestNewPrice = {
-      "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
-      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
-      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
-    }
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+    var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
     // Check that required properties for the item are available, otherwise exclude the item from the result list
     if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&

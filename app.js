@@ -809,7 +809,7 @@ function sendReceiptMessage(recipientId) {
 
     // Check that required properties for the item are available, otherwise exclude the item from the result list
     if (asin !== undefined && title !== undefined && priceFormatted !== undefined && imageUrl !== undefined &&
-      url !== undefined && priceAmount !== undefined) {
+      url !== undefined && amount !== undefined) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + priceFormatted,

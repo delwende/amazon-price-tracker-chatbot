@@ -512,23 +512,13 @@ function receivedPostback(event) {
       var user = json.entities.user;
       var item = json.entities.item;
 
-      var asin = objectPath.get(item, "ASIN.0");
-      var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-      var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-      var lowestNewPrice = {
-        "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
-        "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
-        "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
-      };
-      var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPrice.formattedPrice);
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + item.lowestNewPrice.formattedPrice);
 
       // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
       var query = new Parse.Query(Product);
-      query.equalTo("asin", asin);
+      query.equalTo("asin", item.asin);
       query.find({
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " products.");
@@ -544,19 +534,15 @@ function receivedPostback(event) {
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-            priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
-            // Currently not required, but maby helpful later for the price drop calculation
-            priceAlert.set("asin", asin);
-            priceAlert.set("userLocale", user.parseUserLocale);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
                 // Ask the user to enter a desired price for that article
-                var nintyPercentPrice = (itemInfo.lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
-                var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
-                sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+                // var nintyPercentPrice = (itemInfo.lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
+                // var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
+                // sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
               error: function(priceAlert, error) {
                 console.log('Failed to create new object, with error code: ' + error.message);
@@ -569,10 +555,10 @@ function receivedPostback(event) {
             var Product = Parse.Object.extend("Product");
             var product = new Product();
 
-            product.set("asin", asin);
-            product.set("detailPageUrl", detailPageUrl);
-            product.set("imageUrl", imageUrl);
-            product.set("title", title);
+            product.set("asin", item.asin);
+            product.set("detailPageUrl", item.detailPageUrl);
+            product.set("imageUrl", item.imageUrl);
+            product.set("title", item.title);
 
             product.save(null, {
               success: function(product) {
@@ -585,19 +571,15 @@ function receivedPostback(event) {
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
                 priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-                priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
-                // Currently not required, but maby helpful later for the price drop calculation
-                priceAlert.set("asin", asin);
-                priceAlert.set("userLocale", user.parseUserLocale);
     
                 priceAlert.save(null, {
                   success: function(priceAlert) {
                     console.log('New object created with objectId: ' + priceAlert.id);
     
                     // Ask the user to enter a desired price for that article
-                    var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
-                    var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
-                    sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+                    // var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
+                    // var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
+                    // sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                   },
                   error: function(priceAlert, error) {
                     console.log('Failed to create new object, with error code: ' + error.message);

@@ -332,7 +332,7 @@ function receivedMessage(event) {
                 } else {
                   // Apologize to the user and give some help instructions 
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                  // sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
 
                 break;

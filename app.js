@@ -320,81 +320,88 @@ function receivedMessage(event) {
           var user = reply;
 
           if (messageText) {
-            switch (user.parseUserLocale) {
-              // case 'pt_BR': // Portuguese (Brazil)
-              //   break;
 
-              // case 'zh_CN': // Simplified Chinese (China)
-              //   break;
+            // Check if user has an incomplete price alert
+            if (user.incompletePriceAlert === true) {
 
-              // case 'zh_HK': // Traditional Chinese (Hong Kong)
-              //   break;
+              sendTextMessage(senderID, "Bitte gib noch einen Preis ein um den Alarm abzuschließen (Tippe z.B. 25 Euro):");
 
-              // case 'fr_FR': // French (France)
-              //   break;
+            } else {
+              switch (user.parseUserLocale) {
+                // case 'pt_BR': // Portuguese (Brazil)
+                //   break;
 
-              case 'de_DE': // German
-                
-                if (messageText.startsWith("hilfe")) {
-                  // Give to the user some help instructions
-                  sendTextMessage(senderID, "Hi! Schreibe mir z.B. \"suche iphone6\" um einen Artikel zu suchen " +
-                    "oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
-                } else if (messageText.startsWith("suche ")) {
-                  var keywords = messageText.replace("suche ", "");
+                // case 'zh_CN': // Simplified Chinese (China)
+                //   break;
 
-                  // Search items
-                  amazonClient.itemSearch({
-                    searchIndex: 'All',
-                    responseGroup: 'ItemAttributes,Offers,Images',
-                    keywords: keywords,
-                    domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-                  }).then(function(results){
-                    console.log("Successfully retrieved " + results.length + " items.");
-                    // console.log(results);
+                // case 'zh_HK': // Traditional Chinese (Hong Kong)
+                //   break;
 
-                    // Inform the user that search results are displayed
-                    sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-                    // Show to the user 10 search results
-                    sendListArticleSearchResultsGenericMessage(senderID, results, user);
-                  }).catch(function(error){
-                    console.log("Error: " + JSON.stringify(error));
-                    // Inform the user that the search for his keywords yielded no results
-                    sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
-                      "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
-                  });
-                } else {
-                  // Apologize to the user and provide some help instructions 
-                  sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
-                }
+                // case 'fr_FR': // French (France)
+                //   break;
 
-                break;
+                case 'de_DE': // German
+                  
+                  if (messageText.startsWith("hilfe")) {
+                    // Give to the user some help instructions
+                    sendTextMessage(senderID, "Kleine Hilfestellung: Schreibe mir z.B. \"suche iphone6\" " +
+                      "um einen Artikel zu suchen oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
+                  } else if (messageText.startsWith("suche ")) {
+                    var keywords = messageText.replace("suche ", "");
 
-              // case 'en_IN': // English (India)
-              //   break;
+                    // Search items
+                    amazonClient.itemSearch({
+                      searchIndex: 'All',
+                      responseGroup: 'ItemAttributes,Offers,Images',
+                      keywords: keywords,
+                      domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+                    }).then(function(results){
+                      console.log("Successfully retrieved " + results.length + " items.");
+                      // console.log(results);
 
-              // case 'it_IT': // Italian
-              //   break;
+                      // Inform the user that search results are displayed
+                      sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
+                      // Show to the user 10 search results
+                      sendListArticleSearchResultsGenericMessage(senderID, results, user);
+                    }).catch(function(error){
+                      console.log("Error: " + JSON.stringify(error));
+                      // Inform the user that the search for his keywords yielded no results
+                      sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
+                        "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
+                    });
+                  } else {
+                    // Apologize to the user and provide some help instructions 
+                    sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst. Probiere " +
+                      "\"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                  }
 
-              // case 'ja_JP': // Japanese
-              //   break;
+                  break;
 
-              // case 'es_MX': // Spanish (Mexico)
-              //   break;
+                // case 'en_IN': // English (India)
+                //   break;
 
-              // case 'es_ES': // Spanish (Spain)
-              //   break;
+                // case 'it_IT': // Italian
+                //   break;
 
-              // case 'en_GB': // English (UK)
-              //   break;
+                // case 'ja_JP': // Japanese
+                //   break;
 
-              // case 'en_US': // English (US)
-              //   break;
+                // case 'es_MX': // Spanish (Mexico)
+                //   break;
 
-              default:
-                sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+                // case 'es_ES': // Spanish (Spain)
+                //   break;
+
+                // case 'en_GB': // English (UK)
+                //   break;
+
+                // case 'en_US': // English (US)
+                //   break;
+
+                default:
+                  sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+              }
             }
-
           } else if (messageAttachments) {
             sendTextMessage(senderID, "Message with attachment received");
           }
@@ -425,7 +432,9 @@ function receivedMessage(event) {
               'parseUserProfilePic': user.get("profilePic"),
               'parseUserLocale': user.get("locale"),
               'parseUserGender': user.get("gender"),
-              'parseUserTimezone': user.get("timezone")
+              'parseUserTimezone': user.get("timezone"),
+              'incompletePriceAlert': false,
+              'incompletePriceAlertId': undefined // ParseObject id of the imcomplete price alert
 
             }, function(error, reply) {
 
@@ -513,7 +522,7 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + item.lowestNewPrice.formattedPrice);
+      sendTextMessage(senderID, "Der aktuelle Preis des Artikels ist " + item.lowestNewPrice.formattedPrice + ".");
 
       // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
@@ -533,16 +542,30 @@ function receivedPostback(event) {
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
-            priceAlert.set("active", false); // Indicates if the price alert is active or inactive
+            priceAlert.set("active", false);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
-                // Ask the user to enter a desired price for that article
-                // var nintyPercentPrice = (itemInfo.lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
-                // var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
-                // sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+
+                // Create new key-value pair with key user:senderID
+                redisClient.hmset('user:' + senderID, {
+                  'incompletePriceAlert': true,
+                  'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
+
+                }, function(error, reply) {
+
+                    if (error == null) {
+                      console.log("New key-value pair created with key: user:" + senderID);
+
+                      // Ask the user to enter a desired price
+                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
+                    }
+                    
+                });
+
+
               },
               error: function(priceAlert, error) {
                 console.log('Failed to create new object, with error code: ' + error.message);
@@ -570,16 +593,29 @@ function receivedPostback(event) {
     
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
-                priceAlert.set("active", false); // Indicates if the price alert is active or inactive
+                priceAlert.set("active", false);
     
                 priceAlert.save(null, {
                   success: function(priceAlert) {
                     console.log('New object created with objectId: ' + priceAlert.id);
     
-                    // Ask the user to enter a desired price for that article
-                    // var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
-                    // var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
-                    // sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+
+                    // Create new key-value pair with key user:senderID and value ParseUser
+                    redisClient.hmset('user:' + senderID, {
+                      'incompletePriceAlert': true,
+                      'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
+
+                    }, function(error, reply) {
+
+                        if (error == null) {
+                          console.log("New key-value pair created with key: user:" + senderID);
+
+                          // Ask the user to enter a desired price
+                          sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
+                        }
+                        
+                    });
+
                   },
                   error: function(priceAlert, error) {
                     console.log('Failed to create new object, with error code: ' + error.message);
@@ -919,7 +955,7 @@ function sendReceiptMessage(recipientId) {
         success: function(user) {
           console.log("New user created with objectId: " + user.id);
 
-          // Create new key-value pair with key user:senderID and value ParseUser
+          // Create new key-value pair with key user:senderID
           redisClient.hmset('user:' + senderID, {
             'parseUserObjectId': user.id,
             'parseUserFirstName': user.get("firstName"),
@@ -927,7 +963,9 @@ function sendReceiptMessage(recipientId) {
             'parseUserProfilePic': user.get("profilePic"),
             'parseUserLocale': user.get("locale"),
             'parseUserGender': user.get("gender"),
-            'parseUserTimezone': user.get("timezone")
+            'parseUserTimezone': user.get("timezone"),
+            'incompletePriceAlert': false,
+            'incompletePriceAlertId': undefined // ParseObject id of the imcomplete price alert
 
           }, function(error, reply) {
 

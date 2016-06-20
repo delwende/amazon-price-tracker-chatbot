@@ -816,7 +816,6 @@ function sendReceiptMessage(recipientId) {
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
 
-    var asin = objectPath.get(item, "ASIN.0");
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
     var lowestNewPrice = {
@@ -827,8 +826,7 @@ function sendReceiptMessage(recipientId) {
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
-    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined &&
-      title !== undefined && lowestNewPrice !== undefined) {
+    if (true) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,

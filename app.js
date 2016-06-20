@@ -276,14 +276,6 @@ function receivedMessage(event) {
 
   // Determine if key user:senderID exists
   redisClient.exists('user:' + senderID, function(error, reply) {
-    
-     redisClient.del('user:' + senderID, function(error, reply) {
-
-              if (error == null) {
-                console.log("Deleted key-value pair with key: user:" + senderID);
-              }
-              
-          });
 
     if (reply === 1) {
       console.log("Key-value pair with key user:" + senderID + " exists.");

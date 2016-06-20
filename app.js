@@ -331,9 +331,9 @@ function receivedMessage(event) {
                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
                   });
                 } else {
-                  // Apologize to the user and give some help instructions 
+                  // Apologize to the user and provide some help instructions 
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-                  // sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                  sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
 
                 break;
@@ -473,11 +473,11 @@ function receivedPostback(event) {
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
-      // var price = json.entities.price;
-      // var priceFormatted = json.entities.priceFormatted;
+      var amount = json.entities.amount;
+      var priceFormatted = json.entities.priceFormatted;
 
-      // Inform user about the current lowest price
-      // sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
+      // Inform the user about the current lowest price
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
 
       // Check if the corresponding product already exists on the Backend,
       // otherwise get product information from Amazon Product Advertising API
@@ -499,8 +499,8 @@ function receivedPostback(event) {
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-            priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
-            // priceAlert.set("price", amout); // Price at the time of the price alert activation
+            priceAlert.set("active", true); // Indicates if the price alert is active or disactivated
+            priceAlert.set("amount", amount); // Amount at the time of the price alert activation
             // Not required now, but maby helpful later for price drop calculation
             priceAlert.set("locale", parseUserLocale);
             priceAlert.set("asin", asin);
@@ -805,7 +805,7 @@ function sendReceiptMessage(recipientId) {
     var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
     var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
     var url = objectPath.get(item, "DetailPageURL.0");
-    var priceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
+    var amount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
     // Check that required properties for the item are available, otherwise exclude the item from the result list
     if (asin !== undefined && title !== undefined && priceFormatted !== undefined && imageUrl !== undefined &&
@@ -824,7 +824,8 @@ function sendReceiptMessage(recipientId) {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
               "asin": asin,
-              "priceFormatted": priceFormatted
+              "priceFormatted": priceFormatted,
+              "amount": amount
             }
           })
         }, {

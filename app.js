@@ -853,7 +853,7 @@ function sendReceiptMessage(recipientId) {
           })
         }, {
           type: "web_url",
-          url: url,
+          url: "",
           title: "Kaufen"
         }],
       });

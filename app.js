@@ -801,11 +801,11 @@ function sendReceiptMessage(recipientId) {
     var item = results[i];
 
     try {
-      var asin = objectPath.get(item, "ASIN[0]");
-      var title = objectPath.get(item, "ItemAttributes[0].Title[0]");
-      var priceFormatted = objectPath.get(item, "OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]");
-      var imageUrl = objectPath.get(item, "LargeImage[0].URL[0]");
-      var url = objectPath.get(item, "DetailPageURL[0]");
+      var asin = objectPath.get(item, "ASIN.0");
+      var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+      var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
+      var imageUrl = objectPath.get(item, "LargeImage.0.URL.0");
+      var url = objectPath.get(item, "DetailPageURL.0");
       
       // var asin = results[i].ASIN[0];
       // var title = results[i].ItemAttributes[0].Title[0];

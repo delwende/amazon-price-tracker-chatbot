@@ -473,11 +473,10 @@ function receivedPostback(event) {
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var asin = json.entities.asin;
-      var lowestNewPriceAmount = json.entities.lowestNewPriceAmount;
-      var lowestNewPriceFormattedPrice = json.entities.lowestNewPriceFormattedPrice;
+      var lowestNewPrice = json.entities.lowestNewPrice;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPriceFormattedPrice);
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPrice.formattedPrice);
 
       // Check if the product already exists on the Backend, otherwise get
       // the product information from Amazon Product Advertising API and
@@ -500,7 +499,7 @@ function receivedPostback(event) {
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-            priceAlert.set("lowestNewPriceAmount", lowestNewPriceAmount); // Lowest new price amount (at the time of the price alert activation)
+            priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
             // Currently not required, but maby helpful later for the price drop calculation
             priceAlert.set("userLocale", parseUserLocale);
             priceAlert.set("asin", asin);
@@ -510,7 +509,7 @@ function receivedPostback(event) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
                 // Ask the user to enter a desired price for that article
-                var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
+                var nintyPercentPrice = (lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
                 var examplePrice = accounting.formatMoney(nintyPercentPrice, config.get('currencySymbol_' + parseUserLocale), 2, ".", ","); // Format price according to the user's locale
                 sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
@@ -535,7 +534,7 @@ function receivedPostback(event) {
               var asin = objectPath.get(item, "ASIN.0");
               var title = objectPath.get(item, "ItemAttributes.0.Title.0");
               var lowestNewPriceFormattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-              var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
+              var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
               var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
               var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
@@ -802,18 +801,21 @@ function sendReceiptMessage(recipientId) {
     var item = results[i];
 
     var asin = objectPath.get(item, "ASIN.0");
-    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-    var lowestNewPriceFormattedPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-    var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-    var lowestNewPriceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
+    var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+    var lowestNewPrice = {
+      "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+    }
+    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
 
     // Check that required properties for the item are available, otherwise exclude the item from the result list
-    if (asin !== undefined && title !== undefined && lowestNewPriceFormattedPrice !== undefined && imageUrl !== undefined &&
-      detailPageUrl !== undefined && lowestNewPriceAmount !== undefined) {
+    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
+      lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
-        subtitle: "Aktueller Preis: " + lowestNewPriceFormattedPrice,
+        subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
@@ -825,8 +827,7 @@ function sendReceiptMessage(recipientId) {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
               "asin": asin,
-              "lowestNewPriceFormattedPrice": lowestNewPriceFormattedPrice,
-              "lowestNewPriceAmount": lowestNewPriceAmount
+              "lowestNewPrice": lowestNewPrice
             }
           })
         }, {

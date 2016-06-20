@@ -803,11 +803,11 @@ function sendReceiptMessage(recipientId) {
     var asin = objectPath.get(item, "ASIN.0");
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
     var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-    var imageUrl = objectPath.coalesce(obj, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
+    var imageUrl = objectPath.coalesce(item, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
     var url = objectPath.get(item, "DetailPageURL.0");
     var priceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
-    // Check if required properties for the item are available, otherwise exclude the item from the result list
+    // Check that required properties for the item are available, otherwise exclude the item from the result list
     if (asin !== undefined && title !== undefined && priceFormatted !== undefined && imageUrl !== undefined &&
       url !== undefined && priceAmount !== undefined) {
       elements.push({

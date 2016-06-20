@@ -801,7 +801,7 @@ function sendReceiptMessage(recipientId) {
 
     try {
       var asin = results[i].ASIN[0];
-      /*var title = results[i].ItemAttributes[0].Title[0];
+      var title = results[i].ItemAttributes[0].Title[0];
       var priceFormatted = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
       // var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
       var url = results[i].DetailPageURL[0];
@@ -810,13 +810,14 @@ function sendReceiptMessage(recipientId) {
       // var largeImageUrl = results[i].LargeImage[0].URL[0];
       // var mediumImageUrl = results[i].MediumImage[0].URL[0];
       // var imageUrl = largeImageUrl != undefined ? largeImageUrl : mediumImageUrl;
-      var imageUrl = results[i].LargeImage[0].URL[0];
+      // var imageUrl = results[i].LargeImage[0].URL[0];
 
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + priceFormatted,
-        item_url: "",               
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
+        item_url: "",
+        image_url: "",
+        // image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",
@@ -831,29 +832,6 @@ function sendReceiptMessage(recipientId) {
         }, {
           type: "web_url",
           url: url,
-          title: "Kaufen"
-        }],
-      });*/
-      
-      elements.push({
-        title: asin,
-        subtitle: asin,
-        item_url: "",               
-        image_url: "",
-        buttons: [{
-          type: "postback",
-          title: "Alarm aktivieren",
-          payload: JSON.stringify({
-            "intent": "activatePriceAlert",
-            "entities": {
-              "parseUserObjectId": userInfo.parseUserObjectId,
-              "parseUserLocale": userInfo.parseUserLocale,
-              "asin": asin
-            }
-          })
-        }, {
-          type: "web_url",
-          url: "http://www.amazon.de",
           title: "Kaufen"
         }],
       });

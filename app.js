@@ -385,10 +385,16 @@ function receivedMessage(event) {
           if (results.length === 1) {
             var user = results[0];
 
-            // Create new key-value pair with key user:senderID
+            // Create new key-value pair with key user:senderID and value ParseUser
             redisClient.hmset('user:' + senderID, {
               'parseUserObjectId': user.id,
-              'parseUserLocale': user.get("locale")
+              'parseUserFirstName': user.get("firstName"),
+              'parseUserLastName': user.get("lastName"),
+              'parseUserProfilePic': user.get("profilePic"),
+              'parseUserLocale': user.get("locale"),
+              'parseUserGender': user.get("gender"),
+              'parseUserTimezone': user.get("timezone")
+
             }, function(error, reply) {
 
                 if (error == null) {
@@ -903,14 +909,20 @@ function sendReceiptMessage(recipientId) {
         success: function(user) {
           console.log("New user created with objectId: " + user.id);
 
-          // Create new key-value pair with key user:senderID
-          redisClient.hmset('user:' + userId, {
+          // Create new key-value pair with key user:senderID and value ParseUser
+          redisClient.hmset('user:' + senderID, {
             'parseUserObjectId': user.id,
-            'parseUserLocale': user.get("locale")
+            'parseUserFirstName': user.get("firstName"),
+            'parseUserLastName': user.get("lastName"),
+            'parseUserProfilePic': user.get("profilePic"),
+            'parseUserLocale': user.get("locale"),
+            'parseUserGender': user.get("gender"),
+            'parseUserTimezone': user.get("timezone")
+
           }, function(error, reply) {
 
               if (error == null) {
-                console.log("New key-value pair created with key: user:" + userId);
+                console.log("New key-value pair created with key: user:" + senderID);
 
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);

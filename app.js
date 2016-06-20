@@ -169,7 +169,7 @@ app.post('/webhook', function (req, res) {
         } else if (messagingEvent.postback) {
           receivedPostback(messagingEvent);
         } else {
-          // console.log("Webhook received unknown messagingEvent: ", messagingEvent);
+          console.log("Webhook received unknown messagingEvent: ", messagingEvent);
         }
       });
     });
@@ -979,7 +979,7 @@ function callSendAPI(messageData) {
         messageId, recipientId);
     } else {
       console.error("Unable to send message.");
-      console.error(response);
+      // console.error(response);
       console.error(error);
     }
   });  

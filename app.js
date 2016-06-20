@@ -476,18 +476,23 @@ function receivedPostback(event) {
   switch (intent) {
 
     case 'activatePriceAlert':
+
       var userInfo = json.entities.userInfo;
-      var itemInfo = json.entities.itemInfo;
+      var item = json.entities.item;
+
+      var asin = objectPath.get(item, "ASIN.0");
+      var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
+      var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+      var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+      var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + itemInfo.lowestNewPrice.formattedPrice);
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPrice.formattedPrice);
 
-      // Check if the product already exists on the Backend, otherwise get
-      // the product information from Amazon Product Advertising API and
-      // save it to the Backend
+      // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
       var query = new Parse.Query(Product);
-      query.equalTo("asin", itemInfo.asin);
+      query.equalTo("asin", asin);
       query.find({
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " products.");
@@ -496,7 +501,7 @@ function receivedPostback(event) {
 
             var product = results[0];
             
-            // Save price alert for the product to the Backend
+            // Save price alert to the Backend
             var PriceAlert = Parse.Object.extend("PriceAlert");
             var priceAlert = new PriceAlert();
 
@@ -505,8 +510,8 @@ function receivedPostback(event) {
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
             priceAlert.set("lowestNewPrice", itemInfo.lowestNewPrice); // Lowest new price (at the time of the price alert activation)
             // Currently not required, but maby helpful later for the price drop calculation
-            priceAlert.set("userLocale", userInfo.parseUserLocale);
             priceAlert.set("asin", itemInfo.asin);
+            priceAlert.set("userLocale", userInfo.parseUserLocale);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
@@ -523,69 +528,49 @@ function receivedPostback(event) {
             });
 
           } else {
-            // Look up item
-            amazonClient.itemLookup({
-              searchIndex: 'All',
-              responseGroup: 'ItemAttributes,Offers,Images',
-              idType: 'ASIN',
-              itemId: asin,
-              domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
-            }).then(function(result) {
-              // console.log(JSON.stringify(result));
-              
-              var item = result;
-              
-              var asin = objectPath.get(item, "ASIN.0");
-              var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-              var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-              var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-              var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
-              // Save product to the Backend
-              var Product = Parse.Object.extend("Product");
-              var product = new Product();
+            // Save product to the Backend
+            var Product = Parse.Object.extend("Product");
+            var product = new Product();
 
-              product.set("asin", asin);
-              product.set("title", title);
-              product.set("detailPageUrl", detailPageUrl);
-              product.set("imageUrl", imageUrl);
+            product.set("asin", asin);
+            product.set("detailPageUrl", detailPageUrl);
+            product.set("imageUrl", imageUrl);
+            product.set("title", title);
 
-              product.save(null, {
-                success: function(product) {
-                  console.log('New object created with objectId: ' + product.id);
+            product.save(null, {
+              success: function(product) {
+                console.log('New object created with objectId: ' + product.id);
 
-                  // Save price alert for the product to the Backend
-                  var PriceAlert = Parse.Object.extend("PriceAlert");
-                  var priceAlert = new PriceAlert();
-      
-                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                  priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-                  priceAlert.set("lowestNewPriceAmount", lowestNewPriceAmount); // Lowest new price amount (at the time of the price alert activation)
-                  // Currently not required, but maby helpful later for the price drop calculation
-                  priceAlert.set("userLocale", parseUserLocale);
-                  priceAlert.set("asin", asin);
-      
-                  priceAlert.save(null, {
-                    success: function(priceAlert) {
-                      console.log('New object created with objectId: ' + priceAlert.id);
-      
-                      // Ask the user to enter a desired price for that article
-                      var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
-                      var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
-                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
-                    },
-                    error: function(priceAlert, error) {
-                      console.log('Failed to create new object, with error code: ' + error.message);
-                    }
-                  });
-                },
-                error: function(product, error) {
-                  console.log('Failed to create new object, with error code: ' + error.message);
-                }
-              });
-            }).catch(function(error) {
-              console.log("Error: " + JSON.stringify(error));
+                // Save price alert for the product to the Backend
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var priceAlert = new PriceAlert();
+    
+                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
+                priceAlert.set("active", false); // Indicates if the price alert is active or inactive
+                priceAlert.set("lowestNewPrice", itemInfo.lowestNewPrice); // Lowest new price (at the time of the price alert activation)
+                // Currently not required, but maby helpful later for the price drop calculation
+                priceAlert.set("asin", itemInfo.asin);
+                priceAlert.set("userLocale", userInfo.parseUserLocale);
+    
+                priceAlert.save(null, {
+                  success: function(priceAlert) {
+                    console.log('New object created with objectId: ' + priceAlert.id);
+    
+                    // Ask the user to enter a desired price for that article
+                    var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
+                    var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
+                    sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+                  },
+                  error: function(priceAlert, error) {
+                    console.log('Failed to create new object, with error code: ' + error.message);
+                  }
+                });
+              },
+              error: function(product, error) {
+                console.log('Failed to create new object, with error code: ' + error.message);
+              }
             });
           }
           
@@ -809,7 +794,7 @@ function sendReceiptMessage(recipientId) {
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
     var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
-    // Check that required properties for the item are available, otherwise exclude the item from the result list
+    // Check if required item properties are available, otherwise exclude the item from the article search results list
     if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
       lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
@@ -824,10 +809,7 @@ function sendReceiptMessage(recipientId) {
             "intent": "activatePriceAlert",
             "entities": {
               "userInfo": userInfo,
-              "itemInfo": {
-                "asin": asin,
-                "lowestNewPrice": lowestNewPrice
-              }
+              "item": item
             }
           })
         }, {

@@ -784,7 +784,6 @@ function sendReceiptMessage(recipientId) {
  */
  function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
   var elements = [];
-  console.log(results);
 
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
@@ -793,7 +792,7 @@ function sendReceiptMessage(recipientId) {
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-    var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
+    var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
     if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && title !== undefined

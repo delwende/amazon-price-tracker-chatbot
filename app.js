@@ -837,7 +837,7 @@ function sendReceiptMessage(recipientId) {
           })
         }, {
           type: "web_url",
-          url: url,
+          url: url !== undefined ? url : "http://www.amazon.de",
           title: "Kaufen"
         }],
       });

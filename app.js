@@ -119,7 +119,7 @@ redisClient.on('error', function (error) {
     console.log("Error: " + error);
 });
 
-// Configure accounting.js settings
+// Configure accounting.js
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
 /*
@@ -183,35 +183,35 @@ app.post('/webhook', function (req, res) {
 });
 
 app.get('/test', function(req, res) {
-  // Search items
-  amazonClient.itemSearch({
-    searchIndex: 'All',
-    responseGroup: 'ItemAttributes,Offers,Images',
-    keywords: 'iphone6',
-    domain: config.get('awsLocale_de_DE') // Set Product Advertising API locale according to user locale
-  }).then(function(results){
-    console.log("Successfully retrieved " + results.length + " items.");
-    // console.log(results);
+  // // Search items
+  // amazonClient.itemSearch({
+  //   searchIndex: 'All',
+  //   responseGroup: 'ItemAttributes,Offers,Images',
+  //   keywords: 'iphone6',
+  //   domain: config.get('awsLocale_de_DE') // Set Product Advertising API locale according to user locale
+  // }).then(function(results){
+  //   console.log("Successfully retrieved " + results.length + " items.");
+  //   // console.log(results);
 
-    var asin = objectPath.get(results[0], "ASIN.0");
-    var detailPageUrl = objectPath.get(results[0], "DetailPageURL.0");
-    var imageUrl = objectPath.coalesce(results[0], ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-    var title = objectPath.get(results[0], "ItemAttributes.0.Title.0");
-    var lowestNewPrice = {
-      "amount": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.Amount.0"),
-      "currencyCode": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
-      "formattedPrice": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
-    };
+  //   var asin = objectPath.get(results[0], "ASIN.0");
+  //   var detailPageUrl = objectPath.get(results[0], "DetailPageURL.0");
+  //   var imageUrl = objectPath.coalesce(results[0], ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+  //   var title = objectPath.get(results[0], "ItemAttributes.0.Title.0");
+  //   var lowestNewPrice = {
+  //     "amount": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+  //     "currencyCode": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+  //     "formattedPrice": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+  //   };
 
-    console.log(asin);
-    console.log(detailPageUrl);
-    console.log(imageUrl);
-    console.log(title);
-    console.log(lowestNewPrice.amount);
+  //   console.log(asin);
+  //   console.log(detailPageUrl);
+  //   console.log(imageUrl);
+  //   console.log(title);
+  //   console.log(lowestNewPrice.amount);
 
-  }).catch(function(error){
-    console.log("Error: " + JSON.stringify(error));
-  });
+  // }).catch(function(error){
+  //   console.log("Error: " + JSON.stringify(error));
+  // });
 });
 
 /*
@@ -317,10 +317,10 @@ function receivedMessage(event) {
 
         if (error == null) {
 
-          var userInfo = reply;
+          var user = reply;
 
           if (messageText) {
-            switch (userInfo.parseUserLocale) {
+            switch (user.parseUserLocale) {
               // case 'pt_BR': // Portuguese (Brazil)
               //   break;
 
@@ -347,7 +347,7 @@ function receivedMessage(event) {
                     searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
                     keywords: keywords,
-                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set Product Advertising API locale according to user locale
+                    domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
@@ -355,10 +355,10 @@ function receivedMessage(event) {
                     // Inform the user that search results are displayed
                     sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
                     // Show to the user 10 search results
-                    sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
+                    sendListArticleSearchResultsGenericMessage(senderID, results, user);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
-                    // Inform the user that the search for his keywords was not successful
+                    // Inform the user that the search for his keywords yielded no results
                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
                   });
@@ -417,7 +417,7 @@ function receivedMessage(event) {
           if (results.length === 1) {
             var user = results[0];
 
-            // Create new key-value pair with key user:senderID and value ParseUser
+            // Create new key-value pair with key user:senderID
             redisClient.hmset('user:' + senderID, {
               'parseUserObjectId': user.id,
               'parseUserFirstName': user.get("firstName"),
@@ -509,7 +509,7 @@ function receivedPostback(event) {
 
     case 'activatePriceAlert':
 
-      var userInfo = json.entities.userInfo;
+      var user = json.entities.user;
       var item = json.entities.item;
 
       var asin = objectPath.get(item, "ASIN.0");
@@ -542,12 +542,12 @@ function receivedPostback(event) {
             var priceAlert = new PriceAlert();
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
+            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
             priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
             // Currently not required, but maby helpful later for the price drop calculation
             priceAlert.set("asin", asin);
-            priceAlert.set("userLocale", userInfo.parseUserLocale);
+            priceAlert.set("userLocale", user.parseUserLocale);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
@@ -578,17 +578,17 @@ function receivedPostback(event) {
               success: function(product) {
                 console.log('New object created with objectId: ' + product.id);
 
-                // Save price alert for the product to the Backend
+                // Save price alert to the Backend
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var priceAlert = new PriceAlert();
     
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
                 priceAlert.set("active", false); // Indicates if the price alert is active or inactive
                 priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
                 // Currently not required, but maby helpful later for the price drop calculation
                 priceAlert.set("asin", asin);
-                priceAlert.set("userLocale", userInfo.parseUserLocale);
+                priceAlert.set("userLocale", user.parseUserLocale);
     
                 priceAlert.save(null, {
                   success: function(priceAlert) {
@@ -818,12 +818,13 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
- function sendListArticleSearchResultsGenericMessage(recipientId, results, userInfo) {
+ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
 
+    var asin = objectPath.get(item, "ASIN.0");
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
     var lowestNewPrice = {
@@ -834,7 +835,8 @@ function sendReceiptMessage(recipientId) {
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
-    if (detailPageUrl !== undefined) {
+    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
+        lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,
@@ -846,7 +848,14 @@ function sendReceiptMessage(recipientId) {
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "userInfo": userInfo
+              "user": user,
+              "item": {
+                "asin": asin,
+                "detailPageUrl": detailPageUrl,
+                "imageUrl": imageUrl,
+                "lowestNewPrice": lowestNewPrice,
+                "title": title
+              }
             }
           })
         }, {

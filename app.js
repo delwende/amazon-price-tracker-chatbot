@@ -181,33 +181,6 @@ app.post('/webhook', function (req, res) {
   }
 });
 
-app.get('/test', function(req, res) {
-  var param = req.param('param');
-  
-  // // Search items
-  // amazonClient.itemSearch({
-  //   keywords: param,
-  //   responseGroup: 'ItemAttributes,Offers,Images',
-  //   domain: 'webservices.amazon.de'
-  // }).then(function(results){
-  //   console.log("Successfully retrieved " + results.length + " items.");
-  //   // console.log(results);
-  //   for (var i=0; i<results.length; i++) {
-  //     console.log("FormattedPrice" in results[i]);
-  //   }
-    
-  //   // console.log(results[0].ASIN[0]);
-  //   // console.log(results[0].DetailPageURL[0]);
-  //   // console.log(results[0].LargeImage[0].URL[0]);
-  //   // console.log(results[0].ItemAttributes[0].Title[0]);
-  //   // console.log(results[0].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0]);
-
-  // }).catch(function(error){
-  //   console.log("Error: " + error);
-  // });
-  
-});
-
 /*
  * Verify that the callback came from Facebook. Using the App Secret from 
  * the App Dashboard, we can verify the signature that is sent with each 
@@ -341,14 +314,14 @@ function receivedMessage(event) {
                     searchIndex: 'All',
                     responseGroup: 'ItemAttributes,Offers,Images',
                     keywords: keywords,
-                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set the corresponding Product Advertising API locale
+                    domain: config.get('awsLocale_' + userInfo.parseUserLocale) // Set Product Advertising API locale according to user locale
                   }).then(function(results){
                     console.log("Successfully retrieved " + results.length + " items.");
                     // console.log(results);
 
                     // Inform the user that search results are displayed
                     sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-                    // Show to the user a list of 10 search results
+                    // Show to the user 10 search results
                     sendListArticleSearchResultsGenericMessage(senderID, results, userInfo);
                   }).catch(function(error){
                     console.log("Error: " + JSON.stringify(error));
@@ -357,7 +330,7 @@ function receivedMessage(event) {
                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
                   });
                 } else {
-                  // Apologize to the user and him some help instructions 
+                  // Apologize to the user and give some help instructions 
                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
                   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                 }
@@ -399,7 +372,9 @@ function receivedMessage(event) {
     } else {
       console.log("Key-value pair with key user:" + senderID + " doesn't exist.");
 
-      // Check if user exists on the Backend
+      // Check if the user already exists on the Backend. If the user exists, save user data to
+      // key-value store, otherwise get user profile information from Facebook User Profile API
+      // and signup a user on the Backend
       var query = new Parse.Query(Parse.User);
       query.equalTo("senderId", senderID);  // find user by senderId
       query.find({
@@ -490,7 +465,7 @@ function receivedPostback(event) {
 
   var intent = json.intent;
 
-  // Check intent in order to decide the next step
+  // Check intent in order to decide the next step to perform
   switch (intent) {
 
     case 'activatePriceAlert':
@@ -503,7 +478,9 @@ function receivedPostback(event) {
       // Inform user about the current lowest price
       // sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + priceFormatted);
 
-      // Query products from Backend
+      // Check if the corresponding product already exists on the Backend,
+      // otherwise get product information from Amazon Product Advertising API
+      // and save it to the Backend
       var Product = Parse.Object.extend("Product");
       var query = new Parse.Query(Product);
       query.equalTo("asin", asin);
@@ -511,14 +488,11 @@ function receivedPostback(event) {
         success: function(results) {
           console.log("Successfully retrieved " + results.length + " products.");
 
-          // Check if the corresponding product already exists on the Backend,
-          // otherwise get product information from Amazon Product Advertising API
-          // and save it to the Backend
           if (results.length === 1) {
 
             var product = results[0];
             
-            // Save price alert for existing product to the Backend
+            // Save price alert for the product to the Backend
             var PriceAlert = Parse.Object.extend("PriceAlert");
             var priceAlert = new PriceAlert();
 
@@ -551,7 +525,7 @@ function receivedPostback(event) {
               responseGroup: 'ItemAttributes,Offers,Images',
               idType: 'ASIN',
               itemId: asin,
-              domain: config.get('awsLocale_' + parseUserLocale) // Set the corresponding Product Advertising API locale
+              domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
             }).then(function(result) {
               // console.log(JSON.stringify(result));
 
@@ -574,14 +548,14 @@ function receivedPostback(event) {
                   success: function(product) {
                     console.log('New object created with objectId: ' + product.id);
 
-                    // Save price alert for existing product to the Backend
+                    // Save price alert for the product to the Backend
                     var PriceAlert = Parse.Object.extend("PriceAlert");
                     var priceAlert = new PriceAlert();
 
                     priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                     priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                     priceAlert.set("active", true); // Indicates if the price alert ist active or inactive
-                    priceAlert.set("price", amout); // Price at the time of the price alert activation
+                    // priceAlert.set("price", amout); // Price at the time of the price alert activation
                     // Not required now, but maby helpful later for price drop calculation
                     priceAlert.set("locale", parseUserLocale);
                     priceAlert.set("asin", asin);
@@ -842,7 +816,7 @@ function sendReceiptMessage(recipientId) {
         title: title,
         subtitle: "Aktueller Preis: " + priceFormatted,
         item_url: "",               
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 pixels using cloudimage.io
+        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
           title: "Alarm aktivieren",

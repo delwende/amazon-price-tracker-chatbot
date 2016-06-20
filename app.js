@@ -507,8 +507,12 @@ function receivedPostback(event) {
       var asin = objectPath.get(item, "ASIN.0");
       var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
       var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+      var lowestNewPrice = {
+        "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+        "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+        "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+      };
       var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-      var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
       // Inform the user about the current lowest new price
       sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + lowestNewPrice.formattedPrice);
@@ -532,9 +536,9 @@ function receivedPostback(event) {
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
             priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-            priceAlert.set("lowestNewPrice", itemInfo.lowestNewPrice); // Lowest new price (at the time of the price alert activation)
+            priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
             // Currently not required, but maby helpful later for the price drop calculation
-            priceAlert.set("asin", itemInfo.asin);
+            priceAlert.set("asin", asin);
             priceAlert.set("userLocale", userInfo.parseUserLocale);
 
             priceAlert.save(null, {
@@ -543,7 +547,7 @@ function receivedPostback(event) {
 
                 // Ask the user to enter a desired price for that article
                 var nintyPercentPrice = (itemInfo.lowestNewPrice.amount / 100) * 90; // Calculate ninty percent price
-                var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
+                var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
                 sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
               },
               error: function(priceAlert, error) {
@@ -573,9 +577,9 @@ function receivedPostback(event) {
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: userInfo.parseUserObjectId});
                 priceAlert.set("active", false); // Indicates if the price alert is active or inactive
-                priceAlert.set("lowestNewPrice", itemInfo.lowestNewPrice); // Lowest new price (at the time of the price alert activation)
+                priceAlert.set("lowestNewPrice", lowestNewPrice); // Lowest new price (at the time of the price alert activation)
                 // Currently not required, but maby helpful later for the price drop calculation
-                priceAlert.set("asin", itemInfo.asin);
+                priceAlert.set("asin", asin);
                 priceAlert.set("userLocale", userInfo.parseUserLocale);
     
                 priceAlert.save(null, {
@@ -584,7 +588,7 @@ function receivedPostback(event) {
     
                     // Ask the user to enter a desired price for that article
                     var nintyPercentPrice = (lowestNewPriceAmount / 100) * 90; // Calculate ninty percent price
-                    var examplePrice = accounting.formatMoney(nintyPercentPrice, itemInfo.lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
+                    var examplePrice = accounting.formatMoney(nintyPercentPrice, lowestNewPrice.currencyCode, 2, ".", ","); // Format price according to the user's locale
                     sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                   },
                   error: function(priceAlert, error) {
@@ -815,12 +819,16 @@ function sendReceiptMessage(recipientId) {
     var asin = objectPath.get(item, "ASIN.0");
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+    var lowestNewPrice = {
+      "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+    };
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-    var lowestNewPrice = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0");
 
     // Check if required item properties are available, otherwise exclude the item from the article search results list
-    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
-      lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice!== undefined && title !== undefined) {
+    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined &&
+      title !== undefined && lowestNewPrice !== undefined) {
       elements.push({
         title: title,
         subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,

@@ -800,28 +800,19 @@ function sendReceiptMessage(recipientId) {
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
 
-    try {
-      var asin = objectPath.get(item, "ASIN.0");
-      var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-      var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
-      var imageUrl = objectPath.get(item, "LargeImage.0.URL.0");
-      var url = objectPath.get(item, "DetailPageURL.0");
-      
-      // var asin = results[i].ASIN[0];
-      // var title = results[i].ItemAttributes[0].Title[0];
-      // var priceFormatted = results[i].OfferSummary[0].LowestNewPrice[0].FormattedPrice[0];
-      // var price = results[i].OfferSummary[0].LowestNewPrice[0].Amount[0];
-      // var url = results[i].DetailPageURL[0];
+    var asin = objectPath.get(item, "ASIN.0");
+    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+    var priceFormatted = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0");
+    var imageUrl = objectPath.coalesce(obj, ["MediumImage.0.URL.0", "SmallImage.0.URL.0"], "LargeImage.0.URL.0"); // Get the first non-undefined value
+    var url = objectPath.get(item, "DetailPageURL.0");
+    var priceAmount = objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0");
 
-      // Check if large image is available (otherwise take the medium one)
-      // var largeImageUrl = results[i].LargeImage[0].URL[0];
-      // var mediumImageUrl = results[i].MediumImage[0].URL[0];
-      // var imageUrl = largeImageUrl != undefined ? largeImageUrl : mediumImageUrl;
-      // var imageUrl = results[i].LargeImage[0].URL[0];
-
+    // Check if required properties for the item are available, otherwise exclude the item from the result list
+    if (asin !== undefined && title !== undefined && priceFormatted !== undefined && imageUrl !== undefined &&
+      url !== undefined && priceAmount !== undefined) {
       elements.push({
-        title: title !== undefined ? title : "title",
-        subtitle: "Aktueller Preis: " + priceFormatted !== undefined ? priceFormatted : "price",
+        title: title,
+        subtitle: "Aktueller Preis: " + priceFormatted,
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
@@ -832,21 +823,17 @@ function sendReceiptMessage(recipientId) {
             "entities": {
               "parseUserObjectId": userInfo.parseUserObjectId,
               "parseUserLocale": userInfo.parseUserLocale,
-              "asin": asin
+              "asin": asin,
+              "priceFormatted": priceFormatted
             }
           })
         }, {
           type: "web_url",
-          url: url !== undefined ? url : "http://www.amazon.de",
+          url: url,
           title: "Kaufen"
         }],
       });
-    } catch (exception) {
-     console.log("Exception: " + exception);
-     console.log("asin: " + asin + "\ntitle: " + title + "\nprice: " +
-      price + "\nurl: " + url + "\nimageUrl: " + imageUrl);
-   }
-
+    }
   }
 
   var messageData = {

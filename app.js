@@ -294,7 +294,7 @@ function receivedMessage(event) {
               var messageTextPrefix = messageText.split(" ")[0];
               if (!isNaN(messageTextPrefix)) {
                 
-                var priceDesired = messageTextPrefix;
+                var priceDesired = parseFloat(messageTextPrefix);
                 
                 // Update price alert with the user entered price desired
                 var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -305,7 +305,7 @@ function receivedMessage(event) {
                 
                 priceAlert.save(null, {
                   success: function(priceAlert) {
-                    console.log('Updated price alert with objectId: ' + priceAlert.id);
+                    console.log("Updated price alert with objectId: " + priceAlert.id);
                     
                     // Update new key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {
@@ -323,6 +323,9 @@ function receivedMessage(event) {
                         }
                         
                     });
+                  },
+                  error: function(priceAlert, error) {
+                    console.log('Failed to create new price alert, with error code: ' + error.message);
                   }
                 });
                 
@@ -376,7 +379,7 @@ function receivedMessage(event) {
                     });
                   } else {
                     // Apologize to the user and provide some help instructions 
-                    sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst. Probiere");
+                    sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
                     sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                   }
 

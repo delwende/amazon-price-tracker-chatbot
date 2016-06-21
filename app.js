@@ -295,6 +295,7 @@ function receivedMessage(event) {
               if (!isNaN(messageTextPrefix)) {
                 
                 var priceDesired = parseFloat(messageTextPrefix);
+                var priceDesiredFormatted = accounting.formatMoney(priceDesired, "EUR", 2, ".", ",");
                 
                 // Update price alert with the user entered price desired
                 var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -551,7 +552,7 @@ function receivedPostback(event) {
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
             priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
-            priceAlert.set("active", false);
+            priceAlert.set("active", true);
 
             priceAlert.save(null, {
               success: function(priceAlert) {
@@ -559,7 +560,7 @@ function receivedPostback(event) {
                 
                 // Calculate example price
                 var amount = item.lowestNewPrice.amount;
-                var examplePrice = accounting.formatMoney((amount / 100) - 1, "EUR", 2, ".", ",");
+                var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ",");
 
                 // Update key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
@@ -605,7 +606,7 @@ function receivedPostback(event) {
     
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
-                priceAlert.set("active", false);
+                priceAlert.set("active", true);
     
                 priceAlert.save(null, {
                   success: function(priceAlert) {
@@ -613,7 +614,7 @@ function receivedPostback(event) {
     
                     // Calculate example price
                     var amount = item.lowestNewPrice.amount;
-                    var examplePrice = accounting.formatMoney((amount / 100) - 1, "EUR", 2, ".", ",");
+                    var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ",");
 
                     // Update key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {

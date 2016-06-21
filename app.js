@@ -334,7 +334,7 @@ function receivedMessage(event) {
             sendTextMessage(senderID, "Message with attachment received");
           }
         }
-      }
+      });
     } else {
       console.log("Key-value pair with key user:" + senderID + " doesn't exist.");
 

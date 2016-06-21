@@ -276,7 +276,6 @@ function receivedMessage(event) {
 
   // Determine if key user:senderID exists
   redisClient.exists('user:' + senderID, function(error, reply) {
-    redisClient.del('user:' + senderID);
     if (reply === 1) {
       console.log("Key-value pair with key user:" + senderID + " exists.");
       // Get all the fields and values in hash for key user:senderID

@@ -320,7 +320,7 @@ function receivedMessage(event) {
     
                           // Inform the user that price alert activation was sucessful
                           sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
-                          priceDesired + " Euro rutscht! (y)");
+                          priceDesiredFormatted + " rutscht! (y)");
                         }
                         
                     });

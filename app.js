@@ -287,7 +287,7 @@ function receivedMessage(event) {
           if (messageText) {
             
             // Check if user has an incomplete price alert
-            if (user.incompletePriceAlert === true) {
+            if (user.incompletePriceAlert === "true") {
               sendTextMessage(senderID, "Bitte gib noch einen Preis ein um den Alarm abzuschließen (Tippe z.B. 25 Euro):");
             } else {
               switch (user.parseUserLocale) {
@@ -396,8 +396,8 @@ function receivedMessage(event) {
               'parseUserLocale': user.get("locale"),
               'parseUserGender': user.get("gender"),
               'parseUserTimezone': user.get("timezone"),
-              'incompletePriceAlert': false,
-              'incompletePriceAlertId': undefined // ParseObject id of the imcomplete price alert
+              'incompletePriceAlert': "false",
+              'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
 
             }, function(error, reply) {
 
@@ -513,7 +513,7 @@ function receivedPostback(event) {
 
                 // Create new key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
-                  'incompletePriceAlert': true,
+                  'incompletePriceAlert': "true",
                   'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
 
                 }, function(error, reply) {
@@ -564,7 +564,7 @@ function receivedPostback(event) {
 
                     // Create new key-value pair with key user:senderID and value ParseUser
                     redisClient.hmset('user:' + senderID, {
-                      'incompletePriceAlert': true,
+                      'incompletePriceAlert': "true",
                       'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
                     }, function(error, reply) {
 
@@ -925,8 +925,8 @@ function sendReceiptMessage(recipientId) {
             'parseUserLocale': user.get("locale"),
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
-            'incompletePriceAlert': false,
-            'incompletePriceAlertId': undefined // ParseObject id of the imcomplete price alert
+            'incompletePriceAlert': "false",
+            'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
 
           }, function(error, reply) {
 

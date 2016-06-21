@@ -983,16 +983,14 @@ function sendReceiptMessage(recipientId) {
             'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
             'incompletePriceAlertExamplePrice': ""
           }, function(error, reply) {
-
               if (error == null) {
                 console.log("New key-value pair created with key: user:" + userId);
-
+                
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);
               }
               
           });
-
         },
         error: function(user, error) {
           console.log("Error: " + error.code + " " + error.message);

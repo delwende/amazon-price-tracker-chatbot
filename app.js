@@ -303,28 +303,26 @@ function receivedMessage(event) {
                 priceAlert.set("objectId", user.incompletePriceAlertId);
                 priceAlert.set("priceDesired", priceDesired);
                 
-                // Create new key-value pair with key user:senderID
-                redisClient.hmset('user:' + senderID, {
-                  'incompletePriceAlert': "false",
-                  'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
-
-                }, function(error, reply) {
-
-                    if (error == null) {
-                      console.log("New key-value pair created with key: user:" + senderID);
-
-                      // Inform the user that price alert activation was sucessful
-                      sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
-                      priceDesired + " Euro rutscht! (y)");
-                    }
-                    
-                });
-                
                 priceAlert.save(null, {
                   success: function(priceAlert) {
-                    console.log('New price alert created with objectId: ' + priceAlert.id);
+                    console.log('Updated price alert with objectId: ' + priceAlert.id);
                     
-                    
+                    // Update new key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'incompletePriceAlert': "false",
+                      'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
+    
+                    }, function(error, reply) {
+    
+                        if (error == null) {
+                          console.log("Updated key-value pair with key: user:" + senderID);
+    
+                          // Inform the user that price alert activation was sucessful
+                          sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
+                          priceDesired + " Euro rutscht! (y)");
+                        }
+                        
+                    });
                   }
                 });
                 
@@ -553,9 +551,9 @@ function receivedPostback(event) {
 
             priceAlert.save(null, {
               success: function(priceAlert) {
-                console.log('New object created with objectId: ' + priceAlert.id);
+                console.log('New price alert created with objectId: ' + priceAlert.id);
 
-                // Create new key-value pair with key user:senderID
+                // Update key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
                   'incompletePriceAlert': "true",
                   'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
@@ -563,7 +561,7 @@ function receivedPostback(event) {
                 }, function(error, reply) {
 
                     if (error == null) {
-                      console.log("New key-value pair created with key: user:" + senderID);
+                      console.log("Updated key-value pair with key: user:" + senderID);
 
                       // Ask the user to enter a desired price
                       sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
@@ -574,7 +572,7 @@ function receivedPostback(event) {
 
               },
               error: function(priceAlert, error) {
-                console.log('Failed to create new object, with error code: ' + error.message);
+                console.log('Failed to create new price alert, with error code: ' + error.message);
               }
             });
 
@@ -591,7 +589,7 @@ function receivedPostback(event) {
 
             product.save(null, {
               success: function(product) {
-                console.log('New object created with objectId: ' + product.id);
+                console.log('New product created with objectId: ' + product.id);
 
                 // Save price alert to the Backend
                 var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -603,17 +601,17 @@ function receivedPostback(event) {
     
                 priceAlert.save(null, {
                   success: function(priceAlert) {
-                    console.log('New object created with objectId: ' + priceAlert.id);
+                    console.log('New price alert created with objectId: ' + priceAlert.id);
     
 
-                    // Create new key-value pair with key user:senderID and value ParseUser
+                    // Update key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {
                       'incompletePriceAlert': "true",
                       'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
                     }, function(error, reply) {
 
                         if (error == null) {
-                          console.log("New key-value pair created with key: user:" + senderID);
+                          console.log("Updated key-value pair with key: user:" + senderID);
 
                           // Ask the user to enter a desired price
                           sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
@@ -623,12 +621,12 @@ function receivedPostback(event) {
 
                   },
                   error: function(priceAlert, error) {
-                    console.log('Failed to create new object, with error code: ' + error.message);
+                    console.log('Failed to create new price alert, with error code: ' + error.message);
                   }
                 });
               },
               error: function(product, error) {
-                console.log('Failed to create new object, with error code: ' + error.message);
+                console.log('Failed to create new product, with error code: ' + error.message);
               }
             });
           }

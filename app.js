@@ -940,19 +940,18 @@ function sendReceiptMessage(recipientId) {
 
       var username = userId;
       // Generate password from userId
-      var userIdHash = crypto.createHmac('sha1', APP_SECRET)
+      var password = crypto.createHmac('sha1', APP_SECRET)
       .update(userId)
       .digest('hex');
-      var password = userIdHash;
 
       var json = JSON.parse(body);
 
-      var firstName = json.first_name;
-      var lastName = json.last_name;
-      var profilePic = json.profile_pic;
-      var locale = json.locale;
-      var timezone = json.timezone;
-      var gender = json.gender;
+      var firstName = objectPath.get(json, "first_name");
+      var lastName = objectPath.get(json, "last_name");
+      var profilePic = objectPath.get(json, "profile_pic");
+      var locale = objectPath.get(json, "locale");
+      var timezone = objectPath.get(json, "timezone");
+      var gender = objectPath.get(json, "gender");
 
       // Sign up user on the Backend
       var user = new Parse.User();

@@ -568,7 +568,7 @@ function receivedPostback(event) {
 
                       // Ask the user to enter a desired price
                       var amount = item.lowestNewPrice.amount;
-                      var examplePrice = accounting.formatMoney(amount - 1000, { symbol: "EUR",  format: "%s %v" });
+                      var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
                       sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                     }
                     
@@ -620,7 +620,7 @@ function receivedPostback(event) {
 
                           // Ask the user to enter a desired price
                           var amount = item.lowestNewPrice.amount;
-                          var examplePrice = accounting.formatMoney(amount - 1000, { symbol: "EUR",  format: "%s %v" });
+                          var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
                           sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                         }
                         

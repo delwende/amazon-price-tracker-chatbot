@@ -528,7 +528,7 @@ function receivedPostback(event) {
 
     case 'activatePriceAlert':
 
-      var user = json.entities.user;
+      var parseUserObjectId = json.entities.parseUserObjectId;
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
@@ -551,7 +551,7 @@ function receivedPostback(event) {
             var priceAlert = new PriceAlert();
 
             priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
+            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
             priceAlert.set("active", true);
 
             priceAlert.save(null, {
@@ -605,7 +605,7 @@ function receivedPostback(event) {
                 var priceAlert = new PriceAlert();
     
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: user.parseUserObjectId});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", true);
     
                 priceAlert.save(null, {
@@ -882,7 +882,7 @@ function sendReceiptMessage(recipientId) {
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "user": user,
+              "parseUserObjectId": user.parseUserObjectId,
               "item": {
                 "asin": asin,
                 "detailPageUrl": detailPageUrl,

@@ -274,72 +274,68 @@ function receivedMessage(event) {
 
   messageText = messageText.toLowerCase();
 
-  // Determine if key user:senderID exists
-  redisClient.exists('user:' + senderID, function(error, reply) {
-    if (reply === 1) {
-      console.log("Key-value pair with key user:" + senderID + " exists.");
-
-      // Get all fields and values in hash for key user:senderID
-      redisClient.hgetall("user:" + senderID, function(error, reply) {
-        if (error) {
-          console.log("Error: " + error);
-        } else {
-          var user = reply;
-
-          if (messageText) {
-
-            switch (user.parseUserLocale) {
-              // case 'pt_BR': // Portuguese (Brazil)
-              //   break;
-
-              // case 'zh_CN': // Simplified Chinese (China)
-              //   break;
-
-              // case 'zh_HK': // Traditional Chinese (Hong Kong)
-              //   break;
-
-              // case 'fr_FR': // French (France)
-              //   break;
-
-              case 'de_DE': // German
-                sendTextMessage(senderID, "Hi, " + user.parseUserFirstName + "!");
-                break;
-
-              // case 'en_IN': // English (India)
-              //   break;
-
-              // case 'it_IT': // Italian
-              //   break;
-
-              // case 'ja_JP': // Japanese
-              //   break;
-
-              // case 'es_MX': // Spanish (Mexico)
-              //   break;
-
-              // case 'es_ES': // Spanish (Spain)
-              //   break;
-
-              // case 'en_GB': // English (UK)
-              //   break;
-
-              // case 'en_US': // English (US)
-              //   break;
-
-              default:
-                sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-            }
-
-          } else if (messageAttachments) {
-            sendTextMessage(senderID, "Message with attachment received");
-          }
-        }
-      });
+  // Get all fields and values in hash for key user:senderID
+  redisClient.hgetall("user:" + senderID, function(error, reply) {
+    if (error) {
+      console.log("Error: " + error);
     } else {
-      console.log("Key-value pair with key user:" + senderID + " doesn't exist.");
 
-      // Get Facebook user profile information and sign up a user on the Backend
-      callUserProfileAPI(senderID, event);
+      if (reply) {
+        var user = reply;
+
+        if (messageText) {
+
+          switch (user.parseUserLocale) {
+            // case 'pt_BR': // Portuguese (Brazil)
+            //   break;
+
+            // case 'zh_CN': // Simplified Chinese (China)
+            //   break;
+
+            // case 'zh_HK': // Traditional Chinese (Hong Kong)
+            //   break;
+
+            // case 'fr_FR': // French (France)
+            //   break;
+
+            case 'de_DE': // German
+              sendTextMessage(senderID, "Hi, " + user.parseUserFirstName + "!");
+              break;
+
+            // case 'en_IN': // English (India)
+            //   break;
+
+            // case 'it_IT': // Italian
+            //   break;
+
+            // case 'ja_JP': // Japanese
+            //   break;
+
+            // case 'es_MX': // Spanish (Mexico)
+            //   break;
+
+            // case 'es_ES': // Spanish (Spain)
+            //   break;
+
+            // case 'en_GB': // English (UK)
+            //   break;
+
+            // case 'en_US': // English (US)
+            //   break;
+
+            default:
+            sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+          }
+
+        } else if (messageAttachments) {
+          sendTextMessage(senderID, "Message with attachment received");
+        }
+      } else {
+        // Get Facebook user profile information and sign up a user on the Backend
+        callUserProfileAPI(senderID, event);
+      }
+
+      
     }
   });
 

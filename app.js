@@ -303,26 +303,28 @@ function receivedMessage(event) {
                 priceAlert.set("objectId", user.incompletePriceAlertId);
                 priceAlert.set("priceDesired", priceDesired);
                 
+                // Create new key-value pair with key user:senderID
+                redisClient.hmset('user:' + senderID, {
+                  'incompletePriceAlert': "false",
+                  'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
+
+                }, function(error, reply) {
+
+                    if (error == null) {
+                      console.log("New key-value pair created with key: user:" + senderID);
+
+                      // Inform the user that price alert activation was sucessful
+                      sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
+                      priceDesired + " Euro rutscht! (y)");
+                    }
+                    
+                });
+                
                 priceAlert.save(null, {
                   success: function(priceAlert) {
                     console.log('New price alert created with objectId: ' + priceAlert.id);
                     
-                    // Create new key-value pair with key user:senderID
-                    redisClient.hmset('user:' + senderID, {
-                      'incompletePriceAlert': "false",
-                      'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
-    
-                    }, function(error, reply) {
-    
-                        if (error == null) {
-                          console.log("New key-value pair created with key: user:" + senderID);
-    
-                          // Inform the user that price alert activation was sucessful
-                          sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
-                          priceDesired + " Euro rutscht! (y)");
-                        }
-                        
-                    });
+                    
                   }
                 });
                 

@@ -36,7 +36,7 @@
     "awsLocale_en_US": "webservices.amazon.com",
     "currencySymbol_pt_BR": "EUR",
     "currencySymbol_zh_CN": "EUR",
-    "currencySymbol_HK": "EUR",
+    "currencySymbol_zh_HK": "EUR",
     "currencySymbol_fr_FR": "EUR",
     "currencySymbol_de_DE": "EUR",
     "currencySymbol_en_IN": "EUR",
@@ -45,5 +45,17 @@
     "currencySymbol_es_MX": "EUR",
     "currencySymbol_es_ES": "EUR",
     "currencySymbol_en_GB": "EUR",
-    "currencySymbol_en_US": "EUR"
+    "currencySymbol_en_US": "EUR",
+    "currencySubunitsPerMainunit_pt_BR": 100,
+    "currencySubunitsPerMainunit_zh_CN": 100,
+    "currencySubunitsPerMainunit_zh_HK": 100,
+    "currencySubunitsPerMainunit_fr_FR": 100,
+    "currencySubunitsPerMainunit_de_DE": 100,
+    "currencySubunitsPerMainunit_en_IN": 100,
+    "currencySubunitsPerMainunit_it_IT": 100,
+    "currencySubunitsPerMainunit_ja_JP": 100,
+    "currencySubunitsPerMainunit_es_MX": 100,
+    "currencySubunitsPerMainunit_es_ES": 100,
+    "currencySubunitsPerMainunit_en_GB": 100,
+    "currencySubunitsPerMainunit_en_US": 100
 }

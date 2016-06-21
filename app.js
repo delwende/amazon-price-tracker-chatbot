@@ -182,38 +182,6 @@ app.post('/webhook', function (req, res) {
   }
 });
 
-app.get('/test', function(req, res) {
-  // // Search items
-  // amazonClient.itemSearch({
-  //   searchIndex: 'All',
-  //   responseGroup: 'ItemAttributes,Offers,Images',
-  //   keywords: 'iphone6',
-  //   domain: config.get('awsLocale_de_DE') // Set Product Advertising API locale according to user locale
-  // }).then(function(results){
-  //   console.log("Successfully retrieved " + results.length + " items.");
-  //   // console.log(results);
-
-  //   var asin = objectPath.get(results[0], "ASIN.0");
-  //   var detailPageUrl = objectPath.get(results[0], "DetailPageURL.0");
-  //   var imageUrl = objectPath.coalesce(results[0], ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-  //   var title = objectPath.get(results[0], "ItemAttributes.0.Title.0");
-  //   var lowestNewPrice = {
-  //     "amount": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.Amount.0"),
-  //     "currencyCode": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
-  //     "formattedPrice": objectPath.get(results[0], "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
-  //   };
-
-  //   console.log(asin);
-  //   console.log(detailPageUrl);
-  //   console.log(imageUrl);
-  //   console.log(title);
-  //   console.log(lowestNewPrice.amount);
-
-  // }).catch(function(error){
-  //   console.log("Error: " + JSON.stringify(error));
-  // });
-});
-
 /*
  * Verify that the callback came from Facebook. Using the App Secret from 
  * the App Dashboard, we can verify the signature that is sent with each 
@@ -308,24 +276,19 @@ function receivedMessage(event) {
 
   // Determine if key user:senderID exists
   redisClient.exists('user:' + senderID, function(error, reply) {
-
     if (reply === 1) {
       console.log("Key-value pair with key user:" + senderID + " exists.");
-
       // Get all the fields and values in hash for key user:senderID
       redisClient.hgetall("user:" + senderID, function(error, reply) {
 
         if (error == null) {
-
           var user = reply;
 
           if (messageText) {
-
+            
             // Check if user has an incomplete price alert
             if (user.incompletePriceAlert === true) {
-
               sendTextMessage(senderID, "Bitte gib noch einen Preis ein um den Alarm abzuschließen (Tippe z.B. 25 Euro):");
-
             } else {
               switch (user.parseUserLocale) {
                 // case 'pt_BR': // Portuguese (Brazil)
@@ -371,8 +334,8 @@ function receivedMessage(event) {
                     });
                   } else {
                     // Apologize to the user and provide some help instructions 
-                    sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst. Probiere " +
-                      "\"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
+                    sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst. Probiere");
+                    sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
                   }
 
                   break;
@@ -548,7 +511,6 @@ function receivedPostback(event) {
               success: function(priceAlert) {
                 console.log('New object created with objectId: ' + priceAlert.id);
 
-
                 // Create new key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
                   'incompletePriceAlert': true,
@@ -604,7 +566,6 @@ function receivedPostback(event) {
                     redisClient.hmset('user:' + senderID, {
                       'incompletePriceAlert': true,
                       'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
-
                     }, function(error, reply) {
 
                         if (error == null) {
@@ -956,7 +917,7 @@ function sendReceiptMessage(recipientId) {
           console.log("New user created with objectId: " + user.id);
 
           // Create new key-value pair with key user:senderID
-          redisClient.hmset('user:' + senderID, {
+          redisClient.hmset('user:' + userId, {
             'parseUserObjectId': user.id,
             'parseUserFirstName': user.get("firstName"),
             'parseUserLastName': user.get("lastName"),
@@ -970,7 +931,7 @@ function sendReceiptMessage(recipientId) {
           }, function(error, reply) {
 
               if (error == null) {
-                console.log("New key-value pair created with key: user:" + senderID);
+                console.log("New key-value pair created with key: user:" + userId);
 
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);

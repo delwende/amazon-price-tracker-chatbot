@@ -868,7 +868,7 @@ function sendReceiptMessage(recipientId) {
     };
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
 
-    // Check if required item properties are available, otherwise exclude the item from the article search results list
+    // Check if required item properties are available, otherwise exclude item from the article search results list
     if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
         lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
@@ -1029,7 +1029,7 @@ function callSendAPI(messageData) {
     } else {
       console.error("Unable to send message.");
       // console.error(response);
-      // console.error(error);
+      console.error(error);
     }
   });  
 }

@@ -983,7 +983,9 @@ function sendReceiptMessage(recipientId) {
             'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
             'incompletePriceAlertExamplePrice': ""
           }, function(error, reply) {
-              if (error == null) {
+              if (error) {
+                console.log("Error: " + error);
+              } else {
                 console.log("New key-value pair created with key: user:" + userId);
                 
                 // Recall receivedMessage() with existing user

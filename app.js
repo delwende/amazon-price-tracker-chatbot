@@ -1028,8 +1028,8 @@ function callSendAPI(messageData) {
         messageId, recipientId);
     } else {
       console.error("Unable to send message.");
-      // console.error(response);
-      console.error(error);
+      console.error(response);
+      // console.error(error);
     }
   });  
 }

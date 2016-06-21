@@ -331,7 +331,8 @@ function receivedMessage(event) {
                 
               } else {
                 // Ask the user to enter a price desired
-                sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B." + user.incompletePriceAlertExamplePrice + "):");
+                sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B. "
+                  + user.incompletePriceAlertExamplePrice + "):");
               }
               
             } else {
@@ -558,7 +559,7 @@ function receivedPostback(event) {
                 
                 // Calculate example price
                 var amount = item.lowestNewPrice.amount;
-                var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
+                var examplePrice = accounting.formatMoney((amount / 100) - 1, "EUR", 2, ".", ",");
 
                 // Update key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
@@ -612,7 +613,7 @@ function receivedPostback(event) {
     
                     // Calculate example price
                     var amount = item.lowestNewPrice.amount;
-                    var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
+                    var examplePrice = accounting.formatMoney((amount / 100) - 1, "EUR", 2, ".", ",");
 
                     // Update key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {

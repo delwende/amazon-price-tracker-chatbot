@@ -288,7 +288,49 @@ function receivedMessage(event) {
             
             // Check if user has an incomplete price alert
             if (user.incompletePriceAlert === "true") {
-              sendTextMessage(senderID, "Bitte gib noch einen Preis ein um den Alarm abzuschließen (Tippe z.B. 25 Euro):");
+              
+              // Check if user entered a valid price desired. If true, update the price alert with the user
+              // entered price, otherwise ask the user again to enter a valid price
+              var messageTextPrefix = messageText.split(" ")[0];
+              if (!isNaN(messageTextPrefix)) {
+                
+                var priceDesired = messageTextPrefix;
+                
+                // Update price alert with the user entered price desired
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var priceAlert = new PriceAlert();
+                
+                priceAlert.set("objectId", user.incompletePriceAlertId);
+                priceAlert.set("priceDesired", priceDesired);
+                
+                priceAlert.save(null, {
+                  success: function(priceAlert) {
+                    console.log('New price alert created with objectId: ' + priceAlert.id);
+                    
+                    // Create new key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'incompletePriceAlert': "false",
+                      'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
+    
+                    }, function(error, reply) {
+    
+                        if (error == null) {
+                          console.log("New key-value pair created with key: user:" + senderID);
+    
+                          // Inform the user that price alert activation was sucessful
+                          sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter +"
+                          priceDesired + " Euro rutscht! (y)");
+                        }
+                        
+                    });
+                  }
+                });
+                
+              } else {
+                // Ask the user to enter a price desired
+                sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B. 25 Euro):");
+              }
+              
             } else {
               switch (user.parseUserLocale) {
                 // case 'pt_BR': // Portuguese (Brazil)

@@ -530,7 +530,7 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis des Artikels ist " + item.lowestNewPrice.formattedPrice + ".");
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt " + item.lowestNewPrice.formattedPrice + ".");
 
       // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
@@ -567,7 +567,9 @@ function receivedPostback(event) {
                       console.log("Updated key-value pair with key: user:" + senderID);
 
                       // Ask the user to enter a desired price
-                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
+                      var amount = item.lowestNewPrice.amount;
+                      var examplePrice = accounting.formatMoney(amount - 1000, { symbol: "EUR",  format: "%s %v" });
+                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                     }
                     
                 });
@@ -617,7 +619,9 @@ function receivedPostback(event) {
                           console.log("Updated key-value pair with key: user:" + senderID);
 
                           // Ask the user to enter a desired price
-                          sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. 25):");
+                          var amount = item.lowestNewPrice.amount;
+                          var examplePrice = accounting.formatMoney(amount - 1000, { symbol: "EUR",  format: "%s %v" });
+                          sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                         }
                         
                     });
@@ -1033,4 +1037,3 @@ app.listen(app.get('port'), function() {
 });
 
 module.exports = app;
-

@@ -318,7 +318,7 @@ function receivedMessage(event) {
                           console.log("New key-value pair created with key: user:" + senderID);
     
                           // Inform the user that price alert activation was sucessful
-                          sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter +"
+                          sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
                           priceDesired + " Euro rutscht! (y)");
                         }
                         

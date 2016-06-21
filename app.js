@@ -310,8 +310,8 @@ function receivedMessage(event) {
                     // Update new key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {
                       'incompletePriceAlert': "false",
-                      'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
-    
+                      'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
+                      'incompletePriceAlertExamplePrice': ""
                     }, function(error, reply) {
     
                         if (error == null) {
@@ -331,7 +331,7 @@ function receivedMessage(event) {
                 
               } else {
                 // Ask the user to enter a price desired
-                sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B. 25 Euro):");
+                sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B." + user.incompletePriceAlertExamplePrice + "):");
               }
               
             } else {
@@ -442,8 +442,8 @@ function receivedMessage(event) {
               'parseUserGender': user.get("gender"),
               'parseUserTimezone': user.get("timezone"),
               'incompletePriceAlert': "false",
-              'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
-
+              'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
+              'incompletePriceAlertExamplePrice': ""
             }, function(error, reply) {
 
                 if (error == null) {
@@ -530,7 +530,7 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt " + item.lowestNewPrice.formattedPrice + ".");
+      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + item.lowestNewPrice.formattedPrice);
 
       // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
@@ -555,20 +555,22 @@ function receivedPostback(event) {
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New price alert created with objectId: ' + priceAlert.id);
+                
+                // Calculate example price
+                var amount = item.lowestNewPrice.amount;
+                var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
 
                 // Update key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
                   'incompletePriceAlert': "true",
-                  'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
-
+                  'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
+                  'incompletePriceAlertExamplePrice': examplePrice
                 }, function(error, reply) {
 
                     if (error == null) {
                       console.log("Updated key-value pair with key: user:" + senderID);
 
                       // Ask the user to enter a desired price
-                      var amount = item.lowestNewPrice.amount;
-                      var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
                       sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                     }
                     
@@ -608,19 +610,21 @@ function receivedPostback(event) {
                   success: function(priceAlert) {
                     console.log('New price alert created with objectId: ' + priceAlert.id);
     
+                    // Calculate example price
+                    var amount = item.lowestNewPrice.amount;
+                    var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
 
                     // Update key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {
                       'incompletePriceAlert': "true",
-                      'incompletePriceAlertId': priceAlert.id // ParseObject id of the imcomplete price alert
+                      'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
+                      'incompletePriceAlertExamplePrice': examplePrice
                     }, function(error, reply) {
 
                         if (error == null) {
                           console.log("Updated key-value pair with key: user:" + senderID);
 
                           // Ask the user to enter a desired price
-                          var amount = item.lowestNewPrice.amount;
-                          var examplePrice = accounting.formatMoney((amount / 100) - 1, { symbol: "EUR",  format: "%s %v" });
                           sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                         }
                         
@@ -975,8 +979,8 @@ function sendReceiptMessage(recipientId) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'incompletePriceAlert': "false",
-            'incompletePriceAlertId': "" // ParseObject id of the imcomplete price alert
-
+            'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
+            'incompletePriceAlertExamplePrice': ""
           }, function(error, reply) {
 
               if (error == null) {

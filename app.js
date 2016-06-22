@@ -305,7 +305,24 @@ function receivedMessage(event) {
                   "senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n-" +
                   " \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
               } else if (messageText.startsWith("suche ")) {
-                sendTextMessage(senderID, "");
+                // Search items
+                amazonClient.itemSearch({
+                  responseGroup: 'ItemAttributes,Offers,Images',
+                  keywords: keywords,
+                  domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+                }).then(function(results){
+                  console.log("Successfully retrieved " + results.length + " items.");
+
+                  // Inform the user that search results are displayed
+                  sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
+                  // Show to the user the search results
+                  sendListArticleSearchResultsGenericMessage(senderID, results, user);
+                }).catch(function(error){
+                  console.log("Error: " + JSON.stringify(error));
+                  // Inform the user that the search for his keywords yielded no results
+                  sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
+                    "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
+                });
               } else if (messageText.startsWith("liste")) {
                 sendTextMessage(senderID, "");
               } else {
@@ -345,24 +362,7 @@ function receivedMessage(event) {
                   "helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search " +
                   "iphone6\"\n- \"list\" to show your price watches");
               } else if (messageText.startsWith("search ")) {
-                // Search items
-                amazonClient.itemSearch({
-                  responseGroup: 'ItemAttributes,Offers,Images',
-                  keywords: keywords,
-                  domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-                }).then(function(results){
-                  console.log("Successfully retrieved " + results.length + " items.");
-
-                  // Inform the user that search results are displayed
-                  sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-                  // Show to the user the search results
-                  sendListArticleSearchResultsGenericMessage(senderID, results, user);
-                }).catch(function(error){
-                  console.log("Error: " + JSON.stringify(error));
-                  // Inform the user that the search for his keywords yielded no results
-                  sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
-                    "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
-                });
+                sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {

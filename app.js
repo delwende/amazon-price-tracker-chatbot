@@ -21,7 +21,8 @@ const
   amazon = require('amazon-product-api'),
   redis = require('redis'),
   accounting = require('accounting'), // A simple and advanced number, money and currency formatting library
-  objectPath = require("object-path"); // Access deep properties using a path
+  objectPath = require("object-path"), // Access deep properties using a path
+  i18n = require("i18n"); // Lightweight translation module with dynamic json storage
 
 var app = express();
 

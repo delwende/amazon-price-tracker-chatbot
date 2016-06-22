@@ -307,7 +307,7 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("liste")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, "Es tut mir Leid! Ich bin mir nicht sicher ob ich das verstehe. Versuchen Sie \"Hilfe\" oder einfach nur fragen, über das Wetter eingeben.");
+                sendTextMessage(senderID, "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder \"suche \[product name\]\" um ein Produkt zu suchen.");
               }
 
               if (messageText.startsWith("help")) {
@@ -317,7 +317,7 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"search \[product name\]\" for searching a product or \"help\".");
+                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
               }
 
               break;

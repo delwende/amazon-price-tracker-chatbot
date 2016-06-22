@@ -123,13 +123,6 @@ redisClient.on('error', function (error) {
 // Configure accounting.js
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
-// Configure i18n
-i18n.configure({
-    locales:['en', 'de'],
-    directory: __dirname + '/locales',
-    register: user
-});
-
 /*
  * Use your own validation token. Check that the token used in the Webhook 
  * setup is the same token used here.

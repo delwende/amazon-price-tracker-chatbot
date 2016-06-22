@@ -302,7 +302,12 @@ function receivedMessage(event) {
               
               if (messageText.startsWith("hilfe")) {
                 sendTextMessage(senderID, "Hallo. Ich überwache Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung senden, " +
-                  " wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt feststellen kannst. Schreibe mir folgendes:"); 
+                  " wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt feststellen kannst. Schreibe mir folgendes:");
+              }
+
+              if (messageText.startsWith("help")) {
+                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
+                  "helping you decide when to buy. Tell me things like the following:");
               }
 
               break;
@@ -330,11 +335,6 @@ function receivedMessage(event) {
 
             default:
               // sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-
-              if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
-                  "helping you decide when to buy. Tell me things like the following:");
-              }
           }
 
         } else if (messageAttachments) {

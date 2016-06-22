@@ -123,6 +123,14 @@ redisClient.on('error', function (error) {
 // Configure accounting.js
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
+// Configure i18n
+var user = {};
+i18n.configure({
+    locales:['en', 'de'],
+    directory: __dirname + '/locales',
+    register: user
+});
+
 /*
  * Use your own validation token. Check that the token used in the Webhook 
  * setup is the same token used here.
@@ -282,7 +290,9 @@ function receivedMessage(event) {
     } else {
 
       if (reply) { // reply is empty list when key does not exist
-        var user = reply;
+        user = reply;
+        var userLocale = user.parseUserLocale.split("_")[0];
+        user.setLocale(userLocale); // Set i18n user locale
 
         if (messageText) {
 
@@ -300,7 +310,7 @@ function receivedMessage(event) {
             //   break;
 
             case 'de_DE': // German
-              sendTextMessage(senderID, "Hi, " + user.parseUserFirstName + "!");
+              sendTextMessage(senderID, user.__('Hello'));
               break;
 
             // case 'en_IN': // English (India)
@@ -325,7 +335,8 @@ function receivedMessage(event) {
             //   break;
 
             default:
-            sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+              // sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+              sendTextMessage(senderID, user.__('Hello'));
           }
 
         } else if (messageAttachments) {

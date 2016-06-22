@@ -301,13 +301,23 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                sendTextMessage(senderID, "Hallo. Ich überwache Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung senden, " +
-                  " wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt feststellen kannst. Schreibe mir folgendes:");
+                sendTextMessage(senderID, "");
+              } else if (messageText.startsWith("suche ")) {
+                sendTextMessage(senderID, "");
+              } else if (messageText.startsWith("liste")) {
+                sendTextMessage(senderID, "");
+              } else {
+                sendTextMessage(senderID, "Es tut mir Leid! Ich bin mir nicht sicher ob ich das verstehe. Versuchen Sie \"Hilfe\" oder einfach nur fragen, über das Wetter eingeben.");
               }
 
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
-                  "helping you decide when to buy. Tell me things like the following:");
+                sendTextMessage(senderID, "");
+              } else if (messageText.startsWith("search ")) {
+                sendTextMessage(senderID, "");
+              } else if (messageText.startsWith("list")) {
+                sendTextMessage(senderID, "");
+              } else {
+                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"search \[product name\]\" for searching a product or \"help\".");
               }
 
               break;

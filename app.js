@@ -301,9 +301,9 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                sendTextMessage(senderID, "Hallo. Ich beobachte Millionen Produkte auf Amazon und kann dir eine Benachrichtigung senden, " +
-                  "wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt findest. Tippe Dinge wie die folgenden:\n\n- \"suche \"" +
-                  "\[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
+                sendTextMessage(senderID, "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung " +
+                  "senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt findest. Tippe Dinge wie die folgenden:\n\n-" +
+                  " \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
               } else if (messageText.startsWith("suche ")) {
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("liste")) {

@@ -301,9 +301,9 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                sendTextMessage(senderID, "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung " +
-                  "senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n-" +
-                  " \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
+                sendTextMessage(senderID, `Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung 
+                  senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n
+                  - \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen`);
               } else if (messageText.startsWith("suche ")) {
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("liste")) {
@@ -314,14 +314,16 @@ function receivedMessage(event) {
               }
 
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
-                  "helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search " +
-                  "iphone6\"\n- \"list\" to show your price watches");
+                sendTextMessage(senderID, `Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, 
+                  helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search 
+                  iphone6\"\n- \"list\" to show your price watches`);
               } else if (messageText.startsWith("search ")) {
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
+                var test = `this is a 
+                            single string`
                 // sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
                 // sendTextMessage(senderID, "Oops, I didn\'t catch that. For things I can help you with, type \"help\".");
               }

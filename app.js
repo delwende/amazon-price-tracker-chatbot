@@ -322,7 +322,7 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
+                // sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
                 // sendTextMessage(senderID, "Oops, I didn\'t catch that. For things I can help you with, type \"help\".");
               }
 

@@ -309,23 +309,8 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("liste")) {
                 sendTextMessage(senderID, "");
               } else {
-                // sendTextMessage(senderID, "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder \"suche \[product name\]\" um ein Produkt zu suchen.");
+                sendTextMessage(senderID, "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder \"suche \[product name\]\" um ein Produkt zu suchen.");
                 // sendTextMessage(senderID, "Hoppla, das habe ich nicht verstanden. Um zu erfahren wie ich dir weiterhelfen kann, tippe \"hilfe\".");
-              }
-
-              if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
-                  "helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search " +
-                  "iphone6\"\n- \"list\" to show your price watches");
-              } else if (messageText.startsWith("search ")) {
-                sendTextMessage(senderID, "");
-              } else if (messageText.startsWith("list")) {
-                sendTextMessage(senderID, "");
-              } else {
-                var test = `this is a 
-                            single string`
-                // sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
-                // sendTextMessage(senderID, "Oops, I didn\'t catch that. For things I can help you with, type \"help\".");
               }
 
               break;
@@ -353,6 +338,21 @@ function receivedMessage(event) {
 
             default:
               // sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
+
+              if (messageText.startsWith("help")) {
+                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
+                  "helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search " +
+                  "iphone6\"\n- \"list\" to show your price watches");
+              } else if (messageText.startsWith("search ")) {
+                sendTextMessage(senderID, "");
+              } else if (messageText.startsWith("list")) {
+                sendTextMessage(senderID, "");
+              } else {
+                var test = `this is a 
+                            single string`
+                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
+                // sendTextMessage(senderID, "Oops, I didn\'t catch that. For things I can help you with, type \"help\".");
+              }
           }
 
         } else if (messageAttachments) {

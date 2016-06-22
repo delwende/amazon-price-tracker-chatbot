@@ -305,6 +305,8 @@ function receivedMessage(event) {
                   "senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n-" +
                   " \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
               } else if (messageText.startsWith("suche ")) {
+                var keywords = messageText.replace("suche ", "");
+                
                 // Search items
                 amazonClient.itemSearch({
                   responseGroup: 'ItemAttributes,Offers,Images',

@@ -280,7 +280,7 @@ function receivedMessage(event) {
       console.log("Error: " + error);
     } else {
 
-      if (reply) {
+      if (reply) { // reply is empty list when key does not exist
         var user = reply;
 
         if (messageText) {

@@ -308,6 +308,7 @@ function receivedMessage(event) {
                 sendTextMessage(senderID, "");
               } else {
                 sendTextMessage(senderID, "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder \"suche \[product name\]\" um ein Produkt zu suchen.");
+                sendTextMessage(senderID, "Hoppla, das habe ich nicht verstanden. Um zu erfahren wie ich dir weiterhelfen kann, tippe \"hilfe\".");
               }
 
               if (messageText.startsWith("help")) {
@@ -317,7 +318,13 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
+                var helpMessages = [
+                  "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.",
+                  "Oops, I didn\'t catch that. For things I can help you with, type \"help\"."
+                ];
+                sendTextMessage(senderID, helpMessages[user.helpMessagesIndex]);
+                var helpMessagesIndex = user.helpMessagesIndex === 0 ? 1 : 0;
+                redisClient.hmset('user:' + senderID, "helpMessagesIndex", helpMessagesIndex);
               }
 
               break;
@@ -1065,6 +1072,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
             'parseUserLocale': user.get("locale"),
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
+            'helpMessagesIndex': 0,
             'incompletePriceAlert': "false",
             'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
             'incompletePriceAlertExamplePrice': ""

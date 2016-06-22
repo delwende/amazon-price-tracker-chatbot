@@ -124,7 +124,6 @@ redisClient.on('error', function (error) {
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
 // Configure i18n
-var user = {};
 i18n.configure({
     locales:['en', 'de'],
     directory: __dirname + '/locales',
@@ -290,9 +289,7 @@ function receivedMessage(event) {
     } else {
 
       if (reply) { // reply is empty list when key does not exist
-        user = reply;
-        var userLocale = user.parseUserLocale.split("_")[0];
-        user.setLocale(userLocale); // Set i18n user locale
+        var user = reply;
 
         if (messageText) {
 
@@ -310,7 +307,7 @@ function receivedMessage(event) {
             //   break;
 
             case 'de_DE': // German
-              sendTextMessage(senderID, user.__('Hello'));
+              sendTextMessage(senderID, "Hi " + user.parseUserFirstName + "!");
               break;
 
             // case 'en_IN': // English (India)
@@ -335,8 +332,7 @@ function receivedMessage(event) {
             //   break;
 
             default:
-              // sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-              sendTextMessage(senderID, user.__('Hello'));
+              sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
           }
 
         } else if (messageAttachments) {

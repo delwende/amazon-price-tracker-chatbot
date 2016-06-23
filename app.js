@@ -637,123 +637,122 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, "Der aktuelle Preis für diesen Artikel beträgt: " + item.lowestNewPrice.formattedPrice);
-
-      // Check if the product already exists on the Backend
-      var Product = Parse.Object.extend("Product");
-      var query = new Parse.Query(Product);
-      query.equalTo("asin", item.asin);
-      query.find({
-        success: function(results) {
-          console.log("Successfully retrieved " + results.length + " products.");
-
-          if (results.length === 1) {
-
-            var product = results[0];
-
-            // Save price alert to the Backend
-            var PriceAlert = Parse.Object.extend("PriceAlert");
-            var priceAlert = new PriceAlert();
-
-            priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-            priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-            priceAlert.set("active", true);
-
-            priceAlert.save(null, {
-              success: function(priceAlert) {
-                console.log('New price alert created with objectId: ' + priceAlert.id);
-
-                // Calculate example price
-                var amount = item.lowestNewPrice.amount;
-                var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
-
-                // Update key-value pair with key user:senderID
-                redisClient.hmset('user:' + senderID, {
-                  'incompletePriceAlert': "true",
-                  'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
-                  'incompletePriceAlertExamplePrice': examplePrice
-                }, function(error, reply) {
-
-                    if (error == null) {
-                      console.log("Updated key-value pair with key: user:" + senderID);
-
-                      // Ask the user to enter a desired price
-                      sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
-                    }
-
-                });
-
-
-              },
-              error: function(priceAlert, error) {
-                console.log('Failed to create new price alert, with error code: ' + error.message);
-              }
-            });
-
-          } else {
-
-            // Save product to the Backend
-            var Product = Parse.Object.extend("Product");
-            var product = new Product();
-
-            product.set("asin", item.asin);
-            product.set("detailPageUrl", item.detailPageUrl);
-            product.set("imageUrl", item.imageUrl);
-            product.set("title", item.title);
-
-            product.save(null, {
-              success: function(product) {
-                console.log('New product created with objectId: ' + product.id);
-
-                // Save price alert to the Backend
-                var PriceAlert = Parse.Object.extend("PriceAlert");
-                var priceAlert = new PriceAlert();
-
-                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                priceAlert.set("active", true);
-
-                priceAlert.save(null, {
-                  success: function(priceAlert) {
-                    console.log('New price alert created with objectId: ' + priceAlert.id);
-
-                    // Calculate example price
-                    var amount = item.lowestNewPrice.amount;
-                    var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
-
-                    // Update key-value pair with key user:senderID
-                    redisClient.hmset('user:' + senderID, {
-                      'incompletePriceAlert': "true",
-                      'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
-                      'incompletePriceAlertExamplePrice': examplePrice
-                    }, function(error, reply) {
-
-                        if (error == null) {
-                          console.log("Updated key-value pair with key: user:" + senderID);
-
-                          // Ask the user to enter a desired price
-                          sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
-                        }
-
-                    });
-
-                  },
-                  error: function(priceAlert, error) {
-                    console.log('Failed to create new price alert, with error code: ' + error.message);
-                  }
-                });
-              },
-              error: function(product, error) {
-                console.log('Failed to create new product, with error code: ' + error.message);
-              }
-            });
-          }
-
-        },
-        error: function(error) {
-          console.log("Error: " + error.code + " " + error.message);
-        }
-      });
+      sendTextMessage(senderID, format('The current price for this item is {}', item.lowestNewPrice.formattedPrice));
+      // // Check if the product already exists on the Backend
+      // var Product = Parse.Object.extend("Product");
+      // var query = new Parse.Query(Product);
+      // query.equalTo("asin", item.asin);
+      // query.find({
+      //   success: function(results) {
+      //     console.log("Successfully retrieved " + results.length + " products.");
+      //
+      //     if (results.length === 1) {
+      //
+      //       var product = results[0];
+      //
+      //       // Save price alert to the Backend
+      //       var PriceAlert = Parse.Object.extend("PriceAlert");
+      //       var priceAlert = new PriceAlert();
+      //
+      //       priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+      //       priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+      //       priceAlert.set("active", true);
+      //
+      //       priceAlert.save(null, {
+      //         success: function(priceAlert) {
+      //           console.log('New price alert created with objectId: ' + priceAlert.id);
+      //
+      //           // Calculate example price
+      //           var amount = item.lowestNewPrice.amount;
+      //           var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
+      //
+      //           // Update key-value pair with key user:senderID
+      //           redisClient.hmset('user:' + senderID, {
+      //             'incompletePriceAlert': "true",
+      //             'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
+      //             'incompletePriceAlertExamplePrice': examplePrice
+      //           }, function(error, reply) {
+      //
+      //               if (error == null) {
+      //                 console.log("Updated key-value pair with key: user:" + senderID);
+      //
+      //                 // Ask the user to enter a desired price
+      //                 sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+      //               }
+      //
+      //           });
+      //
+      //
+      //         },
+      //         error: function(priceAlert, error) {
+      //           console.log('Failed to create new price alert, with error code: ' + error.message);
+      //         }
+      //       });
+      //
+      //     } else {
+      //
+      //       // Save product to the Backend
+      //       var Product = Parse.Object.extend("Product");
+      //       var product = new Product();
+      //
+      //       product.set("asin", item.asin);
+      //       product.set("detailPageUrl", item.detailPageUrl);
+      //       product.set("imageUrl", item.imageUrl);
+      //       product.set("title", item.title);
+      //
+      //       product.save(null, {
+      //         success: function(product) {
+      //           console.log('New product created with objectId: ' + product.id);
+      //
+      //           // Save price alert to the Backend
+      //           var PriceAlert = Parse.Object.extend("PriceAlert");
+      //           var priceAlert = new PriceAlert();
+      //
+      //           priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+      //           priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+      //           priceAlert.set("active", true);
+      //
+      //           priceAlert.save(null, {
+      //             success: function(priceAlert) {
+      //               console.log('New price alert created with objectId: ' + priceAlert.id);
+      //
+      //               // Calculate example price
+      //               var amount = item.lowestNewPrice.amount;
+      //               var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
+      //
+      //               // Update key-value pair with key user:senderID
+      //               redisClient.hmset('user:' + senderID, {
+      //                 'incompletePriceAlert': "true",
+      //                 'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
+      //                 'incompletePriceAlertExamplePrice': examplePrice
+      //               }, function(error, reply) {
+      //
+      //                   if (error == null) {
+      //                     console.log("Updated key-value pair with key: user:" + senderID);
+      //
+      //                     // Ask the user to enter a desired price
+      //                     sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
+      //                   }
+      //
+      //               });
+      //
+      //             },
+      //             error: function(priceAlert, error) {
+      //               console.log('Failed to create new price alert, with error code: ' + error.message);
+      //             }
+      //           });
+      //         },
+      //         error: function(product, error) {
+      //           console.log('Failed to create new product, with error code: ' + error.message);
+      //         }
+      //       });
+      //     }
+      //
+      //   },
+      //   error: function(error) {
+      //     console.log("Error: " + error.code + " " + error.message);
+      //   }
+      // });
       break;
 
     case 'disactivatePriceAlert':

@@ -338,11 +338,31 @@ function receivedMessage(event) {
                 // sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- \"search \[product name\]\", e.g. \"search iphone6\"\n- \"list\" to show your price watches");
                 sendTextMessage(senderID, format('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
               } else if (messageText.startsWith("search ")) {
+                var keywords = messageText.replace("search ", "");
+
+                // Search items
+                amazonClient.itemSearch({
+                  responseGroup: 'ItemAttributes,Offers,Images',
+                  keywords: keywords,
+                  domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+                }).then(function(results){
+                  console.log("Successfully retrieved " + results.length + " items.");
+
+                  // Inform the user that search results are displayed
+                  sendTextMessage(senderID, format('Search results for "{}"', keywords));
+                  // Show to the user the search results
+                  sendListArticleSearchResultsGenericMessage(senderID, results, user);
+                }).catch(function(error){
+                  console.log("Error: " + JSON.stringify(error));
+                  // Inform the user that the search for his keywords did not match any products
+                  sendTextMessage(senderID, format('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
+                });
+
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, "I'm sorry. I'm not sure I understand. Try typing \"search \[product name\]\" to search a product or type \"help\".");
+                sendTextMessage(senderID, format('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
               }
           }
 

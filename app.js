@@ -361,7 +361,7 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, gt.dgettext(lang, 'Search results for "%s"', keywords));
+                  sendTextMessage(senderID, gt.dgettext(lang, 'Search results for \"%s\"', keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){

@@ -128,6 +128,13 @@ accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, 
 // Create a new Gettext object
 var gt = new Gettext();
 
+// Add languages
+var langDe = fs.readFileSync("de.mo");
+gt.addTextdomain("de", langDe);
+
+// Set default language
+gt.textdomain("en"); // English
+
 /*
  * Use your own validation token. Check that the token used in the Webhook
  * setup is the same token used here.
@@ -293,8 +300,11 @@ function receivedMessage(event) {
 
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
+        var language = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
 
         if (messageText) {
+
+
 
           switch (user.parseUserLocale) {
             // case 'pt_BR': // Portuguese (Brazil)
@@ -335,8 +345,7 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith("help")) {
-                // sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- \"search \[product name\]\", e.g. \"search iphone6\"\n- \"list\" to show your price watches");
-                sendTextMessage(senderID, format('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
+                sendTextMessage(senderID, format(gt.gettext('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
               } else if (messageText.startsWith("search ")) {
                 var keywords = messageText.replace("search ", "");
 
@@ -349,20 +358,20 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, format('Search results for "{}"', keywords));
+                  sendTextMessage(senderID, format(gt.gettext('Search results for "{}"'), keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
-                  sendTextMessage(senderID, format('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
+                  sendTextMessage(senderID, format(gt.gettext('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling'), keywords));
                 });
 
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, format('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
+                sendTextMessage(senderID, format(gt.gettext('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
               }
           }
 

@@ -346,7 +346,7 @@ function receivedMessage(event) {
             //   break;
 
             default:
-              if (messageText.startsWith("help")) {
+              if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
                 // sendTextMessage(senderID, format(gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
                 sendTextMessage(senderID, gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
               } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {

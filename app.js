@@ -347,9 +347,10 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, format(gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
-              } else if (messageText.startsWith("search ")) {
-                var keywords = messageText.replace("search ", "");
+                // sendTextMessage(senderID, format(gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
+                sendTextMessage(senderID, gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
+              } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
+                var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
 
                 // Search items
                 amazonClient.itemSearch({
@@ -360,20 +361,20 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, format(gt.dgettext(lang, 'Search results for "{}"'), keywords));
+                  sendTextMessage(senderID, gt.dgettext(lang, 'Search results for "%s"', keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
-                  sendTextMessage(senderID, format(gt.dgettext(lang, 'Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling'), keywords));
+                  sendTextMessage(senderID, gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
                 });
 
-                sendTextMessage(senderID, "");
-              } else if (messageText.startsWith("list")) {
-                sendTextMessage(senderID, "");
+                sendTextMessage(senderID, '');
+              } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
+                sendTextMessage(senderID, '');
               } else {
-                sendTextMessage(senderID, format(gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".')));
+                sendTextMessage(senderID, gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
               }
           }
 
@@ -989,6 +990,7 @@ function sendReceiptMessage(recipientId) {
  */
 function sendListArticleSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
+  var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
 
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
@@ -1008,12 +1010,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
-        subtitle: format('Price : {}', lowestNewPrice.formattedPrice),
+        subtitle: gt.dgettext(lang, 'Price: %s', lowestNewPrice.formattedPrice),
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
-          title: format('Activate price alert'),
+          title: gt.dgettext(lang, 'Activate price alert'),
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
@@ -1030,7 +1032,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         }, {
           type: "web_url",
           url: detailPageUrl,
-          title: format('Buy')
+          title: gt.dgettext(lang, 'Buy')
         }],
       });
     }
@@ -1051,11 +1053,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     }
   };
 
-  if (elements.length === 0) {
-    sendTextMessage(senderID, format('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
-  } else {
-    callSendAPI(messageData);
-  }
+  callSendAPI(messageData);
 }
 
 /*

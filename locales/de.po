@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-23 19:12+0200\n"
-"PO-Revision-Date: 2016-06-23 19:19+0200\n"
+"POT-Creation-Date: 2016-06-23 22:58+0200\n"
+"PO-Revision-Date: 2016-06-23 23:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -10,12 +10,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.8\n"
-"X-Poedit-Basepath: .\n"
+"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:350
+#: app.js:351
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -27,27 +27,51 @@ msgstr ""
 "Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen "
 "Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n"
 "- “suche [produktname]\", z.B. “suche iphone6\"\n"
-"- \"liste” um deine aktiven Preisverfolgungen anzuzeigen"
+"- “liste” um deine Preisverfolgungen anzuzeigen"
 
-#: app.js:363
-msgid "Search results for \"{}\""
-msgstr "Suchergebnisse für \"{}\""
+#: app.js:352 app.js:353
+msgid "search "
+msgstr "suche "
 
-#: app.js:369
+#: app.js:364
+#, javascript-format
+msgid "Search results for \"%s\""
+msgstr "Suchergebnisse für \"%s\""
+
+#: app.js:370
+#, javascript-format
 msgid ""
-"Your search \"{}\" did not match any products. Try something like:\n"
+"Your search \"%s\" did not match any products. Try something like:\n"
 "- Using more general terms\n"
 "- Checking your spelling"
 msgstr ""
-"Deine Suche nach \"{}\" ergab leider keine Produkttreffer. Versuche "
+"Deine Suche nach \"%s\" ergab leider keine Produkttreffer. Versuche "
 "beispielsweise:\n"
 "- Allgemeinere Begriffe verwenden\n"
 "- Rechtschreibung überprüfen"
 
-#: app.js:376
+#: app.js:374
+msgid "list"
+msgstr "liste"
+
+#: app.js:377
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 msgstr ""
 "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstanden "
-"habe. Tippe “suche [produktname]” um ein Produkt zu suchen oder “hilfe”."
+"habe. Tippe “suche [produktname]” um ein Produkt zu suchen oder tippe "
+"“hilfe”."
+
+#: app.js:1013
+#, javascript-format
+msgid "Price: %s"
+msgstr "Preis: %s"
+
+#: app.js:1018
+msgid "Activate price alert"
+msgstr "Aktiviere Preisalarm"
+
+#: app.js:1035
+msgid "Buy"
+msgstr "Kaufe"

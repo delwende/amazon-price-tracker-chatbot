@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-23 20:07+0200\n"
-"PO-Revision-Date: 2016-06-23 20:08+0200\n"
+"POT-Creation-Date: 2016-06-23 22:56+0200\n"
+"PO-Revision-Date: 2016-06-23 22:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:349
+#: app.js:351
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -29,24 +29,59 @@ msgstr ""
 "- \"search [product name]\", e.g. \"search iphone6\"\n"
 "- \"list\" to show your price watches"
 
-#: app.js:362
-msgid "Search results for \"{}\""
-msgstr "Search results for \"{}\""
+#: app.js:352 app.js:353
+msgid "search "
+msgstr "search "
 
-#: app.js:368
+#: app.js:364
+#, javascript-format
+msgid "Search results for \"%s\""
+msgstr "Search results for \"%s\""
+
+#: app.js:370
+#, javascript-format
 msgid ""
-"Your search \"{}\" did not match any products. Try something like:\n"
+"Your search \"%s\" did not match any products. Try something like:\n"
 "- Using more general terms\n"
 "- Checking your spelling"
 msgstr ""
-"Your search \"{}\" did not match any products. Try something like:\n"
+"Your search \"%s\" did not match any products. Try something like:\n"
 "- Using more general terms\n"
 "- Checking your spelling"
 
-#: app.js:375
+#: app.js:374
+msgid "list"
+msgstr "list"
+
+#: app.js:377
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
+
+#: app.js:1013
+#, javascript-format
+msgid "Price: %s"
+msgstr "Price: %s"
+
+#: app.js:1018
+msgid "Activate price alert"
+msgstr "Activate price alert"
+
+#: app.js:1035
+msgid "Buy"
+msgstr "Buy"
+
+#~ msgid "Search results for \"{}\""
+#~ msgstr "Search results for \"{}\""
+
+#~ msgid ""
+#~ "Your search \"{}\" did not match any products. Try something like:\n"
+#~ "- Using more general terms\n"
+#~ "- Checking your spelling"
+#~ msgstr ""
+#~ "Your search \"{}\" did not match any products. Try something like:\n"
+#~ "- Using more general terms\n"
+#~ "- Checking your spelling"

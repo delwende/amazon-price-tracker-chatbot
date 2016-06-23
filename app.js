@@ -14,6 +14,7 @@ const
   bodyParser = require('body-parser'),
   config = require('config'),
   crypto = require('crypto'),
+  de = require('locales/de')
   express = require('express'),
   https = require('https'),  
   request = require('request'),
@@ -301,9 +302,7 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                sendTextMessage(senderID, "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung " +
-                  "senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n-" +
-                  " \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen");
+                sendTextMessage(senderID, de.get('help'));
               } else if (messageText.startsWith("suche ")) {
                 var keywords = messageText.replace("suche ", "");
                 
@@ -322,8 +321,7 @@ function receivedMessage(event) {
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords yielded no results
-                  sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
-                    "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
+                  sendTextMessage(senderID, de.get('did_not_understand_1'));
                 });
               } else if (messageText.startsWith("liste")) {
                 sendTextMessage(senderID, "");

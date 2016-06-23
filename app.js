@@ -131,7 +131,7 @@ var gt = new Gettext();
 // Add languages
 var langDe = fs.readFileSync(__dirname + "/locales/de.mo");
 gt.addTextdomain("de", langDe);
-gt.addTextdomain("en", langDe);
+gt.addTextdomain("en", langEn);
 
 // Set default language
 gt.textdomain("en"); // English

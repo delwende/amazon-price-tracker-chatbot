@@ -114,7 +114,7 @@
 	". is first character": "Dot is first character",
 	"last character is .": "last character is Dot",
 	"few sentences. with .": "few sentences with Dot",
-	"help": "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n\n-  \"suche \[produktname\]\", z.B. \"suche iphone6\"\n- \"liste\" um deine Preisüberwachungen anzuzeigen",
-	"did_not_understand_1": "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder \"suche \[product name\]\" um ein Produkt zu suchen.",
-	"did_not_understand_2": "Hoppla, das habe ich nicht verstanden. Um zu erfahren wie ich dir weiterhelfen kann, tippe \"hilfe\"."
+	"help": "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\\n\\n-  \\"suche \\[produktname\\]\\", z.B. \\"suche iphone6\\"\n- \\"liste\\" um deine Preisüberwachungen anzuzeigen",
+	"did_not_understand_1": "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \\"hilfe\\" oder \\"suche \\[product name\\]\\" um ein Produkt zu suchen.",
+	"did_not_understand_2": "Hoppla, das habe ich nicht verstanden. Um zu erfahren wie ich dir weiterhelfen kann, tippe \\"hilfe\\"."
 }

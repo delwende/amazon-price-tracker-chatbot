@@ -131,6 +131,7 @@ var gt = new Gettext();
 // Add languages
 var langDe = fs.readFileSync(__dirname + "/locales/de.mo");
 gt.addTextdomain("de", langDe);
+gt.addTextdomain("en", langDe);
 
 // Set default language
 gt.textdomain("en"); // English
@@ -197,7 +198,7 @@ app.post('/webhook', function (req, res) {
 
 app.get('/test', function(req, res) {
   var test = format('Hello, {}!', 'Alice');
-  console.log(test);
+  console.log(gt.textdomain());
 });
 
 /*
@@ -345,7 +346,7 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, format(gt.gettext('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
+                sendTextMessage(senderID, format(gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
               } else if (messageText.startsWith("search ")) {
                 var keywords = messageText.replace("search ", "");
 
@@ -358,20 +359,20 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, format(gt.gettext('Search results for "{}"'), keywords));
+                  sendTextMessage(senderID, format(gt.dgettext(lang, 'Search results for "{}"'), keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
-                  sendTextMessage(senderID, format(gt.gettext('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling'), keywords));
+                  sendTextMessage(senderID, format(gt.dgettext(lang, 'Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling'), keywords));
                 });
 
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, format(gt.gettext('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".')));
+                sendTextMessage(senderID, format(gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".')));
               }
           }
 

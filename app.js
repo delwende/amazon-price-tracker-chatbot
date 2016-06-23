@@ -308,6 +308,7 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
+                var greeting = gt.dgettext("de", "No search results.");
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("suche ")) {
                 var keywords = messageText.replace("suche ", "");

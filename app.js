@@ -351,7 +351,7 @@ function receivedMessage(event) {
                   // Inform the user that search results are displayed
                   sendTextMessage(senderID, format('Search results for "{}"', keywords));
                   // Show to the user the search results
-                  sendListArticleSearchResultsGenericMessage(senderID, results, user);
+                  sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
@@ -957,7 +957,7 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListArticleSearchResultsGenericMessage(recipientId, results, user) {
+function sendListArticleSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
 
   for (var i = 0; i < results.length; i++) {
@@ -1021,7 +1021,11 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
     }
   };
 
-  callSendAPI(messageData);
+  if (elements.length === 0) {
+    sendTextMessage(senderID, format('Your search "{}" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
+  } else {
+    callSendAPI(messageData);
+  }
 }
 
 /*

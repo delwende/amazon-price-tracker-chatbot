@@ -978,12 +978,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
         lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
-        subtitle: "Aktueller Preis: " + lowestNewPrice.formattedPrice,
+        subtitle: format('Price : {}', lowestNewPrice.formattedPrice),
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
-          title: "Alarm aktivieren",
+          title: format('Activate price alert'),
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
@@ -1000,7 +1000,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
         }, {
           type: "web_url",
           url: detailPageUrl,
-          title: "Kaufen"
+          title: format('Buy')
         }],
       });
     }

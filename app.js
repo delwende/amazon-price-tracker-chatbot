@@ -14,7 +14,7 @@ const
   bodyParser = require('body-parser'),
   config = require('config'),
   crypto = require('crypto'),
-  de = require('/locales/de.json'),
+  de = require('./locales/de.json'),
   express = require('express'),
   https = require('https'),  
   request = require('request'),

@@ -638,6 +638,26 @@ function receivedPostback(event) {
 
       // Inform the user about the current lowest new price
       sendTextMessage(senderID, format('The current price for this item is {}', item.lowestNewPrice.formattedPrice));
+
+      // Check if the product already exists on the Backend
+      var Product = Parse.Object.extend("Product");
+      var query = new Parse.Query(Product);
+      query.equalTo("asin", item.asin);
+      query.find().then(function(results) {
+        console.log("Successfully retrieved " + results.length + " products.");
+
+        if (results.length === 1) {
+          sendTextMessage(senderID, format('Product exists on the Backend.'));
+        } else {
+          sendTextMessage(senderID, format('Product does not exist on the Backend.'));
+        }
+        return null;
+
+      }).then(function(result) {
+        // the object was saved.
+      }, function(error) {
+        console.log("Error: " + error);
+      });
       // // Check if the product already exists on the Backend
       // var Product = Parse.Object.extend("Product");
       // var query = new Parse.Query(Product);

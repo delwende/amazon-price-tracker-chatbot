@@ -309,7 +309,7 @@ function receivedMessage(event) {
               
               if (messageText.startsWith("hilfe")) {
                 var greeting = gt.dgettext("de", "No search results.");
-                sendTextMessage(senderID, "");
+                sendTextMessage(senderID, greeting);
               } else if (messageText.startsWith("suche ")) {
                 var keywords = messageText.replace("suche ", "");
                 

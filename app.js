@@ -10,12 +10,12 @@
 /* jshint node: true, devel: true */
 'use strict';
 
-const 
+const
   bodyParser = require('body-parser'),
   config = require('config'),
   crypto = require('crypto'),
   express = require('express'),
-  https = require('https'),  
+  https = require('https'),
   request = require('request'),
   Parse = require('parse/node'),
   amazon = require('amazon-product-api'),
@@ -33,13 +33,13 @@ app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 
 /*
- * Be sure to setup your config values before running this code. You can 
+ * Be sure to setup your config values before running this code. You can
  * set them using environment variables or modifying the config file in /config.
  *
  */
 
 // App Secret can be retrieved from the App Dashboard
-const APP_SECRET = (process.env.MESSENGER_APP_SECRET) ? 
+const APP_SECRET = (process.env.MESSENGER_APP_SECRET) ?
   process.env.MESSENGER_APP_SECRET :
   config.get('appSecret');
 
@@ -72,12 +72,12 @@ const PARSE_SERVER_URL = (process.env.PARSE_SERVER_URL) ?
 const AWS_ID = (process.env.AWS_ID) ?
   (process.env.AWS_ID) :
   config.get('awsId');
-  
+
 // AWS Secret
 const AWS_SECRET = (process.env.AWS_SECRET) ?
   (process.env.AWS_SECRET) :
   config.get('awsSecret');
-  
+
 // AWS Tag
 const AWS_TAG = (process.env.AWS_TAG) ?
   (process.env.AWS_TAG) :
@@ -127,12 +127,9 @@ accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, 
 
 // Create a new Gettext object
 var gt = new Gettext();
-// Load from a PO file
-var fileContents = fs.readFileSync("de.po");
-gt.addTextdomain("de", fileContents);
 
 /*
- * Use your own validation token. Check that the token used in the Webhook 
+ * Use your own validation token. Check that the token used in the Webhook
  * setup is the same token used here.
  *
  */
@@ -143,15 +140,15 @@ app.get('/webhook', function(req, res) {
     res.status(200).send(req.query['hub.challenge']);
   } else {
     console.error("Failed validation. Make sure the validation tokens match.");
-    res.sendStatus(403);          
-  }  
+    res.sendStatus(403);
+  }
 });
 
 
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
- * for your page. 
+ * for your page.
  * https://developers.facebook.com/docs/messenger-platform/implementation#subscribe_app_pages
  *
  */
@@ -185,15 +182,15 @@ app.post('/webhook', function (req, res) {
 
     // Assume all went well.
     //
-    // You must send back a 200, within 20 seconds, to let us know you've 
+    // You must send back a 200, within 20 seconds, to let us know you've
     // successfully received the callback. Otherwise, the request will time out.
     res.sendStatus(200);
   }
 });
 
 /*
- * Verify that the callback came from Facebook. Using the App Secret from 
- * the App Dashboard, we can verify the signature that is sent with each 
+ * Verify that the callback came from Facebook. Using the App Secret from
+ * the App Dashboard, we can verify the signature that is sent with each
  * callback in the x-hub-signature field, located in the header.
  *
  * https://developers.facebook.com/docs/graph-api/webhooks#setup
@@ -203,7 +200,7 @@ function verifyRequestSignature(req, res, buf) {
   var signature = req.headers["x-hub-signature"];
 
   if (!signature) {
-    // For testing, let's log an error. In production, you should throw an 
+    // For testing, let's log an error. In production, you should throw an
     // error.
     console.error("Couldn't validate the signature.");
   } else {
@@ -224,8 +221,8 @@ function verifyRequestSignature(req, res, buf) {
 /*
  * Authorization Event
  *
- * The value for 'optin.ref' is defined in the entry point. For the "Send to 
- * Messenger" plugin, it is the 'data-ref' field. Read more at 
+ * The value for 'optin.ref' is defined in the entry point. For the "Send to
+ * Messenger" plugin, it is the 'data-ref' field. Read more at
  * https://developers.facebook.com/docs/messenger-platform/webhook-reference#auth
  *
  */
@@ -235,14 +232,14 @@ function receivedAuthentication(event) {
   var timeOfAuth = event.timestamp;
 
   // The 'ref' field is set in the 'Send to Messenger' plugin, in the 'data-ref'
-  // The developer can set this to an arbitrary value to associate the 
+  // The developer can set this to an arbitrary value to associate the
   // authentication callback with the 'Send to Messenger' click event. This is
-  // a way to do account linking when the user clicks the 'Send to Messenger' 
+  // a way to do account linking when the user clicks the 'Send to Messenger'
   // plugin.
   var passThroughParam = event.optin.ref;
 
   console.log("Received authentication for user %d and page %d with pass " +
-    "through param '%s' at %d", senderID, recipientID, passThroughParam, 
+    "through param '%s' at %d", senderID, recipientID, passThroughParam,
     timeOfAuth);
 
   // When an authentication is received, we'll send a message back to the sender
@@ -254,16 +251,16 @@ function receivedAuthentication(event) {
 /*
  * Message Event
  *
- * This event is called when a message is sent to your page. The 'message' 
+ * This event is called when a message is sent to your page. The 'message'
  * object format can vary depending on the kind of message that was received.
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference#received_message
  *
- * For this example, we're going to echo any text that we get. If we get some 
+ * For this example, we're going to echo any text that we get. If we get some
  * special keywords ('button', 'generic', 'receipt'), then we'll send back
- * examples of those bubbles to illustrate the special message bubbles we've 
- * created. If we receive a message with an attachment (image, video, audio), 
+ * examples of those bubbles to illustrate the special message bubbles we've
+ * created. If we receive a message with an attachment (image, video, audio),
  * then we'll simply confirm that we've received the attachment.
- * 
+ *
  */
 function receivedMessage(event) {
   var senderID = event.sender.id;
@@ -271,7 +268,7 @@ function receivedMessage(event) {
   var timeOfMessage = event.timestamp;
   var message = event.message;
 
-  console.log("Received message for user %d and page %d at %d with message:", 
+  console.log("Received message for user %d and page %d at %d with message:",
     senderID, recipientID, timeOfMessage);
   console.log(JSON.stringify(message));
 
@@ -307,40 +304,8 @@ function receivedMessage(event) {
             // case 'fr_FR': // French (France)
             //   break;
 
-            case 'de_DE': // German
-              
-              if (messageText.startsWith("hilfe")) {
-                var greeting = gt.dgettext("de", "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- test\n- test");
-                sendTextMessage(senderID, greeting);
-              } else if (messageText.startsWith("suche ")) {
-                var keywords = messageText.replace("suche ", "");
-                
-                // Search items
-                amazonClient.itemSearch({
-                  responseGroup: 'ItemAttributes,Offers,Images',
-                  keywords: keywords,
-                  domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-                }).then(function(results){
-                  console.log("Successfully retrieved " + results.length + " items.");
-
-                  // Inform the user that search results are displayed
-                  sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-                  // Show to the user the search results
-                  sendListArticleSearchResultsGenericMessage(senderID, results, user);
-                }).catch(function(error){
-                  console.log("Error: " + JSON.stringify(error));
-                  // Inform the user that the search for his keywords yielded no results
-                  sendTextMessage(senderID, "");
-                });
-              } else if (messageText.startsWith("liste")) {
-                sendTextMessage(senderID, "");
-              } else {
-                sendTextMessage(senderID, "Es tut mir Leid. Ich bin mir nicht sicher ob ich das richtig verstehe. Tippe \"hilfe\" oder " +
-                  "\"suche \[product name\]\" um ein Produkt zu suchen.");
-                // sendTextMessage(senderID, "Hoppla, das habe ich nicht verstanden. Um zu erfahren wie ich dir weiterhelfen kann, tippe \"hilfe\".");
-              }
-
-              break;
+            // case 'de_DE': // German
+            //   break;
 
             // case 'en_IN': // English (India)
             //   break;
@@ -364,19 +329,14 @@ function receivedMessage(event) {
             //   break;
 
             default:
-              // sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, " +
-                  "helping you decide when to buy. Tell me things like the following:\n\n- \"search \[product name\]\", e.g. \"search " +
-                  "iphone6\"\n- \"list\" to show your price watches");
+                sendTextMessage(senderID, "");
               } else if (messageText.startsWith("search ")) {
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                // sendTextMessage(senderID, "I\'m sorry. I\'m not sure I understand. Try typing \"help\" or \"search \[product name\]\" to search a product.");
-                // sendTextMessage(senderID, "Oops, I didn\'t catch that. For things I can help you with, type \"help\".");
+                sendTextMessage(senderID, "");
               }
           }
 
@@ -388,7 +348,7 @@ function receivedMessage(event) {
         callUserProfileAPI(senderID, event);
       }
 
-      
+
     }
   });
 
@@ -396,7 +356,7 @@ function receivedMessage(event) {
   // redisClient.exists('user:' + senderID, function(error, reply) {
   //   if (reply === 1) {
   //     console.log("Key-value pair with key user:" + senderID + " exists.");
-      
+
   //     // Get all fields and values in hash for key user:senderID
   //     redisClient.hgetall("user:" + senderID, function(error, reply) {
   //       if (error) {
@@ -405,57 +365,57 @@ function receivedMessage(event) {
   //         var user = reply;
 
   //         if (messageText) {
-            
+
   //           // Check if user has an incomplete price alert
   //           if (user.incompletePriceAlert === "true") {
-              
+
   //             // Check if user entered a valid price. If true, update the price alert,
   //             // otherwise ask the user again to enter a valid price
   //             var messageTextPrefix = messageText.split(" ")[0];
   //             if (!isNaN(messageTextPrefix)) {
-                
+
   //               var priceDesired = parseFloat(messageTextPrefix);
   //               var priceDesiredFormatted = accounting.formatMoney(priceDesired, "EUR", 2, ".", ",");
-                
+
   //               // Update price alert with the user entered price desired
   //               var PriceAlert = Parse.Object.extend("PriceAlert");
   //               var priceAlert = new PriceAlert();
-                
+
   //               priceAlert.set("objectId", user.incompletePriceAlertId);
   //               priceAlert.set("priceDesired", priceDesired);
-                
+
   //               priceAlert.save(null, {
   //                 success: function(priceAlert) {
   //                   console.log("Updated price alert with objectId: " + priceAlert.id);
-                    
+
   //                   // Update new key-value pair with key user:senderID
   //                   redisClient.hmset('user:' + senderID, {
   //                     'incompletePriceAlert': "false",
   //                     'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
   //                     'incompletePriceAlertExamplePrice': ""
   //                   }, function(error, reply) {
-    
+
   //                       if (error == null) {
   //                         console.log("Updated key-value pair with key: user:" + senderID);
-    
+
   //                         // Inform the user that price alert activation was sucessful
   //                         sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
   //                         priceDesiredFormatted + " rutscht! (y)");
   //                       }
-                        
+
   //                   });
   //                 },
   //                 error: function(priceAlert, error) {
   //                   console.log('Failed to create new price alert, with error code: ' + error.message);
   //                 }
   //               });
-                
+
   //             } else {
   //               // Ask the user to enter a price desired
   //               sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B. "
   //                 + user.incompletePriceAlertExamplePrice + "):");
   //             }
-              
+
   //           } else {
   //             switch (user.parseUserLocale) {
   //               // case 'pt_BR': // Portuguese (Brazil)
@@ -471,7 +431,7 @@ function receivedMessage(event) {
   //               //   break;
 
   //               case 'de_DE': // German
-                  
+
   //                 if (messageText.startsWith("hilfe")) {
   //                   // Give to the user some help instructions
   //                   sendTextMessage(senderID, "Kleine Hilfestellung: Schreibe mir z.B. \"suche iphone6\" " +
@@ -500,7 +460,7 @@ function receivedMessage(event) {
   //                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
   //                   });
   //                 } else {
-  //                   // Apologize to the user and provide some help instructions 
+  //                   // Apologize to the user and provide some help instructions
   //                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
   //                   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
   //                 }
@@ -573,7 +533,7 @@ function receivedMessage(event) {
   //                 // Recall receivedMessage() with existing user
   //                 receivedMessage(event);
   //               }
-                
+
   //           });
   //         } else {
   //           // Get Facebook user profile information and sign up a user on the Backend
@@ -592,7 +552,7 @@ function receivedMessage(event) {
 /*
  * Delivery Confirmation Event
  *
- * This event is sent to confirm the delivery of a message. Read more about 
+ * This event is sent to confirm the delivery of a message. Read more about
  * these fields at https://developers.facebook.com/docs/messenger-platform/webhook-reference#message_delivery
  *
  */
@@ -606,7 +566,7 @@ function receivedDeliveryConfirmation(event) {
 
   if (messageIDs) {
     messageIDs.forEach(function(messageID) {
-      console.log("Received delivery confirmation for message ID: %s", 
+      console.log("Received delivery confirmation for message ID: %s",
         messageID);
     });
   }
@@ -620,21 +580,21 @@ function receivedDeliveryConfirmation(event) {
  *
  * This event is called when a postback is tapped on a Structured Message. Read
  * more at https://developers.facebook.com/docs/messenger-platform/webhook-reference#postback
- * 
+ *
  */
 function receivedPostback(event) {
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
   var timeOfPostback = event.timestamp;
 
-  // The 'payload' param is a developer-defined field which is set in a postback 
-  // button for Structured Messages. 
+  // The 'payload' param is a developer-defined field which is set in a postback
+  // button for Structured Messages.
   var payload = event.postback.payload;
 
-  console.log("Received postback for user %d and page %d with payload '%s' " + 
+  console.log("Received postback for user %d and page %d with payload '%s' " +
     "at %d", senderID, recipientID, payload, timeOfPostback);
 
-  // When a postback is called, we'll send a message back to the sender to 
+  // When a postback is called, we'll send a message back to the sender to
   // let them know it was successful
   // sendTextMessage(senderID, "Postback called");
 
@@ -664,7 +624,7 @@ function receivedPostback(event) {
           if (results.length === 1) {
 
             var product = results[0];
-            
+
             // Save price alert to the Backend
             var PriceAlert = Parse.Object.extend("PriceAlert");
             var priceAlert = new PriceAlert();
@@ -676,7 +636,7 @@ function receivedPostback(event) {
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('New price alert created with objectId: ' + priceAlert.id);
-                
+
                 // Calculate example price
                 var amount = item.lowestNewPrice.amount;
                 var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
@@ -694,7 +654,7 @@ function receivedPostback(event) {
                       // Ask the user to enter a desired price
                       sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                     }
-                    
+
                 });
 
 
@@ -722,15 +682,15 @@ function receivedPostback(event) {
                 // Save price alert to the Backend
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var priceAlert = new PriceAlert();
-    
+
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", true);
-    
+
                 priceAlert.save(null, {
                   success: function(priceAlert) {
                     console.log('New price alert created with objectId: ' + priceAlert.id);
-    
+
                     // Calculate example price
                     var amount = item.lowestNewPrice.amount;
                     var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
@@ -748,7 +708,7 @@ function receivedPostback(event) {
                           // Ask the user to enter a desired price
                           sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
                         }
-                        
+
                     });
 
                   },
@@ -762,7 +722,7 @@ function receivedPostback(event) {
               }
             });
           }
-          
+
         },
         error: function(error) {
           console.log("Error: " + error.code + " " + error.message);
@@ -845,7 +805,7 @@ function sendButtonMessage(recipientId) {
         }
       }
     }
-  };  
+  };
 
   callSendAPI(messageData);
 }
@@ -867,7 +827,7 @@ function sendGenericMessage(recipientId) {
           elements: [{
             title: "rift",
             subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",               
+            item_url: "https://www.oculus.com/en-us/rift/",
             image_url: "http://messengerdemo.parseapp.com/img/rift.png",
             buttons: [{
               type: "web_url",
@@ -881,7 +841,7 @@ function sendGenericMessage(recipientId) {
           }, {
             title: "touch",
             subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",               
+            item_url: "https://www.oculus.com/en-us/touch/",
             image_url: "http://messengerdemo.parseapp.com/img/touch.png",
             buttons: [{
               type: "web_url",
@@ -896,7 +856,7 @@ function sendGenericMessage(recipientId) {
         }
       }
     }
-  };  
+  };
 
   callSendAPI(messageData);
 }
@@ -921,8 +881,8 @@ function sendReceiptMessage(recipientId) {
           recipient_name: "Peter Chang",
           order_number: receiptId,
           currency: "USD",
-          payment_method: "Visa 1234",        
-          timestamp: "1428444852", 
+          payment_method: "Visa 1234",
+          timestamp: "1428444852",
           elements: [{
             title: "Oculus Rift",
             subtitle: "Includes: headset, sensor, remote",
@@ -1033,7 +993,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
         }
       }
     }
-  };  
+  };
 
   callSendAPI(messageData);
 }
@@ -1053,7 +1013,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
     method: 'GET'
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log("Successfully called User Profile API for user with id %s", 
+      console.log("Successfully called User Profile API for user with id %s",
         userId);
       // console.log(body);
 
@@ -1106,11 +1066,11 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
                 console.log("Error: " + error);
               } else {
                 console.log("New key-value pair created with key: user:" + userId);
-                
+
                 // Recall receivedMessage() with existing user
                 receivedMessage(event);
               }
-              
+
           });
         },
         error: function(user, error) {
@@ -1123,12 +1083,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user) 
       console.error(response);
       console.error(error);
     }
-  });  
+  });
 }
 
 /*
- * Call the Send API. The message data goes in the body. If successful, we'll 
- * get the message id in a response 
+ * Call the Send API. The message data goes in the body. If successful, we'll
+ * get the message id in a response
  *
  */
 function callSendAPI(messageData) {
@@ -1143,18 +1103,18 @@ function callSendAPI(messageData) {
       var recipientId = body.recipient_id;
       var messageId = body.message_id;
 
-      console.log("Successfully sent generic message with id %s to recipient %s", 
+      console.log("Successfully sent generic message with id %s to recipient %s",
         messageId, recipientId);
     } else {
       console.error("Unable to send message.");
       // console.error(response);
       // console.error(error);
     }
-  });  
+  });
 }
 
 // Start server
-// Webhooks must be available via SSL with a certificate signed by a valid 
+// Webhooks must be available via SSL with a certificate signed by a valid
 // certificate authority.
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

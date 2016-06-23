@@ -8295,3 +8295,6 @@ msgstr "Abmelden"
 #: wp-includes/class-wp-xmlrpc-server.php:5794
 msgid "You do not have permission to upload files."
 msgstr "Du hast nicht die erforderlichen Rechte, um Dateien hochzuladen."
+
+msgid "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- test\n- test"
+msgstr "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine Benachrichtigung senden wenn die Preise sinken, sodass du den optimalen Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n- test\n- test"

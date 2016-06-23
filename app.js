@@ -129,7 +129,7 @@ accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, 
 var gt = new Gettext();
 
 // Add languages
-var langDe = fs.readFileSync("de.mo");
+var langDe = fs.readFileSync("/locales/de.mo");
 gt.addTextdomain("de", langDe);
 
 // Set default language

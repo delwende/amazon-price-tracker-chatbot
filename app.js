@@ -300,7 +300,7 @@ function receivedMessage(event) {
 
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
-        var language = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+        var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
 
         if (messageText) {
 
@@ -345,7 +345,7 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, format(gt.gettext('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
+                sendTextMessage(senderID, format(gt.gettext('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
               } else if (messageText.startsWith("search ")) {
                 var keywords = messageText.replace("search ", "");
 
@@ -371,7 +371,7 @@ function receivedMessage(event) {
               } else if (messageText.startsWith("list")) {
                 sendTextMessage(senderID, "");
               } else {
-                sendTextMessage(senderID, format(gt.gettext('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
+                sendTextMessage(senderID, format(gt.gettext('I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".')));
               }
           }
 

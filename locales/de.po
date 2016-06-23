@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-23 23:05+0200\n"
-"PO-Revision-Date: 2016-06-23 23:05+0200\n"
+"POT-Creation-Date: 2016-06-23 23:11+0200\n"
+"PO-Revision-Date: 2016-06-23 23:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -40,7 +40,7 @@ msgstr "suche "
 #: app.js:364
 #, javascript-format
 msgid "Search results for \"%s\""
-msgstr "Suchergebnisse für \"%s\""
+msgstr "Suchergebnisse für %s"
 
 #: app.js:370
 #, javascript-format

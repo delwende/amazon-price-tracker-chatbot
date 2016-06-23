@@ -915,8 +915,8 @@ msgid "Newer comments"
 msgstr "Neuere Kommentare"
 
 #: wp-includes/general-template.php:2040
-msgid "Posts published on %s"
-msgstr "Beiträge veröffentlicht am %s"
+msgid "Posts published on {}"
+msgstr "Beiträge veröffentlicht am {}"
 
 #: wp-includes/link-template.php:2787
 msgid "Older comments"

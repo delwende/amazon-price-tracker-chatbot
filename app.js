@@ -14,7 +14,6 @@ const
   bodyParser = require('body-parser'),
   config = require('config'),
   crypto = require('crypto'),
-  de = require('./locales/de.json'),
   express = require('express'),
   https = require('https'),  
   request = require('request'),
@@ -22,7 +21,8 @@ const
   amazon = require('amazon-product-api'),
   redis = require('redis'),
   accounting = require('accounting'), // A simple and advanced number, money and currency formatting library
-  objectPath = require("object-path"); // Access deep properties using a path
+  objectPath = require("object-path"), // Access deep properties using a path
+  Gettext = require("node-gettext"); // Gettext client for Node.js to use .mo files for I18N
 
 var app = express();
 
@@ -122,6 +122,12 @@ redisClient.on('error', function (error) {
 
 // Configure accounting.js
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
+
+// Create a new Gettext object
+var gt = new Gettext();
+// Load from a PO file
+var fileContents = fs.readFileSync("de.po");
+gt.addTextdomain("de", fileContents);
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -302,7 +308,7 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                sendTextMessage(senderID, de.get('help'));
+                sendTextMessage(senderID, "");
               } else if (messageText.startsWith("suche ")) {
                 var keywords = messageText.replace("suche ", "");
                 
@@ -321,7 +327,7 @@ function receivedMessage(event) {
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords yielded no results
-                  sendTextMessage(senderID, de.get('did_not_understand_1'));
+                  sendTextMessage(senderID, "");
                 });
               } else if (messageText.startsWith("liste")) {
                 sendTextMessage(senderID, "");

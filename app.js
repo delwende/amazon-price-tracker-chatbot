@@ -310,8 +310,8 @@ function receivedMessage(event) {
             case 'de_DE': // German
               
               if (messageText.startsWith("hilfe")) {
-                var greeting = gt.dgettext("de", "Posts published on {}");
-                sendTextMessage(senderID, format(greeting, 'Alice'));
+                var greeting = gt.dgettext("de", "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- test\n- test");
+                sendTextMessage(senderID, greeting);
               } else if (messageText.startsWith("suche ")) {
                 var keywords = messageText.replace("suche ", "");
                 

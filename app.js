@@ -130,6 +130,7 @@ var gt = new Gettext();
 
 // Add languages
 var langDe = fs.readFileSync(__dirname + "/locales/de.mo");
+var langEn = fs.readFileSync(__dirname + "/locales/en.mo");
 gt.addTextdomain("de", langDe);
 gt.addTextdomain("en", langEn);
 

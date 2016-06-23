@@ -1115,7 +1115,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
             'parseUserFirstName': user.get("firstName"),
             'parseUserLastName': user.get("lastName"),
             'parseUserProfilePic': user.get("profilePic"),
-            'parseUserLocale': "fr_FR", // user.get("locale")
+            'parseUserLocale': user.get("locale"),
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'incompletePriceAlert': "false",

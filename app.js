@@ -21,8 +21,9 @@ const
   amazon = require('amazon-product-api'),
   redis = require('redis'),
   accounting = require('accounting'), // A simple and advanced number, money and currency formatting library
-  objectPath = require("object-path"), // Access deep properties using a path
-  Gettext = require("node-gettext"); // Gettext client for Node.js to use .mo files for I18N
+  objectPath = require('object-path'), // Access deep properties using a path
+  fs = require('fs'),
+  Gettext = require('node-gettext'); // Gettext client for Node.js to use .mo files for I18N
 
 var app = express();
 

@@ -188,6 +188,11 @@ app.post('/webhook', function (req, res) {
   }
 });
 
+app.get('/test', function(req, res) {
+  var test = format('Hello, {}!', 'Alice');
+  console.log(test);
+});
+
 /*
  * Verify that the callback came from Facebook. Using the App Secret from
  * the App Dashboard, we can verify the signature that is sent with each
@@ -330,7 +335,8 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith("help")) {
-                sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- \"search \[product name\]\", e.g. \"search iphone6\"\n- \"list\" to show your price watches");
+                // sendTextMessage(senderID, "Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- \"search \[product name\]\", e.g. \"search iphone6\"\n- \"list\" to show your price watches");
+                sendTextMessage(senderID, format('Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
               } else if (messageText.startsWith("search ")) {
                 sendTextMessage(senderID, "");
               } else if (messageText.startsWith("list")) {

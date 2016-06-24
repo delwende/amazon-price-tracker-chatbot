@@ -371,14 +371,14 @@ function receivedMessage(event) {
 
                   // Inform the user that search results are displayed
                   responseText = gt.dgettext(lang, 'Search results for "%s"');
-                  sendTextMessage(senderID, vsprintf(responseText, keywords));
+                  sendTextMessage(senderID, sprintf(responseText, keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
                   responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
-                  sendTextMessage(senderID, vsprintf(responseText, keywords));
+                  sendTextMessage(senderID, sprintf(responseText, keywords));
                 });
 
                 sendTextMessage(senderID, '');

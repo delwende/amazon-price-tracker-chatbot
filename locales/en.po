@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-24 09:31+0200\n"
-"PO-Revision-Date: 2016-06-24 09:33+0200\n"
+"POT-Creation-Date: 2016-06-24 09:40+0200\n"
+"PO-Revision-Date: 2016-06-24 09:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -47,7 +47,7 @@ msgstr "search "
 #: app.js:373
 #, javascript-format
 msgid "Search results for \"%s\""
-msgstr "Search results for %s"
+msgstr "Search results for \"%s\""
 
 #: app.js:380
 #, javascript-format
@@ -60,11 +60,11 @@ msgstr ""
 "- Using more general terms\n"
 "- Checking your spelling"
 
-#: app.js:384
+#: app.js:385
 msgid "list"
 msgstr "list"
 
-#: app.js:387
+#: app.js:388
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -72,16 +72,16 @@ msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 
-#: app.js:1023
+#: app.js:1025
 #, javascript-format
 msgid "Price: %s"
 msgstr "Price: %s"
 
-#: app.js:1028
+#: app.js:1030
 msgid "Activate price alert"
 msgstr "Activate price alert"
 
-#: app.js:1045
+#: app.js:1047
 msgid "Buy"
 msgstr "Buy"
 

@@ -385,7 +385,8 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
                 sendTextMessage(senderID, '');
               } else {
-                sendTextMessage(senderID, gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'));
+                responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
+                sendTextMessage(senderID, responseText);
               }
           }
 

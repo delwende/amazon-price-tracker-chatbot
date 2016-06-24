@@ -24,7 +24,9 @@ const
   objectPath = require('object-path'), // Access deep properties using a path
   fs = require('fs'),
   Gettext = require('node-gettext'), // Gettext client for Node.js to use .mo files for I18N
-  format = require('string-format');
+  format = require('string-format'),
+  sprintf = require("sprintf-js").sprintf,
+  vsprintf = require("sprintf-js").vsprintf;
 
 var app = express();
 
@@ -200,6 +202,12 @@ app.post('/webhook', function (req, res) {
 app.get('/test', function(req, res) {
   var test = format('Hello, {}!', 'Alice');
   console.log(gt.textdomain());
+
+  var text = gt.ngettext("%d Comment", "%d Comments", 10);
+  console.log(text);
+
+  var h = vsprintf("The first 4 letters of the english alphabet are: %s, %s, %s and %s", ["a", "b", "c", "d"]);
+  console.log(h);
 });
 
 /*
@@ -347,7 +355,6 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-                // sendTextMessage(senderID, format(gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')));
                 sendTextMessage(senderID, gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
               } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
@@ -361,7 +368,7 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, gt.dgettext(lang, 'Search results for \"%s\"', keywords));
+                  sendTextMessage(senderID, vsprintf(gt.dgettext(lang, 'Search results for "%s"'), keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){

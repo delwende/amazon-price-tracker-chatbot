@@ -782,6 +782,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
             "intent": "activatePriceAlert",
             "entities": {
               "parseUserObjectId": user.parseUserObjectId,
+              "parseUserLocale": user.parseUserLocale
               "item": {
                 "asin": asin,
                 "detailPageUrl": detailPageUrl,

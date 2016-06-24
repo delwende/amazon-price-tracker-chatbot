@@ -311,6 +311,7 @@ function receivedMessage(event) {
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
         var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+        var responseText;
 
         if (messageText) {
 
@@ -355,7 +356,8 @@ function receivedMessage(event) {
 
             default:
               if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-                sendTextMessage(senderID, gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches'));
+                responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')
+                sendTextMessage(senderID, text);
               } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
 
@@ -368,7 +370,8 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  sendTextMessage(senderID, vsprintf(gt.dgettext(lang, 'Search results for "%s"'), keywords));
+                  responseText = gt.dgettext(lang, 'Search results for "%s"');
+                  sendTextMessage(senderID, vsprintf(text, keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){

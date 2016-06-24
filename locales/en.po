@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-24 09:54+0200\n"
-"PO-Revision-Date: 2016-06-24 09:54+0200\n"
+"POT-Creation-Date: 2016-06-24 10:06+0200\n"
+"PO-Revision-Date: 2016-06-24 10:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -15,11 +15,11 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:309
+#: app.js:305
 msgid "help"
 msgstr "hilfe"
 
-#: app.js:310
+#: app.js:306
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -33,16 +33,16 @@ msgstr ""
 "- \"search [product name]\", e.g. \"search iphone6\"\n"
 "- \"list\" to show your price watches"
 
-#: app.js:312 app.js:313
+#: app.js:308 app.js:309
 msgid "search "
 msgstr "search "
 
-#: app.js:324
+#: app.js:319
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:331
+#: app.js:326
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -53,11 +53,11 @@ msgstr ""
 "- Using more general terms\n"
 "- Checking your spelling"
 
-#: app.js:334
+#: app.js:329
 msgid "list"
 msgstr "list"
 
-#: app.js:337
+#: app.js:332
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -65,16 +65,21 @@ msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 
-#: app.js:777
+#: app.js:413
+#, javascript-format
+msgid "The current price for this item is %s"
+msgstr "The current price for this item is %s"
+
+#: app.js:775
 #, javascript-format
 msgid "Price: %s"
 msgstr "Price: %s"
 
-#: app.js:782
+#: app.js:780
 msgid "Activate price alert"
 msgstr "Activate price alert"
 
-#: app.js:799
+#: app.js:797
 msgid "Buy"
 msgstr "Buy"
 

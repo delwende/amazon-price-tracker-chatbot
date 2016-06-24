@@ -331,6 +331,9 @@ function receivedMessage(event) {
           } else {
             responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
             sendTextMessage(senderID, responseText);
+
+            redisClient.del('user:979287485518975 ');
+
           }
         } else if (messageAttachments) {
           sendTextMessage(senderID, "Message with attachment received");

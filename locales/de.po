@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-24 09:33+0200\n"
-"PO-Revision-Date: 2016-06-24 09:41+0200\n"
+"POT-Creation-Date: 2016-06-24 09:53+0200\n"
+"PO-Revision-Date: 2016-06-24 09:56+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,18 +15,11 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:206
-#, javascript-format
-msgid "%d Comment"
-msgid_plural "%d Comments"
-msgstr[0] "%d Kommentar"
-msgstr[1] "%d Kommentare"
-
-#: app.js:358
+#: app.js:309
 msgid "help"
 msgstr "hilfe"
 
-#: app.js:359
+#: app.js:310
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -40,16 +33,16 @@ msgstr ""
 "- “suche [produktname]\", z.B. “suche iphone6\"\n"
 "- “liste” um deine Preisverfolgungen anzuzeigen"
 
-#: app.js:361 app.js:362
+#: app.js:312 app.js:313
 msgid "search "
 msgstr "suche "
 
-#: app.js:373
+#: app.js:324
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Suchergebnisse für \"%s\""
 
-#: app.js:380
+#: app.js:331
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -61,11 +54,11 @@ msgstr ""
 "- Allgemeinere Begriffe verwenden\n"
 "- Rechtschreibung überprüfen"
 
-#: app.js:384
+#: app.js:334
 msgid "list"
 msgstr "liste"
 
-#: app.js:387
+#: app.js:337
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -74,15 +67,20 @@ msgstr ""
 "habe. Tippe “suche [produktname]” um ein Produkt zu suchen oder tippe "
 "“hilfe”."
 
-#: app.js:1023
+#: app.js:777
 #, javascript-format
 msgid "Price: %s"
 msgstr "Preis: %s"
 
-#: app.js:1028
+#: app.js:782
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:1045
+#: app.js:799
 msgid "Buy"
-msgstr "Kaufe"
+msgstr "Kaufen"
+
+#~ msgid "%d Comment"
+#~ msgid_plural "%d Comments"
+#~ msgstr[0] "%d Kommentar"
+#~ msgstr[1] "%d Kommentare"

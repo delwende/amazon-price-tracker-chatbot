@@ -199,17 +199,6 @@ app.post('/webhook', function (req, res) {
   }
 });
 
-app.get('/test', function(req, res) {
-  var test = format('Hello, {}!', 'Alice');
-  console.log(gt.textdomain());
-
-  var text = gt.ngettext("%d Comment", "%d Comments", 10);
-  console.log(text);
-
-  var h = vsprintf("The first 4 letters of the english alphabet are: %s, %s, %s and %s", ["a", "b", "c", "d"]);
-  console.log(h);
-});
-
 /*
  * Verify that the callback came from Facebook. Using the App Secret from
  * the App Dashboard, we can verify the signature that is sent with each
@@ -307,295 +296,53 @@ function receivedMessage(event) {
     if (error) {
       console.log("Error: " + error);
     } else {
-
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
         var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
         var responseText;
 
         if (messageText) {
+          if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
+            responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')
+            sendTextMessage(senderID, responseText);
+          } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
+            var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
+            // Search items
+            amazonClient.itemSearch({
+              responseGroup: 'ItemAttributes,Offers,Images',
+              keywords: keywords,
+              domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+            }).then(function(results){
+              console.log("Successfully retrieved " + results.length + " items.");
 
-
-
-          switch (user.parseUserLocale) {
-            // case 'pt_BR': // Portuguese (Brazil)
-            //   break;
-
-            // case 'zh_CN': // Simplified Chinese (China)
-            //   break;
-
-            // case 'zh_HK': // Traditional Chinese (Hong Kong)
-            //   break;
-
-            // case 'fr_FR': // French (France)
-            //   break;
-
-            // case 'de_DE': // German
-            //   break;
-
-            // case 'en_IN': // English (India)
-            //   break;
-
-            // case 'it_IT': // Italian
-            //   break;
-
-            // case 'ja_JP': // Japanese
-            //   break;
-
-            // case 'es_MX': // Spanish (Mexico)
-            //   break;
-
-            // case 'es_ES': // Spanish (Spain)
-            //   break;
-
-            // case 'en_GB': // English (UK)
-            //   break;
-
-            // case 'en_US': // English (US)
-            //   break;
-
-            default:
-              if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-                responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')
-                sendTextMessage(senderID, responseText);
-              } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
-                var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
-
-                // Search items
-                amazonClient.itemSearch({
-                  responseGroup: 'ItemAttributes,Offers,Images',
-                  keywords: keywords,
-                  domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-                }).then(function(results){
-                  console.log("Successfully retrieved " + results.length + " items.");
-
-                  // Inform the user that search results are displayed
-                  responseText = gt.dgettext(lang, 'Search results for "%s"');
-                  sendTextMessage(senderID, sprintf(responseText, keywords));
-                  // Show to the user the search results
-                  sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
-                }).catch(function(error){
-                  console.log("Error: " + JSON.stringify(error));
-                  // Inform the user that the search for his keywords did not match any products
-                  responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
-                  sendTextMessage(senderID, sprintf(responseText, keywords));
-                });
-
-                sendTextMessage(senderID, '');
-              } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
-                sendTextMessage(senderID, '');
-              } else {
-                responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
-                sendTextMessage(senderID, responseText);
-              }
+              // Inform the user that search results are displayed
+              responseText = gt.dgettext(lang, 'Search results for "%s"');
+              sendTextMessage(senderID, sprintf(responseText, keywords));
+              // Show to the user the search results
+              sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
+            }).catch(function(error){
+              console.log("Error: " + JSON.stringify(error));
+              // Inform the user that the search for his keywords did not match any products
+              responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+              sendTextMessage(senderID, sprintf(responseText, keywords));
+            });
+          } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
+            sendTextMessage(senderID, '');
+          } else {
+            responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
+            sendTextMessage(senderID, responseText);
           }
-
         } else if (messageAttachments) {
           sendTextMessage(senderID, "Message with attachment received");
         }
+
       } else {
         // Get Facebook user profile information and sign up a user on the Backend
         callUserProfileAPI(senderID, event);
       }
 
-
     }
   });
-
-  // Determine if key user:senderID exists
-  // redisClient.exists('user:' + senderID, function(error, reply) {
-  //   if (reply === 1) {
-  //     console.log("Key-value pair with key user:" + senderID + " exists.");
-
-  //     // Get all fields and values in hash for key user:senderID
-  //     redisClient.hgetall("user:" + senderID, function(error, reply) {
-  //       if (error) {
-  //         console.log("Error: " + error);
-  //       } else {
-  //         var user = reply;
-
-  //         if (messageText) {
-
-  //           // Check if user has an incomplete price alert
-  //           if (user.incompletePriceAlert === "true") {
-
-  //             // Check if user entered a valid price. If true, update the price alert,
-  //             // otherwise ask the user again to enter a valid price
-  //             var messageTextPrefix = messageText.split(" ")[0];
-  //             if (!isNaN(messageTextPrefix)) {
-
-  //               var priceDesired = parseFloat(messageTextPrefix);
-  //               var priceDesiredFormatted = accounting.formatMoney(priceDesired, "EUR", 2, ".", ",");
-
-  //               // Update price alert with the user entered price desired
-  //               var PriceAlert = Parse.Object.extend("PriceAlert");
-  //               var priceAlert = new PriceAlert();
-
-  //               priceAlert.set("objectId", user.incompletePriceAlertId);
-  //               priceAlert.set("priceDesired", priceDesired);
-
-  //               priceAlert.save(null, {
-  //                 success: function(priceAlert) {
-  //                   console.log("Updated price alert with objectId: " + priceAlert.id);
-
-  //                   // Update new key-value pair with key user:senderID
-  //                   redisClient.hmset('user:' + senderID, {
-  //                     'incompletePriceAlert': "false",
-  //                     'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
-  //                     'incompletePriceAlertExamplePrice': ""
-  //                   }, function(error, reply) {
-
-  //                       if (error == null) {
-  //                         console.log("Updated key-value pair with key: user:" + senderID);
-
-  //                         // Inform the user that price alert activation was sucessful
-  //                         sendTextMessage(senderID, "Ok, der Alarm wurde aktiviert. Ich melde mich wenn der Preis unter " +
-  //                         priceDesiredFormatted + " rutscht! (y)");
-  //                       }
-
-  //                   });
-  //                 },
-  //                 error: function(priceAlert, error) {
-  //                   console.log('Failed to create new price alert, with error code: ' + error.message);
-  //                 }
-  //               });
-
-  //             } else {
-  //               // Ask the user to enter a price desired
-  //               sendTextMessage(senderID, "Gib bitte noch einen Preis ein um den Alarm azuschließen (Tippe z.B. "
-  //                 + user.incompletePriceAlertExamplePrice + "):");
-  //             }
-
-  //           } else {
-  //             switch (user.parseUserLocale) {
-  //               // case 'pt_BR': // Portuguese (Brazil)
-  //               //   break;
-
-  //               // case 'zh_CN': // Simplified Chinese (China)
-  //               //   break;
-
-  //               // case 'zh_HK': // Traditional Chinese (Hong Kong)
-  //               //   break;
-
-  //               // case 'fr_FR': // French (France)
-  //               //   break;
-
-  //               case 'de_DE': // German
-
-  //                 if (messageText.startsWith("hilfe")) {
-  //                   // Give to the user some help instructions
-  //                   sendTextMessage(senderID, "Kleine Hilfestellung: Schreibe mir z.B. \"suche iphone6\" " +
-  //                     "um einen Artikel zu suchen oder \"liste\" um deine aktiven Preisalarme anzuzeigen.");
-  //                 } else if (messageText.startsWith("suche ")) {
-  //                   var keywords = messageText.replace("suche ", "");
-
-  //                   // Search items
-  //                   amazonClient.itemSearch({
-  //                     searchIndex: 'All',
-  //                     responseGroup: 'ItemAttributes,Offers,Images',
-  //                     keywords: keywords,
-  //                     domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-  //                   }).then(function(results){
-  //                     console.log("Successfully retrieved " + results.length + " items.");
-  //                     // console.log(results);
-
-  //                     // Inform the user that search results are displayed
-  //                     sendTextMessage(senderID, "Ergebnisse für \"" + keywords + "\" werden angezeigt.");
-  //                     // Show to the user 10 search results
-  //                     sendListArticleSearchResultsGenericMessage(senderID, results, user);
-  //                   }).catch(function(error){
-  //                     console.log("Error: " + JSON.stringify(error));
-  //                     // Inform the user that the search for his keywords yielded no results
-  //                     sendTextMessage(senderID, "Deine Suche nach \"" + keywords + "\" ergab leider keine " +
-  //                       "Treffer. Versuche allgemeinere Begriffe wie z.B. \"suche iphone6\" zu verwenden.");
-  //                   });
-  //                 } else {
-  //                   // Apologize to the user and provide some help instructions
-  //                   sendTextMessage(senderID, "Sorry! Ich habe leider nicht verstanden was du meinst.");
-  //                   sendTextMessage(senderID, "Probiere \"suche iphone6\" um einen Artikel zu suchen und einen Preisalarm zu aktivieren.");
-  //                 }
-
-  //                 break;
-
-  //               // case 'en_IN': // English (India)
-  //               //   break;
-
-  //               // case 'it_IT': // Italian
-  //               //   break;
-
-  //               // case 'ja_JP': // Japanese
-  //               //   break;
-
-  //               // case 'es_MX': // Spanish (Mexico)
-  //               //   break;
-
-  //               // case 'es_ES': // Spanish (Spain)
-  //               //   break;
-
-  //               // case 'en_GB': // English (UK)
-  //               //   break;
-
-  //               // case 'en_US': // English (US)
-  //               //   break;
-
-  //               default:
-  //                 sendTextMessage(senderID, "Sorry! Your locale is currently not supported by our service.");
-  //             }
-  //           }
-  //         } else if (messageAttachments) {
-  //           sendTextMessage(senderID, "Message with attachment received");
-  //         }
-  //       }
-  //     });
-
-  //   } else {
-  //     console.log("Key-value pair with key user:" + senderID + " doesn't exist.");
-
-  //     // Check if the user already exists on the Backend. If the user exists, save user data to
-  //     // key-value store, otherwise get user profile information from Facebook User Profile API
-  //     // and signup a user on the Backend
-  //     var query = new Parse.Query(Parse.User);
-  //     query.equalTo("senderId", senderID);  // find user by senderId
-  //     query.find({
-  //       success: function(results) {
-  //         console.log("Successfully retrieved " + results.length + " users.");
-
-  //         if (results.length === 1) {
-  //           var user = results[0];
-
-  //           // Create new key-value pair with key user:senderID
-  //           redisClient.hmset('user:' + senderID, {
-  //             'parseUserObjectId': user.id,
-  //             'parseUserFirstName': user.get("firstName"),
-  //             'parseUserLastName': user.get("lastName"),
-  //             'parseUserProfilePic': user.get("profilePic"),
-  //             'parseUserLocale': user.get("locale"),
-  //             'parseUserGender': user.get("gender"),
-  //             'parseUserTimezone': user.get("timezone"),
-  //             'incompletePriceAlert': "false",
-  //             'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
-  //             'incompletePriceAlertExamplePrice': ""
-  //           }, function(error, reply) {
-
-  //               if (error == null) {
-  //                 console.log("New key-value pair created with key: user:" + senderID);
-
-  //                 // Recall receivedMessage() with existing user
-  //                 receivedMessage(event);
-  //               }
-
-  //           });
-  //         } else {
-  //           // Get Facebook user profile information and sign up a user on the Backend
-  //           callUserProfileAPI(senderID, event);
-  //         }
-  //       },
-  //       error: function(error) {
-  //         console.log("Error: " + error.code + " " + error.message);
-  //       }
-  //     });
-  //   }
-  // });
 }
 
 
@@ -1022,7 +769,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
-        subtitle: gt.dgettext(lang, 'Price: %s', lowestNewPrice.formattedPrice),
+        subtitle: sprintf(gt.dgettext(lang, 'Price: %s'), lowestNewPrice.formattedPrice),
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{

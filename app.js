@@ -421,14 +421,39 @@ function receivedPostback(event) {
         console.log("Successfully retrieved " + results.length + " products.");
 
         if (results.length === 1) {
-          sendTextMessage(senderID, format('Product exists on the Backend.'));
-        } else {
-          sendTextMessage(senderID, format('Product does not exist on the Backend.'));
-        }
-        return null;
+          var product = results[0];
 
-      }).then(function(result) {
-        // the object was saved.
+          // Save price alert to the Backend
+          var PriceAlert = Parse.Object.extend("PriceAlert");
+          var priceAlert = new PriceAlert();
+
+          priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+          priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+          priceAlert.set("active", true);
+
+          return priceAlert.save();
+        } else {
+          // Save product to the Backend
+          var Product = Parse.Object.extend("Product");
+          var product = new Product();
+
+          product.set("asin", item.asin);
+          product.set("detailPageUrl", item.detailPageUrl);
+          product.set("imageUrl", item.imageUrl);
+          product.set("title", item.title);
+
+          return product.save();
+        }
+
+      }).then(function(object) {
+        var className = object.getClassName(); // Get class name of Parse.Object
+        console.log('New ' + className.toLowerCase() + ' created with objectId: ' + object.id);
+
+        if (className === 'PriceAlert') {
+          sendTextMessage(senderID, className);
+        } else if (className === 'Product') {
+          sendTextMessage(senderID, className);
+        }
       }, function(error) {
         console.log("Error: " + error);
       });

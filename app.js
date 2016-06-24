@@ -357,7 +357,7 @@ function receivedMessage(event) {
             default:
               if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
                 responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')
-                sendTextMessage(senderID, text);
+                sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
 
@@ -371,13 +371,14 @@ function receivedMessage(event) {
 
                   // Inform the user that search results are displayed
                   responseText = gt.dgettext(lang, 'Search results for "%s"');
-                  sendTextMessage(senderID, vsprintf(text, keywords));
+                  sendTextMessage(senderID, vsprintf(responseText, keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }).catch(function(error){
                   console.log("Error: " + JSON.stringify(error));
                   // Inform the user that the search for his keywords did not match any products
-                  sendTextMessage(senderID, gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling', keywords));
+                  responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+                  sendTextMessage(senderID, vsprintf(responseText, keywords));
                 });
 
                 sendTextMessage(senderID, '');

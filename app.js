@@ -155,6 +155,10 @@ app.get('/webhook', function(req, res) {
   }
 });
 
+app.get('/test', function(req, res) {
+  gt.dgettext(lang, `string text line 1 string text line 2`);
+});
+
 
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
@@ -331,6 +335,7 @@ function receivedMessage(event) {
           } else {
             responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
             sendTextMessage(senderID, responseText);
+            sendTextMessage(senderID, `string text line 1 string text line 2`);
           }
         } else if (messageAttachments) {
           sendTextMessage(senderID, "Message with attachment received");

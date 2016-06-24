@@ -398,6 +398,8 @@ function receivedPostback(event) {
   var json = JSON.parse(payload);
 
   var intent = json.intent;
+  var lang = json.entities.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+  var responseText;
 
   // Check intent in order to decide the next step to perform
   switch (intent) {
@@ -408,7 +410,8 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      sendTextMessage(senderID, format('The current price for this item is {}', item.lowestNewPrice.formattedPrice));
+      responseText = gt.dgettext(lang, 'The current price for this item is {}');
+      sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
 
       // Check if the product already exists on the Backend
       var Product = Parse.Object.extend("Product");
@@ -820,7 +823,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  * information and sign up a new user on the Backend
  *
  */
- function callUserProfileAPI(userId, event) {
+function callUserProfileAPI(userId, event) {
   request({
     uri: 'https://graph.facebook.com/v2.6/' + userId,
     qs: {

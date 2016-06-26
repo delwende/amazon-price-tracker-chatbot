@@ -450,7 +450,7 @@ function receivedPostback(event) {
       }).then(function(result) {
         //var className = object.getClassName(); // Get class name of Parse.Object
         
-        sendTextMessage(senderID, result);
+        sendTextMessage(senderID, result.id);
       }, function(error) {
         console.log("Error: " + error);
       });

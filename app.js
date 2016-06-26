@@ -869,7 +869,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: amount + "",
+              title: "Call Postback",
               payload: "Payload for first bubble",
             }, {
               type: "postback",

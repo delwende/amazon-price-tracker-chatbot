@@ -447,10 +447,10 @@ function receivedPostback(event) {
           return product.save();
         }
 
-      }).then(function(object) {
-        var className = object.getClassName(); // Get class name of Parse.Object
+      }).then(function(result) {
+        //var className = object.getClassName(); // Get class name of Parse.Object
         
-        sendTextMessage(senderID, className);
+        sendTextMessage(senderID, result);
       }, function(error) {
         console.log("Error: " + error);
       });

@@ -448,7 +448,13 @@ function receivedPostback(event) {
         }
 
       }).then(function(result) {
-        var className = object.className; // Get class name of Parse.Object
+        var className = result.className; // Get class name of ParseObject
+
+        if (className === 'Product') {
+
+        } else if (className === 'PriceAlert') {
+
+        }
         
         sendTextMessage(senderID, className);
       }, function(error) {

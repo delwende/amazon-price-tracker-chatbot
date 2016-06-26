@@ -853,8 +853,6 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
-
-
   var messageData = {
     recipient: {
       id: recipientId

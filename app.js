@@ -455,7 +455,7 @@ function receivedPostback(event) {
         } else if (className === 'PriceAlert') {
           responseText = gt.dgettext(lang, 'Please select your desired price: ');
           sendTextMessage(senderID);
-          sendButtonMessage(senderID);
+          sendGenericMessage(senderID);
         }
         
         
@@ -633,30 +633,6 @@ function sendTextMessage(recipientId, messageText) {
  *
  */
 function sendButtonMessage(recipientId) {
-  // var messageData = {
-  //   recipient: {
-  //     id: recipientId
-  //   },
-  //   message: {
-  //     attachment: {
-  //       type: "template",
-  //       payload: {
-  //         template_type: "button",
-  //         text: "This is test text",
-  //         buttons:[{
-  //           type: "web_url",
-  //           url: "https://www.oculus.com/en-us/rift/",
-  //           title: "Open Web URL"
-  //         }, {
-  //           type: "postback",
-  //           title: "Call Postback",
-  //           payload: "Developer defined postback"
-  //         }]
-  //       }
-  //     }
-  //   }
-  // };
-
   var messageData = {
     recipient: {
       id: recipientId
@@ -668,16 +644,12 @@ function sendButtonMessage(recipientId) {
           template_type: "button",
           text: "This is test text",
           buttons:[{
-            type: "postback",
-            title: "-$0,01 ($88,00)",
-            payload: "Developer defined postback"
+            type: "web_url",
+            url: "https://www.oculus.com/en-us/rift/",
+            title: "Open Web URL"
           }, {
             type: "postback",
-            title: "-3% ($85,00)",
-            payload: "Developer defined postback"
-          }, {
-            type: "postback",
-            title: "-5% ($80,00)",
+            title: "Call Postback",
             payload: "Developer defined postback"
           }]
         }
@@ -693,6 +665,49 @@ function sendButtonMessage(recipientId) {
  *
  */
 function sendGenericMessage(recipientId) {
+  // var messageData = {
+  //   recipient: {
+  //     id: recipientId
+  //   },
+  //   message: {
+  //     attachment: {
+  //       type: "template",
+  //       payload: {
+  //         template_type: "generic",
+  //         elements: [{
+  //           title: "rift",
+  //           subtitle: "Next-generation virtual reality",
+  //           item_url: "https://www.oculus.com/en-us/rift/",
+  //           image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+  //           buttons: [{
+  //             type: "web_url",
+  //             url: "https://www.oculus.com/en-us/rift/",
+  //             title: "Open Web URL"
+  //           }, {
+  //             type: "postback",
+  //             title: "Call Postback",
+  //             payload: "Payload for first bubble",
+  //           }],
+  //         }, {
+  //           title: "touch",
+  //           subtitle: "Your Hands, Now in VR",
+  //           item_url: "https://www.oculus.com/en-us/touch/",
+  //           image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+  //           buttons: [{
+  //             type: "web_url",
+  //             url: "https://www.oculus.com/en-us/touch/",
+  //             title: "Open Web URL"
+  //           }, {
+  //             type: "postback",
+  //             title: "Call Postback",
+  //             payload: "Payload for second bubble",
+  //           }]
+  //         }]
+  //       }
+  //     }
+  //   }
+  // };
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -703,33 +718,59 @@ function sendGenericMessage(recipientId) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            title: "Set desired price",
+            subtitle: "Please set your desired price",
+            item_url: "",
+            image_url: "",
             buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
             }, {
               type: "postback",
               title: "Call Postback",
               payload: "Payload for first bubble",
             }],
           }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            title: "Set desired price",
+            subtitle: "Please set your desired price",
+            item_url: "",
+            image_url: "",
             buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble"
             }, {
               type: "postback",
               title: "Call Postback",
-              payload: "Payload for second bubble",
-            }]
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "Set desired price",
+            subtitle: "Please set your desired price",
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
           }]
         }
       }

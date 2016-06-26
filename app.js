@@ -24,9 +24,8 @@ const
   objectPath = require('object-path'), // Access deep properties using a path
   fs = require('fs'),
   Gettext = require('node-gettext'), // Gettext client for Node.js to use .mo files for I18N
-  format = require('string-format'),
-  sprintf = require("sprintf-js").sprintf,
-  vsprintf = require("sprintf-js").vsprintf;
+  sprintf = require('sprintf-js').sprintf,
+  vsprintf = require('sprintf-js').vsprintf;
 
 var app = express();
 
@@ -156,7 +155,6 @@ app.get('/webhook', function(req, res) {
 });
 
 app.get('/test', function(req, res) {
-  gt.dgettext(lang, `string text line 1 string text line 2`);
 });
 
 
@@ -307,7 +305,9 @@ function receivedMessage(event) {
 
         if (messageText) {
           if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-            responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches')
+            responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, \
+              helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- \
+              "list" to show your price watches');
             sendTextMessage(senderID, responseText);
           } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
             var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
@@ -335,7 +335,6 @@ function receivedMessage(event) {
           } else {
             responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
             sendTextMessage(senderID, responseText);
-            sendTextMessage(senderID, `string text line 1 string text line 2`);
           }
         } else if (messageAttachments) {
           sendTextMessage(senderID, "Message with attachment received");

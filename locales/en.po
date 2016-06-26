@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-26 19:37+0200\n"
-"PO-Revision-Date: 2016-06-26 19:37+0200\n"
+"POT-Creation-Date: 2016-06-26 19:39+0200\n"
+"PO-Revision-Date: 2016-06-26 19:39+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -22,27 +22,27 @@ msgstr "hilfe"
 #: app.js:308
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
-"prices drop,               helping you decide when to buy. Tell me things "
-"like the following:\n"
+"prices drop, helping you decide when to buy. Tell me things like the "
+"following:\n"
 "- \"search [product name]\", e.g. \"search iphone6\"\n"
-"-               \"list\" to show your price watches"
+"- \"list\" to show your price watches"
 msgstr ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
-"prices drop,               helping you decide when to buy. Tell me things "
-"like the following:\n"
+"prices drop, helping you decide when to buy. Tell me things like the "
+"following:\n"
 "- \"search [product name]\", e.g. \"search iphone6\"\n"
-"-               \"list\" to show your price watches"
+"- \"list\" to show your price watches"
 
-#: app.js:312 app.js:313
+#: app.js:310 app.js:311
 msgid "search "
 msgstr "search "
 
-#: app.js:323
+#: app.js:321
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:330
+#: app.js:328
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -53,11 +53,11 @@ msgstr ""
 "- Using more general terms\n"
 "- Checking your spelling"
 
-#: app.js:333
+#: app.js:331
 msgid "list"
 msgstr "list"
 
-#: app.js:336
+#: app.js:334
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -65,36 +65,36 @@ msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 
-#: app.js:417
+#: app.js:415
 #, javascript-format
 msgid "The current price for this item is %s"
 msgstr "The current price for this item is %s"
 
-#: app.js:805
+#: app.js:803
 #, javascript-format
 msgid "Price: %s"
 msgstr "Price: %s"
 
-#: app.js:810
+#: app.js:808
 msgid "Activate price alert"
 msgstr "Activate price alert"
 
-#: app.js:828
+#: app.js:826
 msgid "Buy"
 msgstr "Buy"
 
 #~ msgid ""
 #~ "Hi there. So I monitor millions of products on Amazon and can alert you "
-#~ "when prices drop, helping you decide when to buy. Tell me things like the "
-#~ "following:\n"
+#~ "when prices drop,               helping you decide when to buy. Tell me "
+#~ "things like the following:\n"
 #~ "- \"search [product name]\", e.g. \"search iphone6\"\n"
-#~ "- \"list\" to show your price watches"
+#~ "-               \"list\" to show your price watches"
 #~ msgstr ""
 #~ "Hi there. So I monitor millions of products on Amazon and can alert you "
-#~ "when prices drop, helping you decide when to buy. Tell me things like the "
-#~ "following:\n"
+#~ "when prices drop,               helping you decide when to buy. Tell me "
+#~ "things like the following:\n"
 #~ "- \"search [product name]\", e.g. \"search iphone6\"\n"
-#~ "- \"list\" to show your price watches"
+#~ "-               \"list\" to show your price watches"
 
 #~ msgid "Search results for \"{}\""
 #~ msgstr "Search results for \"{}\""

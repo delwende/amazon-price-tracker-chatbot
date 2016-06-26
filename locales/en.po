@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-26 20:56+0200\n"
-"PO-Revision-Date: 2016-06-26 20:56+0200\n"
+"POT-Creation-Date: 2016-06-26 21:15+0200\n"
+"PO-Revision-Date: 2016-06-26 21:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -83,13 +83,48 @@ msgstr "Activate price alert"
 msgid "Buy"
 msgstr "Buy"
 
-#: app.js:866 app.js:884 app.js:902
+#: app.js:868 app.js:886 app.js:904
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:867 app.js:885 app.js:903
+#: app.js:869 app.js:887 app.js:905
 msgid "Please choose one of the following options"
 msgstr "Please choose one of the following options"
+
+#: app.js:874
+msgid "-0,01"
+msgstr "-0,01"
+
+#: app.js:878
+msgid "-3%"
+msgstr "-3%"
+
+#: app.js:882
+msgid "-5%"
+msgstr "-5%"
+
+#: app.js:892
+msgid "-7%"
+msgstr "-7%"
+
+#: app.js:896
+msgid "-10%"
+msgstr "-10%"
+
+#: app.js:900
+msgid "Good Deal"
+msgstr "Good Deal"
+
+#: app.js:910
+msgid "Best Price"
+msgstr "Best Price"
+
+#: app.js:914
+msgid "Custom Input"
+msgstr "Custom Input"
+
+#~ msgid "Individual Input"
+#~ msgstr "Individual Input"
 
 #~ msgid "Please choose an option"
 #~ msgstr "Bitte wähle eine der nachfolgenden Optionen aus"

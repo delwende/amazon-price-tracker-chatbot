@@ -911,7 +911,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, 'Individual Input'),
+              title: gt.dgettext(lang, 'Custom Input'),
               payload: "Payload for first bubble",
             }],
           }]

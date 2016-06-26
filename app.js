@@ -431,7 +431,7 @@ function receivedPostback(event) {
 
           priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
           priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-          priceAlert.set("active", true);
+          priceAlert.set("active", false);
 
           return priceAlert.save();
         } else {
@@ -449,13 +449,8 @@ function receivedPostback(event) {
 
       }).then(function(object) {
         var className = object.getClassName(); // Get class name of Parse.Object
-        console.log('New ' + className.toLowerCase() + ' created with objectId: ' + object.id);
-
-        if (className === 'PriceAlert') {
-          sendTextMessage(senderID, className);
-        } else if (className === 'Product') {
-          sendTextMessage(senderID, className);
-        }
+        
+        sendTextMessage(senderID, className);
       }, function(error) {
         console.log("Error: " + error);
       });

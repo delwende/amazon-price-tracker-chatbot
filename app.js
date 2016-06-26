@@ -453,9 +453,7 @@ function receivedPostback(event) {
         if (className === 'Product') {
 
         } else if (className === 'PriceAlert') {
-          responseText = gt.dgettext(lang, 'Please select your desired price: ');
-          sendTextMessage(senderID);
-          sendGenericMessage(senderID);
+          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
         }
         
         
@@ -665,49 +663,6 @@ function sendButtonMessage(recipientId) {
  *
  */
 function sendGenericMessage(recipientId) {
-  // var messageData = {
-  //   recipient: {
-  //     id: recipientId
-  //   },
-  //   message: {
-  //     attachment: {
-  //       type: "template",
-  //       payload: {
-  //         template_type: "generic",
-  //         elements: [{
-  //           title: "rift",
-  //           subtitle: "Next-generation virtual reality",
-  //           item_url: "https://www.oculus.com/en-us/rift/",
-  //           image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-  //           buttons: [{
-  //             type: "web_url",
-  //             url: "https://www.oculus.com/en-us/rift/",
-  //             title: "Open Web URL"
-  //           }, {
-  //             type: "postback",
-  //             title: "Call Postback",
-  //             payload: "Payload for first bubble",
-  //           }],
-  //         }, {
-  //           title: "touch",
-  //           subtitle: "Your Hands, Now in VR",
-  //           item_url: "https://www.oculus.com/en-us/touch/",
-  //           image_url: "http://messengerdemo.parseapp.com/img/touch.png",
-  //           buttons: [{
-  //             type: "web_url",
-  //             url: "https://www.oculus.com/en-us/touch/",
-  //             title: "Open Web URL"
-  //           }, {
-  //             type: "postback",
-  //             title: "Call Postback",
-  //             payload: "Payload for second bubble",
-  //           }]
-  //         }]
-  //       }
-  //     }
-  //   }
-  // };
-
   var messageData = {
     recipient: {
       id: recipientId
@@ -718,59 +673,33 @@ function sendGenericMessage(recipientId) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "Set desired price",
-            subtitle: "Please set your desired price",
-            item_url: "",
-            image_url: "",
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",
+            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
             buttons: [{
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
             }, {
               type: "postback",
               title: "Call Postback",
               payload: "Payload for first bubble",
             }],
           }, {
-            title: "Set desired price",
-            subtitle: "Please set your desired price",
-            item_url: "",
-            image_url: "",
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",
+            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
             buttons: [{
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble"
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
             }, {
               type: "postback",
               title: "Call Postback",
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: "Set desired price",
-            subtitle: "Please set your desired price",
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
+              payload: "Payload for second bubble",
+            }]
           }]
         }
       }
@@ -911,6 +840,83 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         payload: {
           template_type: "generic",
           elements: elements
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(lang, 'Set desired price'),
+            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: amount + "",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: gt.dgettext(lang, 'Set desired price'),
+            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: gt.dgettext(lang, 'Set desired price'),
+            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }]
         }
       }
     }

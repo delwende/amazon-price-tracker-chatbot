@@ -453,10 +453,12 @@ function receivedPostback(event) {
         if (className === 'Product') {
 
         } else if (className === 'PriceAlert') {
-
+          responseText = gt.dgettext(lang, 'Please select your desired price: ');
+          sendTextMessage(senderID);
+          sendButtonMessage(senderID);
         }
         
-        sendTextMessage(senderID, className);
+        
       }, function(error) {
         console.log("Error: " + error);
       });
@@ -631,6 +633,30 @@ function sendTextMessage(recipientId, messageText) {
  *
  */
 function sendButtonMessage(recipientId) {
+  // var messageData = {
+  //   recipient: {
+  //     id: recipientId
+  //   },
+  //   message: {
+  //     attachment: {
+  //       type: "template",
+  //       payload: {
+  //         template_type: "button",
+  //         text: "This is test text",
+  //         buttons:[{
+  //           type: "web_url",
+  //           url: "https://www.oculus.com/en-us/rift/",
+  //           title: "Open Web URL"
+  //         }, {
+  //           type: "postback",
+  //           title: "Call Postback",
+  //           payload: "Developer defined postback"
+  //         }]
+  //       }
+  //     }
+  //   }
+  // };
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -642,12 +668,16 @@ function sendButtonMessage(recipientId) {
           template_type: "button",
           text: "This is test text",
           buttons:[{
-            type: "web_url",
-            url: "https://www.oculus.com/en-us/rift/",
-            title: "Open Web URL"
+            type: "postback",
+            title: "-$0,01 ($88,00)",
+            payload: "Developer defined postback"
           }, {
             type: "postback",
-            title: "Call Postback",
+            title: "-3% ($85,00)",
+            payload: "Developer defined postback"
+          }, {
+            type: "postback",
+            title: "-5% ($80,00)",
             payload: "Developer defined postback"
           }]
         }

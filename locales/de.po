@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-26 19:39+0200\n"
-"PO-Revision-Date: 2016-06-26 20:00+0200\n"
+"POT-Creation-Date: 2016-06-26 20:34+0200\n"
+"PO-Revision-Date: 2016-06-26 20:34+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -72,16 +72,20 @@ msgstr ""
 msgid "The current price for this item is %s"
 msgstr "Der aktuelle Preis für diesen Artikel ist %s"
 
-#: app.js:803
+#: app.js:456
+msgid "Please select your desired price: "
+msgstr "Bitte wähle deinen Wunschpreis aus: "
+
+#: app.js:834
 #, javascript-format
 msgid "Price: %s"
 msgstr "Preis: %s"
 
-#: app.js:808
+#: app.js:839
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:826
+#: app.js:857
 msgid "Buy"
 msgstr "Kaufen"
 

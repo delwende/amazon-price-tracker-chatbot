@@ -853,6 +853,8 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
+
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -869,15 +871,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, '-0,01'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, '-3%'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, '-5%'),
               payload: "Payload for first bubble",
             }],
           }, {
@@ -887,15 +889,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, '-7%'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, '-10%'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, 'Good Deal'),
               payload: "Payload for first bubble",
             }],
           }, {
@@ -905,15 +907,11 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, 'Best Price'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: "Call Postback",
+              title: gt.dgettext(lang, 'Individual Input'),
               payload: "Payload for first bubble",
             }],
           }]

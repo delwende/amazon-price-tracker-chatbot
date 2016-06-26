@@ -448,9 +448,9 @@ function receivedPostback(event) {
         }
 
       }).then(function(object) {
-        var className = object.getClassName(); // Get class name of Parse.Object
+        //var className = object.getClassName(); // Get class name of Parse.Object
         
-        sendTextMessage(senderID, className);
+        sendTextMessage(senderID, "test");
       }, function(error) {
         console.log("Error: " + error);
       });

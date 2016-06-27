@@ -466,7 +466,11 @@ function receivedPostback(event) {
         
         
       }).then(function(result) {
-        sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
+
+        if (result) {
+          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
+        }
+        
       }, function(error) {
         console.log("Error: " + error);
       });

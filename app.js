@@ -882,7 +882,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-0,01'),
+              title: gt.dgettext(lang, '-0,01') + ' (' + accounting.formatMoney((price - 1) / 100, "€", 2, ".", ",") + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",

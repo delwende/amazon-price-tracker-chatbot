@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-06-27 21:46+0200\n"
-"PO-Revision-Date: 2016-06-27 21:51+0200\n"
+"PO-Revision-Date: 2016-06-27 22:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -125,7 +125,7 @@ msgstr "Bester Preis"
 
 #: app.js:925
 msgid "Custom Input"
-msgstr "Individuelle Eingabe"
+msgstr "Individuelle Preiseingabe"
 
 #~ msgid "Please choose one of the following options"
 #~ msgstr "Bitte wähle eine der nachfolgenden Optionen"

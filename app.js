@@ -867,10 +867,10 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  */
 function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
   var priceMinusOne = accounting.formatMoney((price - 1) / 100, "EUR", 2, ".", ",");
-  var priceMinusThreePercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
-  var priceMinusFivePercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
-  var priceMinusSevenPercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
-  var priceMinusTenPercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
+  var priceMinusThreePercent = accounting.formatMoney((price * 97) / 100, "EUR", 2, ".", ",");
+  var priceMinusFivePercent = accounting.formatMoney((price * 100) / 95, "EUR", 2, ".", ",");
+  var priceMinusSevenPercent = accounting.formatMoney((price * 100) / 93, "EUR", 2, ".", ",");
+  var priceMinusTenPercent = accounting.formatMoney((price * 100) / 90, "EUR", 2, ".", ",");
 
   var messageData = {
     recipient: {
@@ -911,20 +911,6 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercent + ')',
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: gt.dgettext(lang, 'Good Deal'),
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(lang, 'Best Price'),
               payload: "Payload for first bubble",
             }, {
               type: "postback",

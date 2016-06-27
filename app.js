@@ -466,11 +466,10 @@ function receivedPostback(event) {
         
         
       }).then(function(result) {
-
+        // Check if new price alert was created
         if (result) {
           sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
         }
-        
       }, function(error) {
         console.log("Error: " + error);
       });
@@ -878,7 +877,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
           template_type: "generic",
           elements: [{
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -896,7 +895,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -914,7 +913,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
             item_url: "",
             image_url: "",
             buttons: [{

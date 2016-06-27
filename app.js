@@ -451,11 +451,22 @@ function receivedPostback(event) {
         var className = result.className; // Get class name of ParseObject
 
         if (className === 'Product') {
+          // Save price alert to the Backend
+          var PriceAlert = Parse.Object.extend("PriceAlert");
+          var priceAlert = new PriceAlert();
 
+          priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+          priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+          priceAlert.set("active", false);
+
+          return priceAlert.save();
         } else if (className === 'PriceAlert') {
           sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
         }
         
+        
+      }).then(function(result) {
+        sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
         
       }, function(error) {
         console.log("Error: " + error);

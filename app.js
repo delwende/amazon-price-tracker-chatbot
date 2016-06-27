@@ -866,6 +866,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
+  var priceMinusOne = accounting.formatMoney((price - 1) / 100, "EUR", 2, ".", ",");
+  var priceMinusThreePercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
+  var priceMinusFivePercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
+  var priceMinusSevenPercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
+  var priceMinusTenPercent = accounting.formatMoney((price / 100) * 97, "EUR", 2, ".", ",");
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -882,15 +888,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-0,01') + ' (' + accounting.formatMoney((price - 1) / 100, "€", 2, ".", ",") + ')',
+              title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOne + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-3%'),
+              title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercent + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-5%'),
+              title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercent + ')',
               payload: "Payload for first bubble",
             }],
           }, {
@@ -900,11 +906,11 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-7%'),
+              title: gt.dgettext(lang, '-7%') + ' (' + priceMinusSevenPercent + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-10%'),
+              title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercent + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",

@@ -883,7 +883,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
           template_type: "generic",
           elements: [{
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
+            subtitle: gt.dgettext(lang, 'Please set your desired price'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -901,7 +901,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please set your desired price at which you want to receive an alert'),
+            subtitle: gt.dgettext(lang, 'Please set your desired price'),
             item_url: "",
             image_url: "",
             buttons: [{

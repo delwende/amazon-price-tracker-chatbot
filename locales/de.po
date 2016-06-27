@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-27 21:46+0200\n"
-"PO-Revision-Date: 2016-06-27 22:04+0200\n"
+"POT-Creation-Date: 2016-06-27 22:09+0200\n"
+"PO-Revision-Date: 2016-06-27 22:09+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -85,47 +85,48 @@ msgstr "Aktiviere Preisalarm"
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:879 app.js:897 app.js:915
+#: app.js:885 app.js:903
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:880 app.js:898 app.js:916
-msgid "Please set your desired price at which you want to receive an alert"
-msgstr ""
-"Bitte lege deinen Wunschpreis fest, bei dem du eine Benachrichtigung "
-"erhalten möchtest"
+#: app.js:886 app.js:904
+msgid "Please set your desired price"
+msgstr "Bitte lege deinen Wunschpreis fest"
 
-#: app.js:885
+#: app.js:891
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:889
+#: app.js:895
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:893
+#: app.js:899
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:903
+#: app.js:909
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:907
+#: app.js:913
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:911
-msgid "Good Deal"
-msgstr "Gutes Angebot"
-
-#: app.js:921
-msgid "Best Price"
-msgstr "Bester Preis"
-
-#: app.js:925
+#: app.js:917
 msgid "Custom Input"
 msgstr "Individuelle Preiseingabe"
+
+#~ msgid "Please set your desired price at which you want to receive an alert"
+#~ msgstr ""
+#~ "Bitte lege deinen Wunschpreis fest, bei dem du eine Benachrichtigung "
+#~ "erhalten möchtest"
+
+#~ msgid "Good Deal"
+#~ msgstr "Gutes Angebot"
+
+#~ msgid "Best Price"
+#~ msgstr "Bester Preis"
 
 #~ msgid "Please choose one of the following options"
 #~ msgstr "Bitte wähle eine der nachfolgenden Optionen"

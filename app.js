@@ -360,7 +360,7 @@ function receivedMessage(event) {
           }
 
         } else {
-          responseText = gt.dgettext(lang, 'I\'m sorry. I\'m currently not yet available in your locale. Stay tuned!');
+          responseText = gt.dgettext(lang, 'I\'m sorry. I\'m currently not yet available in your country. Stay tuned!');
           sendTextMessage(senderID, responseText);
         }
         

@@ -461,14 +461,14 @@ function receivedPostback(event) {
 
           return priceAlert.save();
         } else if (className === 'PriceAlert') {
-          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
+          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount, result.id);
         }
         
         
       }).then(function(result) {
         // Check if new price alert was created
         if (result) {
-          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount);
+          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount, result.id);
         }
       }, function(error) {
         console.log("Error: " + error);
@@ -479,6 +479,34 @@ function receivedPostback(event) {
     case 'disactivatePriceAlert':
       break;
 
+    case 'completePriceAlert':
+      
+      var parseUserObjectId = json.entities.parseUserObjectId;
+      var parseUserLocale = json.entities.parseUserLocale;
+      var priceDesired = json.entities.priceDesired;
+      var priceAlertObjectId = json.entities.priceAlertObjectId;
+      
+      // Query price alerts
+      var PriceAlert = Parse.Object.extend("PriceAlert");
+      var query = new Parse.Query(PriceAlert);
+      query.notEqualTo("objectId", priceAlertObjectId);
+      query.find().then(function(results) {
+        
+        if (results.length === 1) {
+          return results[0].save({ priceDesired: priceDesired });
+        } else {
+          
+        }
+        // return query.find();
+      }).then(function(results) {
+        // return results[0].save({ key: value });
+      }).then(function(result) {
+        // the object was saved.
+      }, function(error) {
+        // there was some error.
+      });
+      
+      break;
 
     default:
   }
@@ -757,7 +785,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
+function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertObjectId) {
   var priceMinusOne = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
@@ -786,7 +814,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             buttons: [{
               type: "postback",
               title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOneFormatted + ')',
-              payload: "Payload for first bubble",
+              payload: JSON.stringify({
+            "intent": "completePriceAlert",
+            "entities": {
+              "parseUserObjectId": user.parseUserObjectId,
+              "parseUserLocale": user.parseUserLocale,
+              "priceDesired": priceMinusOneFormatted,
+              "priceAlertObjectId": priceAlertObjectId
+            }
+          }),
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',

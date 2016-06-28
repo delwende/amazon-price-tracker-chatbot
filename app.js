@@ -345,7 +345,7 @@ function receivedMessage(event) {
               ];
               var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
               sendTextMessage(senderID, sprintf(greeting[random-1], user.parseUserFirstName));
-            }else {
+            } else {
               var support = [
                 gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
                 gt.dgettext(lang, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. If you need help just enter "help".'),
@@ -839,7 +839,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
           template_type: "generic",
           elements: [{
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please set your desired price'),
+            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -865,7 +865,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please set your desired price'),
+            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
             item_url: "",
             image_url: "",
             buttons: [{

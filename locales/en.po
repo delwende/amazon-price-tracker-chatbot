@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-28 19:57+0200\n"
-"PO-Revision-Date: 2016-06-28 19:58+0200\n"
+"POT-Creation-Date: 2016-06-28 20:14+0200\n"
+"PO-Revision-Date: 2016-06-28 20:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -128,8 +128,8 @@ msgid "Set desired price"
 msgstr "Set desired price"
 
 #: app.js:842 app.js:868
-msgid "Please set your desired price"
-msgstr "Please set your desired price"
+msgid "Please choose one of the following options"
+msgstr "Please choose one of the following options"
 
 #: app.js:847
 msgid "-0,01"
@@ -154,6 +154,9 @@ msgstr "-10%"
 #: app.js:881
 msgid "Custom Input"
 msgstr "Custom Input"
+
+#~ msgid "Please set your desired price"
+#~ msgstr "Please set your desired price"
 
 #~ msgid ""
 #~ "So, I'm good at alerting you when Amazon prices drop. Other stuff, not so "
@@ -182,9 +185,6 @@ msgstr "Custom Input"
 
 #~ msgid "Best Price"
 #~ msgstr "Best Price"
-
-#~ msgid "Please choose one of the following options"
-#~ msgstr "Please choose one of the following options"
 
 #~ msgid "Individual Input"
 #~ msgstr "Individual Input"

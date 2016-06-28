@@ -337,7 +337,7 @@ function receivedMessage(event) {
               });
             } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
               sendTextMessage(senderID, '');
-            } else if (messageText.startsWith(gt.dgettext(lang, 'hi'))) {
+            } else if (messageText.startsWith(gt.dgettext(lang, 'hi')) || messageText.startsWith(gt.dgettext(lang, 'hello'))) {
               var greetings = [
                 gt.dgettext(lang, 'Hi %s!'),
                 gt.dgettext(lang, 'Oh, hello %s!'),
@@ -357,7 +357,6 @@ function receivedMessage(event) {
           responseText = gt.dgettext(lang, 'I\'m sorry. I\'m currently not yet available in your locale. Stay tuned!');
           sendTextMessage(senderID, responseText);
         }
-
         
 
       } else {

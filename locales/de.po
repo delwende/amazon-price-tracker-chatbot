@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-28 19:14+0200\n"
-"PO-Revision-Date: 2016-06-28 19:18+0200\n"
+"POT-Creation-Date: 2016-06-28 19:21+0200\n"
+"PO-Revision-Date: 2016-06-28 19:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -42,7 +42,7 @@ msgstr "suche "
 msgid "Search results for \"%s\""
 msgstr "Suchergebnisse für \"%s\""
 
-#: app.js:335 app.js:803
+#: app.js:335 app.js:802
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -61,6 +61,10 @@ msgstr "liste"
 #: app.js:340
 msgid "hi"
 msgstr "hi"
+
+#: app.js:340
+msgid "hello"
+msgstr "hallo"
 
 #: app.js:342
 #, javascript-format
@@ -89,53 +93,53 @@ msgstr ""
 msgid "I'm sorry. I'm currently not yet available in your locale. Stay tuned!"
 msgstr ""
 
-#: app.js:439
+#: app.js:438
 #, javascript-format
 msgid "The current price for this item is %s"
 msgstr "Der aktuelle Preis für diesen Artikel ist %s"
 
-#: app.js:755
+#: app.js:754
 #, javascript-format
 msgid "Price: %s"
 msgstr "Preis: %s"
 
-#: app.js:760
+#: app.js:759
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:778
+#: app.js:777
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:836 app.js:862
+#: app.js:835 app.js:861
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:837 app.js:863
+#: app.js:836 app.js:862
 msgid "Please set your desired price"
 msgstr "Bitte lege deinen Wunschpreis fest"
 
-#: app.js:842
+#: app.js:841
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:854
+#: app.js:853
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:858
+#: app.js:857
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:868
+#: app.js:867
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:872
+#: app.js:871
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:876
+#: app.js:875
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
 

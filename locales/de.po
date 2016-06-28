@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-28 20:50+0200\n"
-"PO-Revision-Date: 2016-06-28 20:50+0200\n"
+"POT-Creation-Date: 2016-06-28 20:53+0200\n"
+"PO-Revision-Date: 2016-06-28 20:53+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -106,7 +106,7 @@ msgstr ""
 "\"hilfe”."
 
 #: app.js:363
-msgid "I'm sorry. I'm currently not yet available in your country. Stay tuned!"
+msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
 
@@ -159,6 +159,12 @@ msgstr "-10%"
 #: app.js:881
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
+
+#~ msgid ""
+#~ "I'm sorry. I'm currently not yet available in your country. Stay tuned!"
+#~ msgstr ""
+#~ "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe "
+#~ "dran!"
 
 #~ msgid ""
 #~ "I'm sorry. I'm currently not yet available in your locale. Stay tuned!"

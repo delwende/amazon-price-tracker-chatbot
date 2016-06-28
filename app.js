@@ -815,14 +815,14 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertO
               type: "postback",
               title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOneFormatted + ')',
               payload: JSON.stringify({
-            "intent": "completePriceAlert",
-            "entities": {
-              "parseUserObjectId": user.parseUserObjectId,
-              "parseUserLocale": user.parseUserLocale,
-              "priceDesired": priceMinusOneFormatted,
-              "priceAlertObjectId": priceAlertObjectId
-            }
-          }),
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": user.parseUserObjectId,
+                  "parseUserLocale": user.parseUserLocale,
+                  "priceDesired": priceMinusOne,
+                  "priceAlertObjectId": priceAlertObjectId
+                }
+              }),
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',

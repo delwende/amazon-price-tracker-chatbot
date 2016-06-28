@@ -306,9 +306,8 @@ function receivedMessage(event) {
         var responseText;
 
         // Check if user locale is supported
-        if (locale === 'pt_BR' || locale === 'zh_CN' || locale === 'zh_HK' || locale === 'fr_FR' || locale === 'de_DE' || locale === 'en_IN'
-          || locale === 'it_IT'|| locale === 'ja_JP' || locale === 'es_MX' || locale === 'es_ES'|| locale === 'en_GB' || locale === 'en_US') {
-
+        if (locale === 'fr_CA' || locale === 'zh_CN' || locale === 'zh_HK' || locale === 'fr_FR' || locale === 'de_DE' ||
+          locale === 'it_IT' || locale === 'ja_JP' || locale === 'es_ES'|| locale === 'en_GB' || locale === 'en_US') {
 
           if (messageText) {
             if (messageText.startsWith(gt.dgettext(lang, 'help'))) {

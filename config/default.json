@@ -22,6 +22,7 @@
     "awsTag_es_ES": "wwwjackthebot-21",
     "awsTag_en_GB": "wwwjackthebot-21",
     "awsTag_en_US": "wwwjackthebot-21",
+    "awsTag_fr_CA": "wwwjackthebot-21",
     "awsLocale_pt_BR": "webservices.amazon.com.br",
     "awsLocale_zh_CN": "webservices.amazon.cn",
     "awsLocale_zh_HK": "webservices.amazon.cn",
@@ -33,5 +34,6 @@
     "awsLocale_es_MX": "webservices.amazon.com.mx",
     "awsLocale_es_ES": "webservices.amazon.es",
     "awsLocale_en_GB": "webservices.amazon.co.uk",
-    "awsLocale_en_US": "webservices.amazon.com"
+    "awsLocale_en_US": "webservices.amazon.com",
+    "awsLocale_fr_CA": "webservices.amazon.ca"
 }

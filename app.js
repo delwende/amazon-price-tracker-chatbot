@@ -474,121 +474,6 @@ function receivedPostback(event) {
         console.log("Error: " + error);
       });
 
-      // // Check if the product already exists on the Backend
-      // var Product = Parse.Object.extend("Product");
-      // var query = new Parse.Query(Product);
-      // query.equalTo("asin", item.asin);
-      // query.find({
-      //   success: function(results) {
-      //     console.log("Successfully retrieved " + results.length + " products.");
-      //
-      //     if (results.length === 1) {
-      //
-      //       var product = results[0];
-      //
-      //       // Save price alert to the Backend
-      //       var PriceAlert = Parse.Object.extend("PriceAlert");
-      //       var priceAlert = new PriceAlert();
-      //
-      //       priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-      //       priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-      //       priceAlert.set("active", true);
-      //
-      //       priceAlert.save(null, {
-      //         success: function(priceAlert) {
-      //           console.log('New price alert created with objectId: ' + priceAlert.id);
-      //
-      //           // Calculate example price
-      //           var amount = item.lowestNewPrice.amount;
-      //           var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
-      //
-      //           // Update key-value pair with key user:senderID
-      //           redisClient.hmset('user:' + senderID, {
-      //             'incompletePriceAlert': "true",
-      //             'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
-      //             'incompletePriceAlertExamplePrice': examplePrice
-      //           }, function(error, reply) {
-      //
-      //               if (error == null) {
-      //                 console.log("Updated key-value pair with key: user:" + senderID);
-      //
-      //                 // Ask the user to enter a desired price
-      //                 sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
-      //               }
-      //
-      //           });
-      //
-      //
-      //         },
-      //         error: function(priceAlert, error) {
-      //           console.log('Failed to create new price alert, with error code: ' + error.message);
-      //         }
-      //       });
-      //
-      //     } else {
-      //
-      //       // Save product to the Backend
-      //       var Product = Parse.Object.extend("Product");
-      //       var product = new Product();
-      //
-      //       product.set("asin", item.asin);
-      //       product.set("detailPageUrl", item.detailPageUrl);
-      //       product.set("imageUrl", item.imageUrl);
-      //       product.set("title", item.title);
-      //
-      //       product.save(null, {
-      //         success: function(product) {
-      //           console.log('New product created with objectId: ' + product.id);
-      //
-      //           // Save price alert to the Backend
-      //           var PriceAlert = Parse.Object.extend("PriceAlert");
-      //           var priceAlert = new PriceAlert();
-      //
-      //           priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-      //           priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-      //           priceAlert.set("active", true);
-      //
-      //           priceAlert.save(null, {
-      //             success: function(priceAlert) {
-      //               console.log('New price alert created with objectId: ' + priceAlert.id);
-      //
-      //               // Calculate example price
-      //               var amount = item.lowestNewPrice.amount;
-      //               var examplePrice = accounting.formatMoney((amount / 100) - 1, "", 2, ".", ","); // Original lowest new price minus 1 mainunit (Euro/Dollar, etc.)
-      //
-      //               // Update key-value pair with key user:senderID
-      //               redisClient.hmset('user:' + senderID, {
-      //                 'incompletePriceAlert': "true",
-      //                 'incompletePriceAlertId': priceAlert.id, // ParseObject id of the imcomplete price alert
-      //                 'incompletePriceAlertExamplePrice': examplePrice
-      //               }, function(error, reply) {
-      //
-      //                   if (error == null) {
-      //                     console.log("Updated key-value pair with key: user:" + senderID);
-      //
-      //                     // Ask the user to enter a desired price
-      //                     sendTextMessage(senderID, "Bei welchem Preis soll ich dir eine Benachrichtigung senden? (Tippe z.B. " + examplePrice + "):");
-      //                   }
-      //
-      //               });
-      //
-      //             },
-      //             error: function(priceAlert, error) {
-      //               console.log('Failed to create new price alert, with error code: ' + error.message);
-      //             }
-      //           });
-      //         },
-      //         error: function(product, error) {
-      //           console.log('Failed to create new product, with error code: ' + error.message);
-      //         }
-      //       });
-      //     }
-      //
-      //   },
-      //   error: function(error) {
-      //     console.log("Error: " + error.code + " " + error.message);
-      //   }
-      // });
       break;
 
     case 'disactivatePriceAlert':
@@ -795,6 +680,7 @@ function sendReceiptMessage(recipientId) {
 function sendListArticleSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
   var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+  var responseText;
 
   for (var i = 0; i < results.length; i++) {
     var item = results[i];
@@ -858,7 +744,13 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     }
   };
 
-  callSendAPI(messageData);
+  if (elements.length > 0) {
+    callSendAPI(messageData);
+  } else {
+    // Inform the user that the search for his keywords did not match any products
+    responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+    sendTextMessage(senderID, sprintf(responseText, keywords));
+  }
 }
 
 /*
@@ -866,11 +758,16 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
-  var priceMinusOne = accounting.formatMoney((price - 1) / 100, "EUR", 2, ".", ",");
-  var priceMinusThreePercent = accounting.formatMoney((price / 100) * 0.97, "EUR", 2, ".", ",");
-  var priceMinusFivePercent = accounting.formatMoney((price / 100) * 0.95, "EUR", 2, ".", ",");
-  var priceMinusSevenPercent = accounting.formatMoney((price / 100) * 0.93, "EUR", 2, ".", ",");
-  var priceMinusTenPercent = accounting.formatMoney((price / 100) * 0.9, "EUR", 2, ".", ",");
+  var priceMinusOne = price - 1;
+  var priceMinusThreePercent = price * 0.97;
+  var priceMinusFivePercent = price * 0.95;
+  var priceMinusSevenPercent = price * 0.93;
+  var priceMinusTenPercent = price * 0.9;
+  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, "EUR", 2, ".", ",");
+  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, "EUR", 2, ".", ",");
+  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, "EUR", 2, ".", ",");
+  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, "EUR", 2, ".", ",");
+  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, "EUR", 2, ".", ",");
 
   var messageData = {
     recipient: {
@@ -888,15 +785,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOne + ')',
+              title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOneFormatted + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercent + ')',
+              title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercent + ')',
+              title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
               payload: "Payload for first bubble",
             }],
           }, {
@@ -906,11 +803,11 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price) {
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-7%') + ' (' + priceMinusSevenPercent + ')',
+              title: gt.dgettext(lang, '-7%') + ' (' + priceMinusSevenPercentFormatted + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercent + ')',
+              title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
               payload: "Payload for first bubble",
             }, {
               type: "postback",

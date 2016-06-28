@@ -822,15 +822,15 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertO
                   "priceDesired": priceMinusOne,
                   "priceAlertObjectId": priceAlertObjectId
                 }
-              }),
+              })
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
-              payload: "Payload for first bubble",
+              payload: "Payload for first bubble"
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
-              payload: "Payload for first bubble",
+              payload: "Payload for first bubble"
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
@@ -844,11 +844,11 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertO
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
-              payload: "Payload for first bubble",
+              payload: "Payload for first bubble"
             }, {
               type: "postback",
               title: gt.dgettext(lang, 'Custom Input'),
-              payload: "Payload for first bubble",
+              payload: "Payload for first bubble"
             }],
           }]
         }

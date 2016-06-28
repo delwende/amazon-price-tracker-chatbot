@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-06-28 19:14+0200\n"
-"PO-Revision-Date: 2016-06-28 19:17+0200\n"
+"PO-Revision-Date: 2016-06-28 19:18+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -74,7 +74,7 @@ msgstr "Hallo %s!"
 
 #: app.js:344
 msgid "Oh, hi. I didn't see you there."
-msgstr "Hallo. Ich habe dich lange nicht mehr gesehen."
+msgstr "Hallo. Lange nicht mehr gesehen."
 
 #: app.js:349
 msgid ""

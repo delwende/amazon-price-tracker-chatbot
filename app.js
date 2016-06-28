@@ -306,8 +306,8 @@ function receivedMessage(event) {
         var responseText;
 
         // Check if user locale is supported
-        if (lang === 'pt_BR' || lang === 'zh_CN' || lang === 'zh_HK' || lang === 'fr_FR' || lang === 'de_DE' || lang === 'en_IN'
-          || lang === 'it_IT'|| lang === 'ja_JP' || lang === 'es_MX' || lang === 'es_ES'|| lang === 'en_GB' || lang === 'en_US') {
+        if (locale === 'pt_BR' || locale === 'zh_CN' || locale === 'zh_HK' || locale === 'fr_FR' || locale === 'de_DE' || locale === 'en_IN'
+          || locale === 'it_IT'|| locale === 'ja_JP' || locale === 'es_MX' || locale === 'es_ES'|| locale === 'en_GB' || locale === 'en_US') {
 
 
           if (messageText) {
@@ -337,7 +337,15 @@ function receivedMessage(event) {
               });
             } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
               sendTextMessage(senderID, '');
-            } else {
+            } else if (messageText.startsWith(gt.dgettext(lang, 'hi'))) {
+              var greetings = [
+                gt.dgettext(lang, 'Hi %s!'),
+                gt.dgettext(lang, 'Oh, hello %s!'),
+                gt.dgettext(lang, 'Oh, hi. I didn\'t see you there.')
+              ];
+              var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
+              sendTextMessage(senderID, sprintf(greetings[random-1], user.parseUserFirstName));
+            }else {
               responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
               sendTextMessage(senderID, responseText);
             }

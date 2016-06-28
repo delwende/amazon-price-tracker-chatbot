@@ -301,43 +301,56 @@ function receivedMessage(event) {
     } else {
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
-        var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+        var locale = user.parseUserLocale;
+        var lang = locale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
         var responseText;
 
-        if (messageText) {
-          if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-            responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
-            sendTextMessage(senderID, responseText);
-          } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
-            var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
-            // Search items
-            amazonClient.itemSearch({
-              responseGroup: 'ItemAttributes,Offers,Images',
-              keywords: keywords,
-              domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
-            }).then(function(results){
-              console.log("Successfully retrieved " + results.length + " items.");
+        // Check if user locale is supported
+        if (lang === 'pt_BR' || lang === 'zh_CN' || lang === 'zh_HK' || lang === 'fr_FR' || lang === 'de_DE' || lang === 'en_IN'
+          || lang === 'it_IT'|| lang === 'ja_JP' || lang === 'es_MX' || lang === 'es_ES'|| lang === 'en_GB' || lang === 'en_US') {
 
-              // Inform the user that search results are displayed
-              responseText = gt.dgettext(lang, 'Search results for "%s"');
-              sendTextMessage(senderID, sprintf(responseText, keywords));
-              // Show to the user the search results
-              sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
-            }).catch(function(error){
-              console.log("Error: " + JSON.stringify(error));
-              // Inform the user that the search for his keywords did not match any products
-              responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
-              sendTextMessage(senderID, sprintf(responseText, keywords));
-            });
-          } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
-            sendTextMessage(senderID, '');
-          } else {
-            responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
-            sendTextMessage(senderID, responseText);
+
+          if (messageText) {
+            if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
+              responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
+              sendTextMessage(senderID, responseText);
+            } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
+              var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
+              // Search items
+              amazonClient.itemSearch({
+                responseGroup: 'ItemAttributes,Offers,Images',
+                keywords: keywords,
+                domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+              }).then(function(results){
+                console.log("Successfully retrieved " + results.length + " items.");
+
+                // Inform the user that search results are displayed
+                responseText = gt.dgettext(lang, 'Search results for "%s"');
+                sendTextMessage(senderID, sprintf(responseText, keywords));
+                // Show to the user the search results
+                sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
+              }).catch(function(error){
+                console.log("Error: " + JSON.stringify(error));
+                // Inform the user that the search for his keywords did not match any products
+                responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+                sendTextMessage(senderID, sprintf(responseText, keywords));
+              });
+            } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
+              sendTextMessage(senderID, '');
+            } else {
+              responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
+              sendTextMessage(senderID, responseText);
+            }
+          } else if (messageAttachments) {
+            sendTextMessage(senderID, "Message with attachment received");
           }
-        } else if (messageAttachments) {
-          sendTextMessage(senderID, "Message with attachment received");
+
+        } else {
+          responseText = gt.dgettext(lang, 'I\'m sorry. I\'m currently not yet available in your locale. Stay tuned!');
+          sendTextMessage(senderID, responseText);
         }
+
+        
 
       } else {
         // Get Facebook user profile information and sign up a user on the Backend
@@ -399,6 +412,7 @@ function receivedPostback(event) {
   // sendTextMessage(senderID, "Postback called");
 
   var json = JSON.parse(payload);
+
   var intent = json.intent;
   var parseUserObjectId = json.entities.parseUserObjectId;
   var parseUserLocale = json.entities.parseUserLocale;

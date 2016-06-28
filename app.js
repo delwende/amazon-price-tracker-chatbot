@@ -348,7 +348,7 @@ function receivedMessage(event) {
             }else {
               var support = [
                 gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
-                gt.dgettext(lang, 'So, I\'m good at alerting you when Amazon prices drop. Other stuff, not so good. If you need help just enter "help".'),
+                gt.dgettext(lang, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. If you need help just enter "help".'),
                 gt.dgettext(lang, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
               ];
 

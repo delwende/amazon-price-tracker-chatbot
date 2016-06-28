@@ -154,10 +154,6 @@ app.get('/webhook', function(req, res) {
   }
 });
 
-app.get('/test', function(req, res) {
-});
-
-
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
@@ -291,6 +287,11 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
+  // Log every message
+  var Message = Parse.Object.extend("Message");
+  var message = new Message();
+  message.save({senderId: senderID, text: messageText});
+
   messageText = messageText.toLowerCase();
 
   // Get all fields and values in hash for key user:senderID
@@ -398,8 +399,10 @@ function receivedPostback(event) {
   // sendTextMessage(senderID, "Postback called");
 
   var json = JSON.parse(payload);
-
   var intent = json.intent;
+  var parseUserObjectId = json.entities.parseUserObjectId;
+  var parseUserLocale = json.entities.parseUserLocale;
+
   var lang = json.entities.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
   var responseText;
 
@@ -407,8 +410,7 @@ function receivedPostback(event) {
   switch (intent) {
 
     case 'activatePriceAlert':
-
-      var parseUserObjectId = json.entities.parseUserObjectId;
+      
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
@@ -461,14 +463,14 @@ function receivedPostback(event) {
 
           return priceAlert.save();
         } else if (className === 'PriceAlert') {
-          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount, result.id);
+          sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
         }
         
         
       }).then(function(result) {
         // Check if new price alert was created
         if (result) {
-          sendSetDesiredPriceGenericMessage(senderID, lang, item.lowestNewPrice.amount, result.id);
+          sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
         }
       }, function(error) {
         console.log("Error: " + error);
@@ -785,7 +787,9 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertObjectId) {
+function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parseUserLocale, price, priceAlertObjectId) {
+  var lang = parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+
   var priceMinusOne = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
@@ -817,8 +821,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, lang, price, priceAlertO
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": user.parseUserObjectId,
-                  "parseUserLocale": user.parseUserLocale,
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusOne,
                   "priceAlertObjectId": priceAlertObjectId
                 }

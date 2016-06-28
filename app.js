@@ -816,17 +816,18 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  */
 function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parseUserLocale, price, priceAlertObjectId) {
   var lang = parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+  var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
 
   var priceMinusOne = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
   var priceMinusSevenPercent = price * 0.93;
   var priceMinusTenPercent = price * 0.9;
-  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, "EUR", 2, ".", ",");
-  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, "EUR", 2, ".", ",");
-  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, "EUR", 2, ".", ",");
-  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, "EUR", 2, ".", ",");
-  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, "EUR", 2, ".", ",");
+  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, currencySymbol, 2, ".", ",");
+  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, currencySymbol, 2, ".", ",");
+  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, currencySymbol, 2, ".", ",");
+  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, currencySymbol, 2, ".", ",");
+  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, currencySymbol, 2, ".", ",");
 
   var messageData = {
     recipient: {

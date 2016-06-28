@@ -33,5 +33,17 @@
     "awsLocale_es_MX": "webservices.amazon.com.mx",
     "awsLocale_es_ES": "webservices.amazon.es",
     "awsLocale_en_GB": "webservices.amazon.co.uk",
-    "awsLocale_en_US": "webservices.amazon.com"
+    "awsLocale_en_US": "webservices.amazon.com",
+    "currencySymbol_pt_BR": "R$",
+    "currencySymbol_zh_CN": "￥",
+    "currencySymbol_zh_HK": "￥",
+    "currencySymbol_fr_FR": "EUR",
+    "currencySymbol_de_DE": "EUR",
+    "currencySymbol_en_IN": "₹",
+    "currencySymbol_it_IT": "EUR",
+    "currencySymbol_ja_JP": "¥",
+    "currencySymbol_es_MX": "$",
+    "currencySymbol_es_ES": "EUR",
+    "currencySymbol_en_GB": "£",
+    "currencySymbol_en_US": "$"
 }

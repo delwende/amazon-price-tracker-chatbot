@@ -338,16 +338,22 @@ function receivedMessage(event) {
             } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
               sendTextMessage(senderID, '');
             } else if (messageText.startsWith(gt.dgettext(lang, 'hi')) || messageText.startsWith(gt.dgettext(lang, 'hello'))) {
-              var greetings = [
+              var greeting = [
                 gt.dgettext(lang, 'Hi %s!'),
                 gt.dgettext(lang, 'Oh, hello %s!'),
                 gt.dgettext(lang, 'Oh, hi. I didn\'t see you there.')
               ];
               var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
-              sendTextMessage(senderID, sprintf(greetings[random-1], user.parseUserFirstName));
+              sendTextMessage(senderID, sprintf(greeting[random-1], user.parseUserFirstName));
             }else {
-              responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".');
-              sendTextMessage(senderID, responseText);
+              var support = [
+                gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
+                gt.dgettext(lang, 'So, I\'m good at alerting you when Amazon prices drop. Other stuff, not so good. If you need help just enter "help".'),
+                gt.dgettext(lang, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
+              ];
+
+              var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
+              sendTextMessage(senderID, sprintf(support[random-1]));
             }
           } else if (messageAttachments) {
             sendTextMessage(senderID, "Message with attachment received");

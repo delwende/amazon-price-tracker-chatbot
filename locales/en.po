@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-06-28 19:21+0200\n"
-"PO-Revision-Date: 2016-06-28 19:21+0200\n"
+"POT-Creation-Date: 2016-06-28 19:35+0200\n"
+"PO-Revision-Date: 2016-06-28 19:35+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -42,7 +42,7 @@ msgstr "search "
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:335 app.js:802
+#: app.js:335 app.js:808
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -79,7 +79,7 @@ msgstr "Oh, hello %s!"
 msgid "Oh, hi. I didn't see you there."
 msgstr "Oh, hi. I didn't see you there."
 
-#: app.js:349
+#: app.js:350
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -87,59 +87,78 @@ msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 
-#: app.js:357
+#: app.js:351
+msgid ""
+"So, I'm good at alerting you when Amazon prices drop. Other stuff, not so "
+"good. If you need help just enter \"help\"."
+msgstr ""
+"So, I'm good at alerting you when Amazon prices drop. Other stuff, not so "
+"good. If you need help just enter \"help\"."
+
+#: app.js:352
+msgid ""
+"Oops, I didn't catch that. For things I can help you with, type \"help\"."
+msgstr ""
+"Oops, I didn't catch that. For things I can help you with, type \"help\"."
+
+#: app.js:363
 msgid "I'm sorry. I'm currently not yet available in your locale. Stay tuned!"
 msgstr "I'm sorry. I'm currently not yet available in your locale. Stay tuned!"
 
-#: app.js:438
+#: app.js:444
 #, javascript-format
 msgid "The current price for this item is %s"
 msgstr "The current price for this item is %s"
 
-#: app.js:754
+#: app.js:760
 #, javascript-format
 msgid "Price: %s"
 msgstr "Price: %s"
 
-#: app.js:759
+#: app.js:765
 msgid "Activate price alert"
 msgstr "Activate price alert"
 
-#: app.js:777
+#: app.js:783
 msgid "Buy"
 msgstr "Buy"
 
-#: app.js:835 app.js:861
+#: app.js:841 app.js:867
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:836 app.js:862
+#: app.js:842 app.js:868
 msgid "Please set your desired price"
 msgstr "Please set your desired price"
 
-#: app.js:841
+#: app.js:847
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:853
+#: app.js:859
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:857
+#: app.js:863
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:867
+#: app.js:873
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:871
+#: app.js:877
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:875
+#: app.js:881
 msgid "Custom Input"
 msgstr "Custom Input"
+
+#~ msgid ""
+#~ "Oops, I didn't catch that. For things I can help you with, type \"help.\""
+#~ msgstr ""
+#~ "Oops, I didn't catch that. For things I can help you with, type \"help.\""
 
 #~ msgid ""
 #~ "I'm sorry. I'm currently not available in your locale. Stay tuned until I "

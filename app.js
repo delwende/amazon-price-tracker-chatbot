@@ -136,7 +136,7 @@ gt.addTextdomain("de", langDe);
 gt.addTextdomain("en", langEn);
 
 // Set default language
-gt.textdomain("en"); // English
+gt.textdomain("en");
 
 /*
  * Use your own validation token. Check that the token used in the Webhook
@@ -287,7 +287,7 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
-  // Log every message
+  // Save every message
   var Message = Parse.Object.extend("Message");
   var message = new Message();
   message.save({senderId: senderID, text: messageText});
@@ -301,58 +301,83 @@ function receivedMessage(event) {
     } else {
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
-        var locale = user.parseUserLocale;
-        var lang = locale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+        var parseUserLocale = user.parseUserLocale;
+        var parseUserLanguage = user.parseUserLanguage;
+
         var responseText;
 
         // Check if user locale is supported
-        if (locale === 'zh_CN' || locale === 'zh_HK' || locale === 'fr_FR' || locale === 'de_DE' || locale === 'it_IT'
-          || locale === 'ja_JP' || locale === 'es_ES'|| locale === 'en_GB' || locale === 'en_US') {
+        if (parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' || parseUserLocale === 'de_DE' || parseUserLocale === 'it_IT' ||
+            parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'|| parseUserLocale === 'en_GB' || parseUserLocale === 'en_US') {
 
           if (messageText) {
-            if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
-              responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
+
+            // Check if user has started any transactions
+            if (user.setPriceAlertTransaction) {
+              // Check if user input is a valid price
+              var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
+              var price = accounting.unformat(messageText, decimalPointSeparator); // accounting.unformat("£ 12,345,678.90 GBP"); // 12345678.9
+
+              if(isNaN(price)) {
+                responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol.');
+                sendTextMessage(senderID, responseText);
+              } else {
+                // Check if user input is a number greater or equal than 0
+                if (price >= 0) {
+                  // Update price alert
+
+                  // Set setPriceAlertTransaction to false
+                } else {
+                  // Inform the user that the input must be a number greater or equal to zero
+                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.');
+                  sendTextMessage(senderID, responseText);
+                }
+              }
+            }
+
+            if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
+              responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
               sendTextMessage(senderID, responseText);
-            } else if (messageText.startsWith(gt.dgettext(lang, 'search '))) {
-              var keywords = messageText.replace(gt.dgettext(lang, 'search '), '');
+            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
+              var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
               // Search items
               amazonClient.itemSearch({
                 responseGroup: 'ItemAttributes,Offers,Images',
                 keywords: keywords,
-                domain: config.get('awsLocale_' + user.parseUserLocale) // Set Product Advertising API locale according to user locale
+                domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
               }).then(function(results){
                 console.log("Successfully retrieved " + results.length + " items.");
 
                 // Inform the user that search results are displayed
-                responseText = gt.dgettext(lang, 'Search results for "%s"');
+                responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
                 sendTextMessage(senderID, sprintf(responseText, keywords));
                 // Show to the user the search results
                 sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
               }).catch(function(error){
                 console.log("Error: " + JSON.stringify(error));
                 // Inform the user that the search for his keywords did not match any products
-                responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+                responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
                 sendTextMessage(senderID, sprintf(responseText, keywords));
               });
-            } else if (messageText.startsWith(gt.dgettext(lang, 'list'))) {
+            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
               sendTextMessage(senderID, '');
-            } else if (messageText.startsWith(gt.dgettext(lang, 'hi')) || messageText.startsWith(gt.dgettext(lang, 'hello'))) {
+            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
               var greeting = [
-                gt.dgettext(lang, 'Hi %s!'),
-                gt.dgettext(lang, 'Oh, hello %s!'),
-                gt.dgettext(lang, 'Oh, hi. I didn\'t see you there.')
+                gt.dgettext(parseUserLanguage, 'Hi %s!'),
+                gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
+                gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
               ];
               var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
               sendTextMessage(senderID, sprintf(greeting[random-1], user.parseUserFirstName));
-            } else if (messageText.startsWith(gt.dgettext(lang, 'menu'))) {
+            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
               sendTextMessage(senderID, '');
-            } else if (messageText.startsWith(gt.dgettext(lang, 'settings'))) {
+            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
               sendTextMessage(senderID, '');
             } else {
               var support = [
-                gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
-                gt.dgettext(lang, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. If you need help just enter "help".'),
-                gt.dgettext(lang, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
+                gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
+                gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. If you need help just enter "help".'),
+                gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
               ];
 
               var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
@@ -363,7 +388,7 @@ function receivedMessage(event) {
           }
 
         } else {
-          responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not yet available in your country. Stay tuned!');
+          responseText = gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not yet available in your country. Stay tuned!');
           sendTextMessage(senderID, responseText);
         }
 
@@ -432,8 +457,8 @@ function receivedPostback(event) {
   var intent = json.intent;
   var parseUserObjectId = json.entities.parseUserObjectId;
   var parseUserLocale = json.entities.parseUserLocale;
+  var parseUserLanguage = json.entities.parseUserLanguage;
 
-  var lang = json.entities.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
   var responseText;
 
   // Check intent in order to decide the next step to perform
@@ -444,7 +469,7 @@ function receivedPostback(event) {
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
-      responseText = gt.dgettext(lang, 'The current price for this item is %s');
+      responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
       sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
 
       // Check if the product already exists on the Backend
@@ -493,6 +518,8 @@ function receivedPostback(event) {
 
           return priceAlert.save();
         } else if (className === 'PriceAlert') {
+          redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
+
           sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
         }
 
@@ -500,6 +527,8 @@ function receivedPostback(event) {
       }).then(function(result) {
         // Check if new price alert was created
         if (result) {
+          redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
+
           sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
         }
       }, function(error) {
@@ -519,15 +548,14 @@ function receivedPostback(event) {
       var priceAlertObjectId = json.entities.priceAlertObjectId;
       var customPriceInput = json.entities.customPriceInput;
 
-      // Check if desired price is a custom price input (user-generated price input)
+      // Check if user entered a custom price
       if (customPriceInput) {
-        var customInputPriceExample = json.entities.customInputPriceExample;
-        var currencySymbol = customInputPriceExample.split(" ")[0];
-        var priceAmount = customInputPriceExample.split(" ")[1];
+        var customPriceInputExample = json.entities.customPriceInputExample;
+        var priceAmount = customPriceInputExample.split(" ")[1];
 
         // Give to the user instructions on how to enter a valid price
-        responseText = gt.dgettext(lang, 'Please enter your desired price in %s (e.g. %s):');
-        sendTextMessage(senderID, vsprintf(responseText, [currencySymbol, priceAmount]));
+        responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s):');
+        sendTextMessage(senderID, sprintf(responseText, priceAmount));
       } else {
         // Query price alerts
         var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -751,7 +779,7 @@ function sendReceiptMessage(recipientId) {
  */
 function sendListArticleSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
-  var lang = user.parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+  var parseUserLanguage = user.parseUserLanguage;
   var responseText;
 
   for (var i = 0; i < results.length; i++) {
@@ -772,12 +800,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
       elements.push({
         title: title,
-        subtitle: sprintf(gt.dgettext(lang, 'Price: %s'), lowestNewPrice.formattedPrice),
+        subtitle: sprintf(gt.dgettext(parseUserLanguage, 'Price: %s'), lowestNewPrice.formattedPrice),
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
-          title: gt.dgettext(lang, 'Activate price alert'),
+          title: gt.dgettext(parseUserLanguage, 'Activate price alert'),
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
@@ -795,7 +823,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
         }, {
           type: "web_url",
           url: detailPageUrl,
-          title: gt.dgettext(lang, 'Buy')
+          title: gt.dgettext(parseUserLanguage, 'Buy')
         }],
       });
     }
@@ -820,7 +848,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     callSendAPI(messageData);
   } else {
     // Inform the user that the search for his keywords did not match any products
-    responseText = gt.dgettext(lang, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
+    responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- Using more general terms\n- Checking your spelling');
     sendTextMessage(senderID, sprintf(responseText, keywords));
   }
 }
@@ -832,17 +860,20 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
 function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parseUserLocale, price, priceAlertObjectId) {
   var lang = parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
   var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
+  var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
+  var thousandsSeparator = config.get('thousandsSeparator_' + parseUserLocale);
+  var decimalPlaces = config.get('decimalPlaces_' + parseUserLocale);
 
   var priceMinusOnePercent = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
   var priceMinusSevenPercent = price * 0.93;
   var priceMinusTenPercent = price * 0.9;
-  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, currencySymbol, 2, ".", ",");
-  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, currencySymbol, 2, ".", ",");
-  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, currencySymbol, 2, ".", ",");
-  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, currencySymbol, 2, ".", ",");
-  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, currencySymbol, 2, ".", ",");
+  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
 
   var messageData = {
     recipient: {
@@ -940,7 +971,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
                   "priceDesired": 0,
                   "priceAlertObjectId": priceAlertObjectId,
                   "customPriceInput": true,
-                  "customInputPriceExample": priceMinusTenPercentFormatted // used as price example for the custom price input instructions
+                  "customPriceInputExample": priceMinusTenPercentFormatted // Used as price example for the custom price input instructions
                 }
               })
             }],
@@ -1037,6 +1068,7 @@ function callUserProfileAPI(userId, event) {
       var locale = objectPath.get(json, "locale");
       var timezone = objectPath.get(json, "timezone");
       var gender = objectPath.get(json, "gender");
+      var language = locale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
 
       // Sign up user on the Backend
       var user = new Parse.User();
@@ -1050,6 +1082,7 @@ function callUserProfileAPI(userId, event) {
       user.set("locale", locale);
       user.set("timezone", timezone);
       user.set("gender", gender);
+      user.set("language", language);
 
       user.signUp(null, {
         success: function(user) {
@@ -1064,9 +1097,10 @@ function callUserProfileAPI(userId, event) {
             'parseUserLocale': user.get("locale"),
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
-            'incompletePriceAlert': "false",
-            'incompletePriceAlertId': "", // ParseObject id of the imcomplete price alert
-            'incompletePriceAlertExamplePrice': ""
+            'parseUserLanguage': user.get("language"),
+            'setPriceAlertTransaction': 'false',
+            'incompletePriceAlertObjectId': '', // Used to save ParseObject id of imcomplete price alert
+            'incompletePriceAlertExamplePrice': ''
           }, function(error, reply) {
               if (error) {
                 console.log("Error: " + error);

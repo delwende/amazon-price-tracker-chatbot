@@ -313,27 +313,6 @@ function receivedMessage(event) {
           if (messageText) {
 
             // Check if user has started any transactions
-            if (user.setPriceAlertTransaction) {
-              // Check if user input is a valid price
-              var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
-              var price = accounting.unformat(messageText, decimalPointSeparator); // accounting.unformat("£ 12,345,678.90 GBP"); // 12345678.9
-
-              if(isNaN(price)) {
-                responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol.');
-                sendTextMessage(senderID, responseText);
-              } else {
-                // Check if user input is a number greater or equal than 0
-                if (price >= 0) {
-                  // Update price alert
-
-                  // Set setPriceAlertTransaction to false
-                } else {
-                  // Inform the user that the input must be a number greater or equal to zero
-                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.');
-                  sendTextMessage(senderID, responseText);
-                }
-              }
-            }
 
             if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
               responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
@@ -452,136 +431,151 @@ function receivedPostback(event) {
   // let them know it was successful
   // sendTextMessage(senderID, "Postback called");
 
-  var json = JSON.parse(payload);
+  // Get all fields and values in hash for key user:senderID
+  redisClient.hgetall("user:" + senderID, function(error, reply) {
+    if (error) {
+      console.log("Error: " + error);
+    } else {
+      if (reply) { // reply is empty list when key does not exist
+        var user = reply;
 
-  var intent = json.intent;
-  var parseUserObjectId = json.entities.parseUserObjectId;
-  var parseUserLocale = json.entities.parseUserLocale;
-  var parseUserLanguage = json.entities.parseUserLanguage;
+        var json = JSON.parse(payload);
 
-  var responseText;
+        var intent = json.intent;
 
-  // Check intent in order to decide the next step to perform
-  switch (intent) {
+        var parseUserObjectId = user.parseUserObjectId;
+        var parseUserLocale = user.parseUserLocale;
+        var parseUserLanguage = user.parseUserLanguage;
 
-    case 'activatePriceAlert':
+        var responseText;
 
-      var item = json.entities.item;
+        // Check intent in order to decide the next step to perform
+        switch (intent) {
 
-      // Inform the user about the current lowest new price
-      responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
-      sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
+          case 'activatePriceAlert':
 
-      // Check if the product already exists on the Backend
-      var Product = Parse.Object.extend("Product");
-      var query = new Parse.Query(Product);
-      query.equalTo("asin", item.asin);
-      query.find().then(function(results) {
-        console.log("Successfully retrieved " + results.length + " products.");
+            var item = json.entities.item;
 
-        if (results.length === 1) {
-          var product = results[0];
+            // Inform the user about the current lowest new price
+            responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
+            sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
 
-          // Save price alert to the Backend
-          var PriceAlert = Parse.Object.extend("PriceAlert");
-          var priceAlert = new PriceAlert();
+            // Check if the product already exists on the Backend
+            var Product = Parse.Object.extend("Product");
+            var query = new Parse.Query(Product);
+            query.equalTo("asin", item.asin);
+            query.find().then(function(results) {
+              console.log("Successfully retrieved " + results.length + " products.");
 
-          priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-          priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-          priceAlert.set("active", false);
+              if (results.length === 1) {
+                var product = results[0];
 
-          return priceAlert.save();
-        } else {
-          // Save product to the Backend
-          var Product = Parse.Object.extend("Product");
-          var product = new Product();
+                // Save price alert to the Backend
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var priceAlert = new PriceAlert();
 
-          product.set("asin", item.asin);
-          product.set("detailPageUrl", item.detailPageUrl);
-          product.set("imageUrl", item.imageUrl);
-          product.set("title", item.title);
+                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                priceAlert.set("active", false);
 
-          return product.save();
+                return priceAlert.save();
+              } else {
+                // Save product to the Backend
+                var Product = Parse.Object.extend("Product");
+                var product = new Product();
+
+                product.set("asin", item.asin);
+                product.set("detailPageUrl", item.detailPageUrl);
+                product.set("imageUrl", item.imageUrl);
+                product.set("title", item.title);
+
+                return product.save();
+              }
+
+            }).then(function(result) {
+              var className = result.className; // Get class name of newly created ParseObject
+
+              if (className === 'Product') {
+                // Save price alert to the Backend
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var priceAlert = new PriceAlert();
+
+                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: result.id});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                priceAlert.set("active", false);
+
+                return priceAlert.save();
+              } else if (className === 'PriceAlert') {
+                sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+
+                redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
+              }
+
+
+            }).then(function(result) {
+              if (result) {
+                sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+
+                redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
+              }
+            }, function(error) {
+              console.log("Error: " + error);
+            });
+
+            break;
+
+          case 'disactivatePriceAlert':
+
+            break;
+
+          case 'completePriceAlert':
+            // var customPriceInput = json.entities.customPriceInput;
+            // var customPriceInputExample = json.entities.customPriceInputExample;
+            // var priceDesired = json.entities.priceDesired;
+            // var productTitle = json.entities.productTitle;
+
+            // var priceAlertObjectId = user.incompletePriceAlertObjectId;
+
+            // // Check if user wants to enter a custom price
+            // if (customPriceInput) {
+            //   var priceAmount = customPriceInputExample.split(" ")[1];
+
+            //   // Give to the user instructions on how to enter a valid price
+            //   responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s)');
+            //   sendTextMessage(senderID, sprintf(responseText, priceAmount));
+            // } else {
+            //   // Query price alerts
+            //   var PriceAlert = Parse.Object.extend("PriceAlert");
+            //   var query = new Parse.Query(PriceAlert);
+            //   query.notEqualTo("objectId", priceAlertObjectId);
+            //   query.find().then(function(results) {
+
+            //     if (results.length === 1) {
+            //       return results[0].save({ priceDesired: priceDesired, active: true });
+            //     } else {
+
+            //     }
+            //   }).then(function(result) {
+            //     console.log('Updated price alert with objectId: ' + result.id);
+
+            //     // Inform the user that the price alert is now active
+            //     responseText = gt.dgettext(parseUserLanguage, 'Price alert for %s has been activated.');
+            //     sendTextMessage(senderID, sprintf(responseText, productTitle));
+
+            //     redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'false');
+            //   }, function(error) {
+            //     // there was some error.
+            //   });
+            // }
+
+            break;
+
+          default:
         }
-
-      }).then(function(result) {
-        var className = result.className; // Get class name of newly created ParseObject
-
-        if (className === 'Product') {
-          // Save price alert to the Backend
-          var PriceAlert = Parse.Object.extend("PriceAlert");
-          var priceAlert = new PriceAlert();
-
-          priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: result.id});
-          priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-          priceAlert.set("active", false);
-
-          return priceAlert.save();
-        } else if (className === 'PriceAlert') {
-          redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
-
-          sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
-        }
-
-
-      }).then(function(result) {
-        // Check if new price alert was created
-        if (result) {
-          redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
-
-          sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
-        }
-      }, function(error) {
-        console.log("Error: " + error);
-      });
-
-      break;
-
-    case 'disactivatePriceAlert':
-      break;
-
-    case 'completePriceAlert':
-
-      var parseUserObjectId = json.entities.parseUserObjectId;
-      var parseUserLocale = json.entities.parseUserLocale;
-      var priceDesired = json.entities.priceDesired;
-      var priceAlertObjectId = json.entities.priceAlertObjectId;
-      var customPriceInput = json.entities.customPriceInput;
-
-      // Check if user entered a custom price
-      if (customPriceInput) {
-        var customPriceInputExample = json.entities.customPriceInputExample;
-        var priceAmount = customPriceInputExample.split(" ")[1];
-
-        // Give to the user instructions on how to enter a valid price
-        responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s):');
-        sendTextMessage(senderID, sprintf(responseText, priceAmount));
-      } else {
-        // Query price alerts
-        var PriceAlert = Parse.Object.extend("PriceAlert");
-        var query = new Parse.Query(PriceAlert);
-        query.notEqualTo("objectId", priceAlertObjectId);
-        query.find().then(function(results) {
-
-          if (results.length === 1) {
-            return results[0].save({ priceDesired: priceDesired });
-          } else {
-
-          }
-          // return query.find();
-        }).then(function(results) {
-          // return results[0].save({ key: value });
-        }).then(function(result) {
-          // the object was saved.
-        }, function(error) {
-          // there was some error.
-        });
       }
+    }
+  });
 
-      break;
-
-    default:
-  }
 }
 
 
@@ -809,8 +803,6 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "parseUserObjectId": user.parseUserObjectId,
-              "parseUserLocale": user.parseUserLocale,
               "item": {
                 "asin": asin,
                 "detailPageUrl": detailPageUrl,
@@ -857,8 +849,9 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parseUserLocale, price, priceAlertObjectId) {
-  var lang = parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
+function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitle) {
+  var parseUserLocale = user.parseUserLocale;
+  var parseUserLanguage = user.parseUserLanguage;
   var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
   var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
   var thousandsSeparator = config.get('thousandsSeparator_' + parseUserLocale);
@@ -869,7 +862,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
   var priceMinusFivePercent = price * 0.95;
   var priceMinusSevenPercent = price * 0.93;
   var priceMinusTenPercent = price * 0.9;
-  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOne / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOnePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
   var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
   var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
   var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
@@ -885,93 +878,81 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
         payload: {
           template_type: "generic",
           elements: [{
-            title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            title: gt.dgettext(parseUserLanguage, 'Set desired price'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
             item_url: "",
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-0,01') + ' (' + priceMinusOneFormatted + ')',
+              title: gt.dgettext(parseUserLanguage, '-0,01') + ' (' + priceMinusOneFormatted + ')',
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusOnePercent,
-                  "priceAlertObjectId": priceAlertObjectId,
-                  "customPriceInput": false
+                  "customPriceInput": false,
+                  "productTitle": productTitle
                 }
               })
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
+              title: gt.dgettext(parseUserLanguage, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusThreePercent,
-                  "priceAlertObjectId": priceAlertObjectId,
-                  "customPriceInput": false
+                  "customPriceInput": false,
+                  "productTitle": productTitle
                 }
               })
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
+              title: gt.dgettext(parseUserLanguage, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusFivePercent,
-                  "priceAlertObjectId": priceAlertObjectId,
-                  "customPriceInput": false
+                  "customPriceInput": false,
+                  "productTitle": productTitle
                 }
               })
             }],
           }, {
-            title: gt.dgettext(lang, 'Set desired price'),
-            subtitle: gt.dgettext(lang, 'Please choose one of the following options'),
+            title: gt.dgettext(parseUserLanguage, 'Set desired price'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
             item_url: "",
             image_url: "",
             buttons: [{
               type: "postback",
-              title: gt.dgettext(lang, '-7%') + ' (' + priceMinusSevenPercentFormatted + ')',
+              title: gt.dgettext(parseUserLanguage, '-7%') + ' (' + priceMinusSevenPercentFormatted + ')',
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusSevenPercent,
-                  "priceAlertObjectId": priceAlertObjectId,
-                  "customPriceInput": false
+                  "customPriceInput": false,
+                  "productTitle": productTitle
                 }
               })
             }, {
               type: "postback",
-              title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
+              title: gt.dgettext(parseUserLanguage, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": priceMinusTenPercent,
-                  "priceAlertObjectId": priceAlertObjectId,
-                  "customPriceInput": false
+                  "customPriceInput": false,
+                  "productTitle": productTitle
                 }
               })
             }, {
               type: "postback",
-              title: gt.dgettext(lang, 'Custom Input'),
+              title: gt.dgettext(parseUserLanguage, 'Custom Input'),
               payload: JSON.stringify({
                 "intent": "completePriceAlert",
                 "entities": {
-                  "parseUserObjectId": parseUserObjectId,
-                  "parseUserLocale": parseUserLocale,
                   "priceDesired": 0,
-                  "priceAlertObjectId": priceAlertObjectId,
                   "customPriceInput": true,
-                  "customPriceInputExample": priceMinusTenPercentFormatted // Used as price example for the custom price input instructions
+                  "customPriceInputExample": priceMinusTenPercentFormatted, // Used as price example for the custom price input instructions
+                  "productTitle": productTitle
                 }
               })
             }],
@@ -980,6 +961,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
       }
     }
   };
+
+  redisClient.hmset('user:' + recipientId, 'setPriceAlertMessage', messageData);
 
   callSendAPI(messageData);
 }
@@ -1098,9 +1081,7 @@ function callUserProfileAPI(userId, event) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
-            'setPriceAlertTransaction': 'false',
-            'incompletePriceAlertObjectId': '', // Used to save ParseObject id of imcomplete price alert
-            'incompletePriceAlertExamplePrice': ''
+            'setPriceAlertMessage': ''
           }, function(error, reply) {
               if (error) {
                 console.log("Error: " + error);

@@ -309,7 +309,6 @@ function receivedMessage(event) {
         if (locale === 'zh_CN' || locale === 'zh_HK' || locale === 'fr_FR' || locale === 'de_DE' || locale === 'it_IT'
           || locale === 'ja_JP' || locale === 'es_ES'|| locale === 'en_GB' || locale === 'en_US') {
 
-
           if (messageText) {
             if (messageText.startsWith(gt.dgettext(lang, 'help'))) {
               responseText = gt.dgettext(lang, 'Hi there. So I monitor millions of products on Amazon and can alert you when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g. "search iphone6"\n- "list" to show your price watches');
@@ -345,6 +344,10 @@ function receivedMessage(event) {
               ];
               var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
               sendTextMessage(senderID, sprintf(greeting[random-1], user.parseUserFirstName));
+            } else if (messageText.startsWith(gt.dgettext(lang, 'menu'))) {
+              sendTextMessage(senderID, '');
+            } else if (messageText.startsWith(gt.dgettext(lang, 'settings'))) {
+              sendTextMessage(senderID, '');
             } else {
               var support = [
                 gt.dgettext(lang, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to search a product or type "help".'),
@@ -363,7 +366,7 @@ function receivedMessage(event) {
           responseText = gt.dgettext(lang, 'I\'m sorry. I\'m not yet available in your country. Stay tuned!');
           sendTextMessage(senderID, responseText);
         }
-        
+
 
       } else {
         // Get Facebook user profile information and sign up a user on the Backend
@@ -437,7 +440,7 @@ function receivedPostback(event) {
   switch (intent) {
 
     case 'activatePriceAlert':
-      
+
       var item = json.entities.item;
 
       // Inform the user about the current lowest new price
@@ -492,8 +495,8 @@ function receivedPostback(event) {
         } else if (className === 'PriceAlert') {
           sendSetDesiredPriceGenericMessage(senderID, parseUserObjectId, parseUserLocale, item.lowestNewPrice.amount, result.id);
         }
-        
-        
+
+
       }).then(function(result) {
         // Check if new price alert was created
         if (result) {
@@ -509,22 +512,22 @@ function receivedPostback(event) {
       break;
 
     case 'completePriceAlert':
-      
+
       var parseUserObjectId = json.entities.parseUserObjectId;
       var parseUserLocale = json.entities.parseUserLocale;
       var priceDesired = json.entities.priceDesired;
       var priceAlertObjectId = json.entities.priceAlertObjectId;
-      
+
       // Query price alerts
       var PriceAlert = Parse.Object.extend("PriceAlert");
       var query = new Parse.Query(PriceAlert);
       query.notEqualTo("objectId", priceAlertObjectId);
       query.find().then(function(results) {
-        
+
         if (results.length === 1) {
           return results[0].save({ priceDesired: priceDesired });
         } else {
-          
+
         }
         // return query.find();
       }).then(function(results) {
@@ -534,7 +537,7 @@ function receivedPostback(event) {
       }, function(error) {
         // there was some error.
       });
-      
+
       break;
 
     default:

@@ -517,26 +517,38 @@ function receivedPostback(event) {
       var parseUserLocale = json.entities.parseUserLocale;
       var priceDesired = json.entities.priceDesired;
       var priceAlertObjectId = json.entities.priceAlertObjectId;
+      var customPriceInput = json.entities.customPriceInput;
 
-      // Query price alerts
-      var PriceAlert = Parse.Object.extend("PriceAlert");
-      var query = new Parse.Query(PriceAlert);
-      query.notEqualTo("objectId", priceAlertObjectId);
-      query.find().then(function(results) {
+      // Check if desired price is a custom price input (user-generated price input)
+      if (customPriceInput) {
+        var customInputPriceExample = json.entities.customInputPriceExample;
+        var currencySymbol = customInputPriceExample.split(" ")[0];
+        var priceAmount = customInputPriceExample.split(" ")[1];
 
-        if (results.length === 1) {
-          return results[0].save({ priceDesired: priceDesired });
-        } else {
+        // Give to the user instructions on how to enter a valid price
+        responseText = gt.dgettext(lang, 'Please enter your desired price in %s (e.g. %s):');
+        sendTextMessage(senderID, vsprintf(responseText, [currencySymbol, priceAmount]));
+      } else {
+        // Query price alerts
+        var PriceAlert = Parse.Object.extend("PriceAlert");
+        var query = new Parse.Query(PriceAlert);
+        query.notEqualTo("objectId", priceAlertObjectId);
+        query.find().then(function(results) {
 
-        }
-        // return query.find();
-      }).then(function(results) {
-        // return results[0].save({ key: value });
-      }).then(function(result) {
-        // the object was saved.
-      }, function(error) {
-        // there was some error.
-      });
+          if (results.length === 1) {
+            return results[0].save({ priceDesired: priceDesired });
+          } else {
+
+          }
+          // return query.find();
+        }).then(function(results) {
+          // return results[0].save({ key: value });
+        }).then(function(result) {
+          // the object was saved.
+        }, function(error) {
+          // there was some error.
+        });
+      }
 
       break;
 
@@ -821,7 +833,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
   var lang = parseUserLocale.split("_")[0]; // Get prefix substring (e.g. de of de_DE)
   var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
 
-  var priceMinusOne = price - 1;
+  var priceMinusOnePercent = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
   var priceMinusSevenPercent = price * 0.93;
@@ -854,18 +866,37 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
                 "entities": {
                   "parseUserObjectId": parseUserObjectId,
                   "parseUserLocale": parseUserLocale,
-                  "priceDesired": priceMinusOne,
-                  "priceAlertObjectId": priceAlertObjectId
+                  "priceDesired": priceMinusOnePercent,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": false
                 }
               })
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
-              payload: "Payload for first bubble"
+              payload: JSON.stringify({
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
+                  "priceDesired": priceMinusThreePercent,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": false
+                }
+              })
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
-              payload: "Payload for first bubble"
+              payload: JSON.stringify({
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
+                  "priceDesired": priceMinusFivePercent,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": false
+                }
+              })
             }],
           }, {
             title: gt.dgettext(lang, 'Set desired price'),
@@ -875,16 +906,95 @@ function sendSetDesiredPriceGenericMessage(recipientId, parseUserObjectId, parse
             buttons: [{
               type: "postback",
               title: gt.dgettext(lang, '-7%') + ' (' + priceMinusSevenPercentFormatted + ')',
-              payload: "Payload for first bubble",
+              payload: JSON.stringify({
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
+                  "priceDesired": priceMinusSevenPercent,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": false
+                }
+              })
             }, {
               type: "postback",
               title: gt.dgettext(lang, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
-              payload: "Payload for first bubble"
+              payload: JSON.stringify({
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
+                  "priceDesired": priceMinusTenPercent,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": false
+                }
+              })
             }, {
               type: "postback",
               title: gt.dgettext(lang, 'Custom Input'),
-              payload: "Payload for first bubble"
+              payload: JSON.stringify({
+                "intent": "completePriceAlert",
+                "entities": {
+                  "parseUserObjectId": parseUserObjectId,
+                  "parseUserLocale": parseUserLocale,
+                  "priceDesired": 0,
+                  "priceAlertObjectId": priceAlertObjectId,
+                  "customPriceInput": true,
+                  "customInputPriceExample": priceMinusTenPercentFormatted // used as price example for the custom price input instructions
+                }
+              })
             }],
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a List Price Watches Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendListPriceWatchesGenericMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",
+            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",
+            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for second bubble",
+            }]
           }]
         }
       }

@@ -154,9 +154,6 @@ app.get('/webhook', function(req, res) {
   }
 });
 
-app.get('/test', function(req, res) {
-});
-
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
@@ -515,20 +512,16 @@ function receivedPostback(event) {
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
                 sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-
-                redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
               }
 
 
             }).then(function(result) {
               if (result) {
                 sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-
-                redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'true');
               }
             }, function(error) {
               console.log("Error: " + error);
-            });*/
+            });
 
             break;
 
@@ -537,44 +530,41 @@ function receivedPostback(event) {
             break;
 
           case 'completePriceAlert':
-            // var customPriceInput = json.entities.customPriceInput;
-            // var customPriceInputExample = json.entities.customPriceInputExample;
-            // var priceDesired = json.entities.priceDesired;
-            // var productTitle = json.entities.productTitle;
+            var customPriceInput = json.entities.customPriceInput;
+            var priceDesired = json.entities.priceDesired;
+            var productTitle = json.entities.productTitle;
 
-            // var priceAlertObjectId = user.incompletePriceAlertObjectId;
+            var priceAlertObjectId = user.incompletePriceAlertObjectId;
 
-            // // Check if user wants to enter a custom price
-            // if (customPriceInput) {
-            //   var priceAmount = customPriceInputExample.split(" ")[1];
+            // Check if user wants to enter a custom price
+            if (customPriceInput) {
+              var examplePrice = customPriceInputExamplePrice.split(" ")[1];
 
-            //   // Give to the user instructions on how to enter a valid price
-            //   responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s)');
-            //   sendTextMessage(senderID, sprintf(responseText, priceAmount));
-            // } else {
-            //   // Query price alerts
-            //   var PriceAlert = Parse.Object.extend("PriceAlert");
-            //   var query = new Parse.Query(PriceAlert);
-            //   query.notEqualTo("objectId", priceAlertObjectId);
-            //   query.find().then(function(results) {
+              // Give to the user instructions on how to enter a valid price
+              responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s)');
+              sendTextMessage(senderID, sprintf(responseText, examplePrice));
+            } else {
+              // Query price alerts
+              var PriceAlert = Parse.Object.extend("PriceAlert");
+              var query = new Parse.Query(PriceAlert);
+              query.notEqualTo("objectId", priceAlertObjectId);
+              query.find().then(function(results) {
 
-            //     if (results.length === 1) {
-            //       return results[0].save({ priceDesired: priceDesired, active: true });
-            //     } else {
+                if (results.length === 1) {
+                  return results[0].save({ priceDesired: priceDesired, active: true });
+                } else {
 
-            //     }
-            //   }).then(function(result) {
-            //     console.log('Updated price alert with objectId: ' + result.id);
+                }
+              }).then(function(result) {
+                console.log('Updated price alert with objectId: ' + result.id);
 
-            //     // Inform the user that the price alert is now active
-            //     responseText = gt.dgettext(parseUserLanguage, 'Price alert for %s has been activated.');
-            //     sendTextMessage(senderID, sprintf(responseText, productTitle));
-
-            //     redisClient.hmset('user:' + senderID, 'setPriceAlertTransaction', 'false');
-            //   }, function(error) {
-            //     // there was some error.
-            //   });
-            // }
+                // Inform the user that the price alert is now active
+                responseText = gt.dgettext(parseUserLanguage, 'Price alert for %s has been activated.');
+                sendTextMessage(senderID, sprintf(responseText, productTitle));
+              }, function(error) {
+                // there was some error.
+              });
+            }
 
             break;
 
@@ -1088,7 +1078,9 @@ function callUserProfileAPI(userId, event) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
-            'setPriceAlertMessage': ''
+            'incompletePriceAlertObjectId': '',
+            'customPriceInputTransaction': 'false',
+            'customPriceInputExamplePrice': ''
           }, function(error, reply) {
               if (error) {
                 console.log("Error: " + error);

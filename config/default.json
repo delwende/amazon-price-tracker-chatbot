@@ -81,5 +81,9 @@
     "decimalPlaces_es_MX": "2",
     "decimalPlaces_es_ES": "2",
     "decimalPlaces_en_GB": "2",
-    "decimalPlaces_en_US": "2"
+    "decimalPlaces_en_US": "2",
+    "currencySymbol_EUR": "€",
+    "decimalPointSeparator_EUR": ",",
+    "thousandsSeparator_EUR": ".",
+    "decimalPlaces_EUR": "2"
 }

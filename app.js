@@ -324,7 +324,7 @@ function receivedMessage(event) {
               var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
               // Search items
               amazonClient.itemSearch({
-                responseGroup: 'ItemAttributes,Offers,Images',
+                responseGroup: 'ItemAttributes,OfferFull,Images',
                 keywords: keywords,
                 domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
               }).then(function(results){
@@ -494,6 +494,8 @@ function receivedPostback(event) {
                 product.set("detailPageUrl", item.detailPageUrl);
                 product.set("imageUrl", item.imageUrl);
                 product.set("title", item.title);
+                product.set("ean", item.ean);
+                product.set("model", item.model);
 
                 return product.save();
               }
@@ -552,7 +554,7 @@ function receivedPostback(event) {
               // Query price alerts
               var PriceAlert = Parse.Object.extend("PriceAlert");
               var query = new Parse.Query(PriceAlert);
-              query.notEqualTo("objectId", priceAlertObjectId);
+              query.equalTo("objectId", priceAlertObjectId);
               query.find().then(function(results) {
 
                 if (results.length === 1) {
@@ -578,9 +580,7 @@ function receivedPostback(event) {
       }
     }
   });
-
 }
-
 
 /*
  * Send a message with an using the Send API.
@@ -785,19 +785,53 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     var asin = objectPath.get(item, "ASIN.0");
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+
+    var ean = objectPath.get(item, "ItemAttributes.0.EAN.0");
+    var model = objectPath.get(item, "ItemAttributes.0.Model.0");
+
+
     var lowestNewPrice = {
       "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
       "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
       "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
     };
-    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
+    var lowestUsedPrice = {
+      "amount": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.Amount.0"),
+      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.CurrencyCode.0"),
+      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.FormattedPrice.0")
+    };
+    var offerPrice = {
+      "merchant": objectPath.get(item, "Offers.0.Offer.0.Merchant.0.Name.0"),
+      "condition": objectPath.get(item, "Offers.0.Offer.0.OfferAttributes.0.Condition.0"),
+      "amount": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.Amount.0"),
+      "currencyCode": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.CurrencyCode.0"),
+      "formattedPrice": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
+    };
+
+    var amazonPrice = offerPrice.merchant === "Amazon" ? offerPrice.amount : undefined;
+    var thirdPartyNewPrice = lowestNewPrice.amount;
+    var thirdPartyUsedPrice = lowestUsedPrice.amount;
+
+    var anyCurrencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offerPrice.currencyCode;
+    var anyAmount = amazonPrice || thirdPartyNewPrice || thirdPartyUsedPrice;
+
+    if (anyCurrencyCode !== undefined) {
+      var currencySymbol = config.get('currencySymbol_' + anyCurrencyCode);
+      var decimalPointSeparator = config.get('decimalPointSeparator_' + anyCurrencyCode);
+      var thousandsSeparator = config.get('thousandsSeparator_' + anyCurrencyCode);
+      var decimalPlaces = config.get('decimalPlaces_' + anyCurrencyCode);
+
+      var amazonPriceFormatted = amazonPrice !== undefined ? accounting.formatMoney(amazonPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+      var thirdPartyNewPriceFormatted = thirdPartyNewPrice !== undefined ? accounting.formatMoney(thirdPartyNewPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+      var thirdPartyUsedPriceFormatted = thirdPartyUsedPrice !== undefined ? accounting.formatMoney(thirdPartyUsedPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    }
 
     // Check if required item properties are available, otherwise exclude item from the article search results list
-    if (asin !== undefined && detailPageUrl !== undefined && imageUrl !== undefined && lowestNewPrice.amount !== undefined &&
-        lowestNewPrice.currencyCode !== undefined && lowestNewPrice.formattedPrice !== undefined && title !== undefined) {
+    if (asin !== undefined && detailPageUrl !== undefined && title !== undefined && anyAmount !== undefined) {
       elements.push({
-        title: title,
-        subtitle: sprintf(gt.dgettext(parseUserLanguage, 'Price: %s'), lowestNewPrice.formattedPrice),
+        title: vsprintf('%s (%s)', [title, asin]),
+        subtitle: vsprintf(gt.dgettext(parseUserLanguage, 'Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s'), [amazonPriceFormatted, thirdPartyNewPriceFormatted, thirdPartyUsedPriceFormatted]),
         item_url: "",
         image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
@@ -811,7 +845,9 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                 "detailPageUrl": detailPageUrl,
                 "imageUrl": imageUrl,
                 "lowestNewPrice": lowestNewPrice,
-                "title": title
+                "title": title,
+                "ean": ean,
+                "model": model
               }
             }
           })

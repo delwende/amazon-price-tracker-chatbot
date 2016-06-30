@@ -160,6 +160,16 @@ app.get('/deleteredisuser', function(req, res) {
   });
 });
 
+app.get('/changeredituserlocale/:locale', function(req, res) {
+  var locale = req.params.locale;
+  redisClient.hmset('user:979287485518975', 'parseUserLocale', locale);
+});
+
+app.get('/changeredituserlanguage/:language', function(req, res) {
+  var language = req.params.language;
+  redisClient.hmset('user:979287485518975', 'parseUserLanguage', locale);
+});
+
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks

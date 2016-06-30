@@ -154,6 +154,14 @@ app.get('/webhook', function(req, res) {
   }
 });
 
+app.get('/deleteredisuser', function(req, res) {
+  redisClient.del('user:979287485518975 ', function(err, reply) {
+    if (reply) {
+      res.sendStatus(200);
+    }
+  });
+});
+
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
@@ -307,8 +315,9 @@ function receivedMessage(event) {
         var responseText;
 
         // Check if user locale is supported
-        if (parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' || parseUserLocale === 'de_DE' || parseUserLocale === 'it_IT' ||
-            parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'|| parseUserLocale === 'en_GB' || parseUserLocale === 'en_US') {
+        if (parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' || parseUserLocale === 'de_DE' ||
+            parseUserLocale === 'it_IT' || parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'|| parseUserLocale === 'en_GB' ||
+            parseUserLocale === 'en_US') {
 
           if (messageText) {
 

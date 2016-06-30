@@ -155,7 +155,7 @@ app.get('/webhook', function(req, res) {
 });
 
 app.get('/deleteredisuser', function(req, res) {
-  client.del('user:979287485518975', function(err, reply) {
+  redisClient.del('user:979287485518975', function(err, reply) {
     console.log(reply);
   });
 });

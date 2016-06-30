@@ -323,24 +323,29 @@ function receivedMessage(event) {
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
               var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
               // Search items
-              amazonClient.itemSearch({
+              var query = {
+                searchIndex: 'All',
                 responseGroup: 'ItemAttributes,OfferFull,Images',
                 keywords: keywords,
                 domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
-              }).then(function(results){
-                console.log("Successfully retrieved " + results.length + " items.");
+              };
+              amazonClient.itemSearch(query, function (error, results) {
+                if (error) {
+                  console.log("Error: " + JSON.stringify(error));
 
-                // Inform the user that search results are displayed
-                responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
-                sendTextMessage(senderID, sprintf(responseText, keywords));
-                // Show to the user the search results
-                sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
-              }).catch(function(error){
-                console.log("Error: " + JSON.stringify(error));
-                // Inform the user that the search for his keywords did not match any products
-                responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
-                'Using more general terms\n- Checking your spelling');
-                sendTextMessage(senderID, sprintf(responseText, keywords));
+                  // Inform the user that the search for his keywords did not match any products
+                  responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
+                  'Using more general terms\n- Checking your spelling');
+                  sendTextMessage(senderID, sprintf(responseText, keywords));
+                } else {
+                  console.log("Successfully retrieved " + results.length + " items.");
+
+                  // Inform the user that search results are displayed
+                  responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
+                  sendTextMessage(senderID, sprintf(responseText, keywords));
+                  // Show to the user the search results
+                  sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
+                }
               });
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
               sendTextMessage(senderID, '');
@@ -463,8 +468,8 @@ function receivedPostback(event) {
             var item = json.entities.item;
 
             // Inform the user about the current lowest new price
-            responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
-            sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
+            // responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
+            // sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
 
             // Check if the product already exists on the Backend
             var Product = Parse.Object.extend("Product");
@@ -514,7 +519,8 @@ function receivedPostback(event) {
 
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
-                sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+                // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+                sendSetPriceTypeGenericMessage(senderID);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -522,7 +528,8 @@ function receivedPostback(event) {
 
             }).then(function(result) {
               if (result) {
-                sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+                // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+                sendSetPriceTypeGenericMessage(senderID);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -1047,6 +1054,47 @@ function sendListPriceWatchesGenericMessage(recipientId) {
               title: "Call Postback",
               payload: "Payload for second bubble",
             }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendSetPriceTypeGenericMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "Preistyp festlegen",
+            subtitle: "Welchen Preistyp möchtest du verfolgen",
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: "Amazon",
+              payload: "Payload for first bubble"
+            }, {
+              type: "postback",
+              title: "Drittanb. Neu",
+              payload: "Payload for first bubble"
+            }, {
+              type: "postback",
+              title: "Drittanb. Gebraucht",
+              payload: "Payload for first bubble"
+            }],
           }]
         }
       }

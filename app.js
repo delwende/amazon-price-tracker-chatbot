@@ -464,8 +464,19 @@ function receivedPostback(event) {
             // Inform the user about the current lowest new price
             responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
             sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
-
+            
             // Check if the product already exists on the Backend
+            var Product = Parse.Object.extend("Product");
+            var query = new Parse.Query(Product);
+            query.equalTo("asin", item.asin);
+            query.find().then(function(results) {
+              console.log("Successfully retrieved " + results.length + " products.");
+              
+              if (results.length === 1) {
+                var product = results[0];
+                
+                // Save price alert to the Backend
+            /*// Check if the product already exists on the Backend
             var Product = Parse.Object.extend("Product");
             var query = new Parse.Query(Product);
             query.equalTo("asin", item.asin);
@@ -525,7 +536,7 @@ function receivedPostback(event) {
               }
             }, function(error) {
               console.log("Error: " + error);
-            });
+            });*/
 
             break;
 

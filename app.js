@@ -512,12 +512,16 @@ function receivedPostback(event) {
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
                 sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+
+                redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
 
 
             }).then(function(result) {
               if (result) {
                 sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
+
+                redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
             }, function(error) {
               console.log("Error: " + error);

@@ -471,17 +471,6 @@ function receivedPostback(event) {
             query.equalTo("asin", item.asin);
             query.find().then(function(results) {
               console.log("Successfully retrieved " + results.length + " products.");
-              
-              if (results.length === 1) {
-                var product = results[0];
-                
-                // Save price alert to the Backend
-            /*// Check if the product already exists on the Backend
-            var Product = Parse.Object.extend("Product");
-            var query = new Parse.Query(Product);
-            query.equalTo("asin", item.asin);
-            query.find().then(function(results) {
-              console.log("Successfully retrieved " + results.length + " products.");
 
               if (results.length === 1) {
                 var product = results[0];

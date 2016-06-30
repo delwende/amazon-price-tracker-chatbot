@@ -272,10 +272,6 @@ function receivedAuthentication(event) {
  *
  */
 function receivedMessage(event) {
-  redisClient.del('user:979287485518975', function(err, reply) {
-    console.log(reply);
-  });
-  
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
   var timeOfMessage = event.timestamp;

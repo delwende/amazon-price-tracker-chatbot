@@ -962,8 +962,6 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
     }
   };
 
-  redisClient.hmset('user:' + recipientId, 'setPriceAlertMessage', messageData);
-
   callSendAPI(messageData);
 }
 

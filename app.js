@@ -154,6 +154,9 @@ app.get('/webhook', function(req, res) {
   }
 });
 
+app.get('/test', function(req, res) {
+});
+
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks
@@ -464,7 +467,7 @@ function receivedPostback(event) {
             // Inform the user about the current lowest new price
             responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
             sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
-            
+
             // Check if the product already exists on the Backend
             var Product = Parse.Object.extend("Product");
             var query = new Parse.Query(Product);

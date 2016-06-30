@@ -154,14 +154,6 @@ app.get('/webhook', function(req, res) {
   }
 });
 
-app.get('/deleteredisuser', function(req, res) {
-  redisClient.del('user:979287485518975 ', function(err, reply) {
-    if (reply) {
-      res.sendStatus(200);
-    }
-  });
-});
-
 /*
  * All callbacks for Messenger are POST-ed. They will be sent to the same
  * webhook. Be sure to subscribe your app to your page to receive callbacks

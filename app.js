@@ -581,6 +581,30 @@ function receivedPostback(event) {
             }
 
             break;
+            
+          case 'setPriceType':
+            var priceAlertObjectId = user.incompletePriceAlertObjectId;
+            var priceType = json.entities.priceType; // User selected price type
+            var prices = json.entities.prices;
+            
+            // Update price alert
+            var PriceAlert = Parse.Object.extend("PriceAlert");
+            var priceAlert = new PriceAlert();
+            
+            priceAlert.set("objectId", priceAlertObjectId);
+            priceAlert.set("priceType", priceType);
+            priceAlert.save(null, {
+              success: function(priceAlert) {
+                console.log('Updated price alert with objectId: ' + priceAlert.id);
+                
+                sendSetDesiredPriceGenericMessage(senderID, user, prices[priceType], item.title);
+              },
+              error: function(priceAlert, error) {
+                console.log('Failed to update price alert, with error code: ' + error.message);
+              }
+            });
+            
+            break;
 
           default:
         }
@@ -1087,7 +1111,8 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
       payload: JSON.stringify({
         "intent": "setPriceType",
         "entities": {
-          "priceType": priceType
+          "priceType": priceType,
+          "prices": prices
         }
       })
     });

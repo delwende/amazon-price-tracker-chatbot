@@ -313,7 +313,7 @@ function receivedMessage(event) {
 
           if (messageText) {
 
-            // Check if user has started any transactions
+            // Check if any transactions have been started
 
             if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
               responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
@@ -520,7 +520,7 @@ function receivedPostback(event) {
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID);
+                sendSetPriceTypeGenericMessage(senderID, item.prices);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -529,7 +529,7 @@ function receivedPostback(event) {
             }).then(function(result) {
               if (result) {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID);
+                sendSetPriceTypeGenericMessage(senderID, item.prices);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -797,7 +797,6 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     var ean = objectPath.get(item, "ItemAttributes.0.EAN.0");
     var model = objectPath.get(item, "ItemAttributes.0.Model.0");
 
-
     var lowestNewPrice = {
       "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
       "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
@@ -851,10 +850,14 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                 "asin": asin,
                 "detailPageUrl": detailPageUrl,
                 "imageUrl": imageUrl,
-                "lowestNewPrice": lowestNewPrice,
                 "title": title,
                 "ean": ean,
-                "model": model
+                "model": model,
+                "prices": {
+                  "amazonPrice": amazonPrice,
+                  "thirdPartyNewPrice": thirdPartyNewPrice,
+                  "thirdPartyUsedPrice": thirdPartyUsedPrice
+                }
               }
             }
           })
@@ -1067,7 +1070,17 @@ function sendListPriceWatchesGenericMessage(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetPriceTypeGenericMessage(recipientId) {
+function sendSetPriceTypeGenericMessage(recipientId, prices) {
+  var buttons = [];
+  
+  for (price in prices) {
+    buttons.push({
+      type: "postback",
+      title: price,
+      payload: "Payload for first bubble"
+    });
+  }
+  
   var messageData = {
     recipient: {
       id: recipientId
@@ -1082,19 +1095,7 @@ function sendSetPriceTypeGenericMessage(recipientId) {
             subtitle: "Welchen Preistyp möchtest du verfolgen",
             item_url: "",
             image_url: "",
-            buttons: [{
-              type: "postback",
-              title: "Amazon",
-              payload: "Payload for first bubble"
-            }, {
-              type: "postback",
-              title: "Drittanb. Neu",
-              payload: "Payload for first bubble"
-            }, {
-              type: "postback",
-              title: "Drittanb. Gebraucht",
-              payload: "Payload for first bubble"
-            }],
+            buttons: buttons,
           }]
         }
       }

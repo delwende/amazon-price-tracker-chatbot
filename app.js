@@ -25,7 +25,8 @@ const
   fs = require('fs'),
   Gettext = require('node-gettext'), // Gettext client for Node.js to use .mo files for I18N
   sprintf = require('sprintf-js').sprintf,
-  vsprintf = require('sprintf-js').vsprintf;
+  vsprintf = require('sprintf-js').vsprintf,
+  helpers = require(__dirname + '/libs/helpers'); // Custom helper functions
 
 var app = express();
 
@@ -351,13 +352,13 @@ function receivedMessage(event) {
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
               sendTextMessage(senderID, '');
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
-              var greeting = [
+              var greetings = [
                 gt.dgettext(parseUserLanguage, 'Hi %s!'),
                 gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
                 gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
               ];
-              var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
-              sendTextMessage(senderID, sprintf(greeting[random-1], user.parseUserFirstName));
+              var greeting = helpers.randomElementFromArray(greetings);
+              sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
               sendTextMessage(senderID, '');
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {

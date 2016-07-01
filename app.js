@@ -520,7 +520,7 @@ function receivedPostback(event) {
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID, user, item.prices);
+                sendSetPriceTypeGenericMessage(senderID, user, item.prices, item.title);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -529,7 +529,7 @@ function receivedPostback(event) {
             }).then(function(result) {
               if (result) {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID, user, item.prices);
+                sendSetPriceTypeGenericMessage(senderID, user, item.prices, item.title);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -586,6 +586,7 @@ function receivedPostback(event) {
             var priceAlertObjectId = user.incompletePriceAlertObjectId;
             var priceType = json.entities.priceType; // User selected price type
             var prices = json.entities.prices;
+            var productTitle = json.entities.productTitle;
             
             // Update price alert
             var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -597,7 +598,7 @@ function receivedPostback(event) {
               success: function(priceAlert) {
                 console.log('Updated price alert with objectId: ' + priceAlert.id);
                 
-                sendSetDesiredPriceGenericMessage(senderID, user, prices[priceType], item.title);
+                sendSetDesiredPriceGenericMessage(senderID, user, prices[priceType], productTitle);
               },
               error: function(priceAlert, error) {
                 console.log('Failed to update price alert, with error code: ' + error.message);
@@ -1094,8 +1095,9 @@ function sendListPriceWatchesGenericMessage(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
+function sendSetPriceTypeGenericMessage(recipientId, user, prices, productTitle) {
   var parseUserLanguage = user.parseUserLanguage;
+  var productTitle = productTitle;
   var buttons = [];
   
   var priceTypeTitles = {
@@ -1112,7 +1114,8 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
         "intent": "setPriceType",
         "entities": {
           "priceType": priceType,
-          "prices": prices
+          "prices": prices,
+          "productTitle": productTitle
         }
       })
     });

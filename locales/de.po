@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-01 17:12+0200\n"
-"PO-Revision-Date: 2016-07-01 17:12+0200\n"
+"POT-Creation-Date: 2016-07-01 21:51+0200\n"
+"PO-Revision-Date: 2016-07-01 21:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,11 +15,11 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:318
+#: app.js:320
 msgid "help"
 msgstr "hilfe"
 
-#: app.js:319
+#: app.js:321
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -33,11 +33,11 @@ msgstr ""
 "- “suche [produktname]\", z.B. “suche iphone6\"\n"
 "- “liste” um deine Preisverfolgungen anzuzeigen"
 
-#: app.js:323 app.js:324
+#: app.js:325 app.js:326
 msgid "search "
 msgstr "suche "
 
-#: app.js:337 app.js:918
+#: app.js:339 app.js:923
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -49,46 +49,46 @@ msgstr ""
 "- Allgemeinere Begriffe verwenden\n"
 "- Rechtschreibung überprüfen"
 
-#: app.js:344
+#: app.js:346
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Suchergebnisse für \"%s\""
 
-#: app.js:350
+#: app.js:353
 msgid "list"
 msgstr "liste"
 
-#: app.js:352
+#: app.js:355
 msgid "hi"
 msgstr "hi"
 
-#: app.js:352
+#: app.js:355
 msgid "hello"
 msgstr "hallo"
 
-#: app.js:354
+#: app.js:357
 #, javascript-format
 msgid "Hi %s!"
 msgstr "Hi %s!"
 
-#: app.js:355
+#: app.js:358
 #, javascript-format
 msgid "Oh, hello %s!"
 msgstr "Hallo %s!"
 
-#: app.js:356
+#: app.js:359
 msgid "Oh, hi. I didn't see you there."
 msgstr "Hallo. Lange nicht mehr gesehen."
 
-#: app.js:360
+#: app.js:364
 msgid "menu"
 msgstr "menu"
 
-#: app.js:362
+#: app.js:366
 msgid "settings"
 msgstr "einstellungen"
 
-#: app.js:366
+#: app.js:370
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -97,23 +97,23 @@ msgstr ""
 "habe. Tippe “suche [produktname]” um ein Produkt zu suchen oder tippe "
 "“hilfe”."
 
-#: app.js:368
+#: app.js:372
 msgid ""
 "So, I'm good at alerting you when prices on Amazon drop. Other stuff, not so "
 "good. If you need help just enter \"help\"."
 msgstr ""
-"Also, ich bin gut darin dich zu benachrichtigen, wenn die Preise auf Amazon "
-"sinken. Andere Dinge kann ich leider nicht so gut. Wenn du Hilfe benötigst, "
-"tippe \"hilfe”."
+"Also, ich bin gut darin dir eine Benachrichtigung zu senden, wenn die Preise "
+"auf Amazon sinken. Andere Dinge kann ich leider nicht so gut. Wenn du Hilfe "
+"benötigst, tippe \"hilfe”."
 
-#: app.js:370
+#: app.js:374
 msgid ""
 "Oops, I didn't catch that. For things I can help you with, type \"help\"."
 msgstr ""
 "Hoppla, das habe ich nicht verstanden. Wenn du Hilfe benötigst, tippe "
 "\"hilfe”."
 
-#: app.js:381
+#: app.js:385
 msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
@@ -128,74 +128,82 @@ msgstr "Gib bitte einen gültigen Preis ein, ohne das Währungssymbol (z.B. %s)"
 msgid "Price alert for %s has been activated."
 msgstr "Der Preisalarm für %s wurde aktiviert."
 
-#: app.js:857 app.js:858 app.js:859
+#: app.js:603
+#, javascript-format
+msgid "The current %s price for this item is %s"
+msgstr "Der aktuelle %s Preis für diesen Artikel beträgt %s"
+
+#: app.js:861 app.js:862 app.js:863
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:866
+#: app.js:870
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:871
+#: app.js:875
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:893
+#: app.js:898
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:957 app.js:996
-msgid "Set desired price"
-msgstr "Wunschpreis festlegen"
-
-#: app.js:958 app.js:997
-msgid "Please choose one of the following options"
-msgstr "Bitte wähle eine der nachfolgenden Optionen"
-
-#: app.js:963
-msgid "-0,01"
-msgstr "-0,01"
-
-#: app.js:974
-msgid "-3%"
-msgstr "-3%"
-
-#: app.js:985
-msgid "-5%"
-msgstr "-5%"
-
-#: app.js:1002
-msgid "-7%"
-msgstr "-7%"
-
-#: app.js:1013
-msgid "-10%"
-msgstr "-10%"
-
-#: app.js:1024
-msgid "Custom Input"
-msgstr "Individuelle Eingabe"
-
-#: app.js:1105
+#: app.js:938
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1106
+#: app.js:939
 msgid "3rd Party New"
-msgstr "Drittanbieter Neu"
+msgstr "Drittanb. Neu"
 
-#: app.js:1107
+#: app.js:940
 msgid "3rd Party Used"
-msgstr "Drittanbieter Gebraucht"
+msgstr "Drittanb. Gebraucht"
 
-#: app.js:1135
+#: app.js:967
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:1136
+#: app.js:968
 msgid "What price type do you want to track"
 msgstr "Welchen Preistyp möchtest du verfolgen"
+
+#: app.js:1015 app.js:1054
+msgid "Set desired price"
+msgstr "Wunschpreis festlegen"
+
+#: app.js:1016 app.js:1055
+msgid "Please choose one of the following options"
+msgstr "Bitte wähle eine der nachfolgenden Optionen"
+
+#: app.js:1021
+msgid "-0,01"
+msgstr "-0,01"
+
+#: app.js:1032
+msgid "-3%"
+msgstr "-3%"
+
+#: app.js:1043
+msgid "-5%"
+msgstr "-5%"
+
+#: app.js:1060
+msgid "-7%"
+msgstr "-7%"
+
+#: app.js:1071
+msgid "-10%"
+msgstr "-10%"
+
+#: app.js:1082
+msgid "Custom Input"
+msgstr "Individuelle Eingabe"
+
+#~ msgid "The current %s price for this item is %s."
+#~ msgstr "Der aktuelle %s Preis für diesen Artikel beträgt %s"
 
 #~ msgid "The current price for this item is %s"
 #~ msgstr "Der aktuelle Preis für diesen Artikel ist %s"

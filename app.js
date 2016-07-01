@@ -26,7 +26,8 @@ const
   Gettext = require('node-gettext'), // Gettext client for Node.js to use .mo files for I18N
   sprintf = require('sprintf-js').sprintf,
   vsprintf = require('sprintf-js').vsprintf,
-  helpers = require(__dirname + '/libs/helpers'); // Custom helper functions
+  helpers = require(__dirname + '/libs/helpers'); // Custom mixed helper functions
+
 
 var app = express();
 
@@ -357,6 +358,7 @@ function receivedMessage(event) {
                 gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
                 gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
               ];
+
               var greeting = helpers.randomElementFromArray(greetings);
               sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
@@ -364,7 +366,7 @@ function receivedMessage(event) {
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
               sendTextMessage(senderID, '');
             } else {
-              var support = [
+              var helpInstructions = [
                 gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
                 'search a product or type "help".'),
                 gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
@@ -372,8 +374,8 @@ function receivedMessage(event) {
                 gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
               ];
 
-              var random = Math.floor((Math.random() * 3) + 1); // Generate random number between 0 and 3
-              sendTextMessage(senderID, sprintf(support[random-1]));
+              var helpInstruction = helpers.randomElementFromArray(helpInstructions);
+              sendTextMessage(senderID, sprintf(helpInstruction));
             }
           } else if (messageAttachments) {
             sendTextMessage(senderID, "Message with attachment received");
@@ -419,7 +421,6 @@ function receivedDeliveryConfirmation(event) {
 
   console.log("All message before %d were delivered.", watermark);
 }
-
 
 /*
  * Postback Event
@@ -468,10 +469,6 @@ function receivedPostback(event) {
           case 'activatePriceAlert':
 
             var item = json.entities.item;
-
-            // Inform the user about the current lowest new price
-            // responseText = gt.dgettext(parseUserLanguage, 'The current price for this item is %s');
-            // sendTextMessage(senderID, sprintf(responseText, item.lowestNewPrice.formattedPrice));
 
             // Check if the product already exists on the Backend
             var Product = Parse.Object.extend("Product");
@@ -523,7 +520,7 @@ function receivedPostback(event) {
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID, user, item.prices, item.title);
+                sendSetPriceTypeGenericMessage(senderID, user, item);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -532,7 +529,7 @@ function receivedPostback(event) {
             }).then(function(result) {
               if (result) {
                 // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
-                sendSetPriceTypeGenericMessage(senderID, user, item.prices, item.title);
+                sendSetPriceTypeGenericMessage(senderID, user, item);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
               }
@@ -587,9 +584,9 @@ function receivedPostback(event) {
 
           case 'setPriceType':
             var priceAlertObjectId = user.incompletePriceAlertObjectId;
+            
             var priceType = json.entities.priceType; // User selected price type
-            var prices = json.entities.prices;
-            var productTitle = json.entities.productTitle;
+            var item = json.entities.item;
 
             // Update price alert
             var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -597,12 +594,22 @@ function receivedPostback(event) {
 
             priceAlert.set("objectId", priceAlertObjectId);
             priceAlert.set("priceType", priceType);
-            pricealert.set("currentPrice", prices[priceType]);
+            priceAlert.set("currentPrice", Number(item.prices[priceType])); // Convert price from string to number
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('Updated price alert with objectId: ' + priceAlert.id);
 
-                sendSetDesiredPriceGenericMessage(senderID, user, prices[priceType], productTitle);
+                var priceTypeTitles = {
+                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
+                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
+                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
+                };
+
+                // Inform the user about the current price
+                responseText = gt.dgettext(parseUserLanguage, 'The current %s price for this item is %s');
+                sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitles[priceType], item.prices[priceType]]));
+
+                sendSetDesiredPriceGenericMessage(senderID, user, item.prices[priceType], item.title);
               },
               error: function(priceAlert, error) {
                 console.log('Failed to update price alert, with error code: ' + error.message);
@@ -836,7 +843,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
       "currencyCode": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.CurrencyCode.0"),
       "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.FormattedPrice.0")
     };
-    var offerPrice = {
+    var offer = {
       "merchant": objectPath.get(item, "Offers.0.Offer.0.Merchant.0.Name.0"),
       "condition": objectPath.get(item, "Offers.0.Offer.0.OfferAttributes.0.Condition.0"),
       "amount": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.Amount.0"),
@@ -844,11 +851,11 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
       "formattedPrice": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
     };
 
-    var amazonPrice = offerPrice.merchant === "Amazon.de" ? offerPrice.amount : undefined;
+    var amazonPrice = offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
     var thirdPartyNewPrice = lowestNewPrice.amount;
     var thirdPartyUsedPrice = lowestUsedPrice.amount;
 
-    var anyCurrencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offerPrice.currencyCode;
+    var anyCurrencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
     var anyAmount = amazonPrice || thirdPartyNewPrice || thirdPartyUsedPrice;
 
     if (anyCurrencyCode !== undefined) {
@@ -882,12 +889,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                 "title": title,
                 "ean": ean,
                 "model": model,
+                "productGroup": productGroup,
                 "prices": {
                   "amazonPrice": amazonPrice,
                   "thirdPartyNewPrice": thirdPartyNewPrice,
                   "thirdPartyUsedPrice": thirdPartyUsedPrice
-                },
-                "productGroup": productGroup
+                }
               }
             }
           })
@@ -926,12 +933,65 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
 }
 
 /*
+ * Send a Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendSetPriceTypeGenericMessage(recipientId, user, item) {
+  var buttons = [];
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var priceTypeTitles = {
+    "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
+    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
+    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
+  };
+
+  for (var priceType in item.prices) { // Keys of prices are the price titles, e.g. Amazon, 3rd Party New, etc.
+    buttons.push({
+      type: "postback",
+      title: priceTypeTitles[priceType],
+      payload: JSON.stringify({
+        "intent": "setPriceType",
+        "entities": {
+          "item": item,
+          "priceType": priceType
+        }
+      })
+    });
+  }
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(parseUserLanguage, 'Set price type'),
+            subtitle: gt.dgettext(parseUserLanguage, 'What price type do you want to track'),
+            item_url: "",
+            image_url: "",
+            buttons: buttons,
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitle) {
   var parseUserLocale = user.parseUserLocale;
   var parseUserLanguage = user.parseUserLanguage;
+
   var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
   var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
   var thousandsSeparator = config.get('thousandsSeparator_' + parseUserLocale);
@@ -1087,60 +1147,6 @@ function sendListPriceWatchesGenericMessage(recipientId) {
               title: "Call Postback",
               payload: "Payload for second bubble",
             }]
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
-}
-
-/*
- * Send a Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendSetPriceTypeGenericMessage(recipientId, user, prices, productTitle) {
-  var parseUserLanguage = user.parseUserLanguage;
-  var productTitle = productTitle;
-  var buttons = [];
-
-  var priceTypeTitles = {
-    "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
-    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
-    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
-  };
-
-  for (var priceType in prices) {
-    buttons.push({
-      type: "postback",
-      title: priceTypeTitles[priceType],
-      payload: JSON.stringify({
-        "intent": "setPriceType",
-        "entities": {
-          "priceType": priceType,
-          "prices": prices,
-          "productTitle": productTitle
-        }
-      })
-    });
-  }
-
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Set price type'),
-            subtitle: gt.dgettext(parseUserLanguage, 'What price type do you want to track'),
-            item_url: "",
-            image_url: "",
-            buttons: buttons,
           }]
         }
       }

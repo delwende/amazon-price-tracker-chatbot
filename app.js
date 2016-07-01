@@ -1073,7 +1073,7 @@ function sendListPriceWatchesGenericMessage(recipientId) {
 function sendSetPriceTypeGenericMessage(recipientId, prices) {
   var buttons = [];
   
-  for (price in prices) {
+  for (var price in prices) {
     buttons.push({
       type: "postback",
       title: price,

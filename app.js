@@ -341,8 +341,9 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  responseText = gt.dgettext(parseUserLanguage, '\2713 Search results for "%s"');
+                  responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
                   sendTextMessage(senderID, sprintf(responseText, keywords));
+
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);
                 }
@@ -501,6 +502,7 @@ function receivedPostback(event) {
                 product.set("title", item.title);
                 product.set("ean", item.ean);
                 product.set("model", item.model);
+                product.set("productGroup", item.productGroup);
 
                 return product.save();
               }
@@ -819,9 +821,9 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
     var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
     var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-
     var ean = objectPath.get(item, "ItemAttributes.0.EAN.0");
     var model = objectPath.get(item, "ItemAttributes.0.Model.0");
+    var productGroup = objectPath.get(item, "ItemAttributes.0.ProductGroup.0");
 
     var lowestNewPrice = {
       "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
@@ -841,7 +843,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
       "formattedPrice": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
     };
 
-    var amazonPrice = offerPrice.merchant === "Amazon" ? offerPrice.amount : undefined;
+    var amazonPrice = offerPrice.merchant === "Amazon.de" ? offerPrice.amount : undefined;
     var thirdPartyNewPrice = lowestNewPrice.amount;
     var thirdPartyUsedPrice = lowestUsedPrice.amount;
 
@@ -883,7 +885,8 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                   "amazonPrice": amazonPrice,
                   "thirdPartyNewPrice": thirdPartyNewPrice,
                   "thirdPartyUsedPrice": thirdPartyUsedPrice
-                }
+                },
+                "productGroup": productGroup
               }
             }
           })
@@ -1133,7 +1136,7 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices, productTitle)
           template_type: "generic",
           elements: [{
             title: gt.dgettext(parseUserLanguage, 'Set price type'),
-            subtitle: 'What price type do you want to track',
+            subtitle: gt.dgettext(parseUserLanguage, 'What price type do you want to track'),
             item_url: "",
             image_url: "",
             buttons: buttons,

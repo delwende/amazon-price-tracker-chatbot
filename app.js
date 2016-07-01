@@ -341,7 +341,7 @@ function receivedMessage(event) {
                   console.log("Successfully retrieved " + results.length + " items.");
 
                   // Inform the user that search results are displayed
-                  responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
+                  responseText = gt.dgettext(parseUserLanguage, '\2713 Search results for "%s"');
                   sendTextMessage(senderID, sprintf(responseText, keywords));
                   // Show to the user the search results
                   sendListArticleSearchResultsGenericMessage(senderID, results, user, keywords);

@@ -1070,13 +1070,20 @@ function sendListPriceWatchesGenericMessage(recipientId) {
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetPriceTypeGenericMessage(recipientId, prices) {
+function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
+  var parseUserLanguage = user.parseUserLanguage;
   var buttons = [];
+  
+  var priceTypeTitles = {
+    "amazonPrice": gt.dgettext(parseUserLanguage, "Amazon"),
+    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, "3rd Party New"),
+    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, "3rd Party Used")
+  };
   
   for (var price in prices) {
     buttons.push({
       type: "postback",
-      title: price,
+      title: priceTypeTitles[price],
       payload: "Payload for first bubble"
     });
   }

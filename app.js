@@ -1075,16 +1075,21 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
   var buttons = [];
   
   var priceTypeTitles = {
-    "amazonPrice": gt.dgettext(parseUserLanguage, "Amazon"),
-    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, "3rd Party New"),
-    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, "3rd Party Used")
+    "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
+    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
+    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
   };
   
-  for (var price in prices) {
+  for (var priceType in prices) {
     buttons.push({
       type: "postback",
-      title: priceTypeTitles[price],
-      payload: "Payload for first bubble"
+      title: priceTypeTitles[priceType],
+      payload: JSON.stringify({
+        "intent": "setPriceType",
+        "entities": {
+          "priceType": priceType
+        }
+      })
     });
   }
   
@@ -1098,8 +1103,8 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "Preistyp festlegen",
-            subtitle: "Welchen Preistyp möchtest du verfolgen",
+            title: gt.dgettext(parseUserLanguage, 'Set price type'),
+            subtitle: 'What price type do you want to track',
             item_url: "",
             image_url: "",
             buttons: buttons,

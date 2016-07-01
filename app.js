@@ -581,30 +581,31 @@ function receivedPostback(event) {
             }
 
             break;
-            
+
           case 'setPriceType':
             var priceAlertObjectId = user.incompletePriceAlertObjectId;
             var priceType = json.entities.priceType; // User selected price type
             var prices = json.entities.prices;
             var productTitle = json.entities.productTitle;
-            
+
             // Update price alert
             var PriceAlert = Parse.Object.extend("PriceAlert");
             var priceAlert = new PriceAlert();
-            
+
             priceAlert.set("objectId", priceAlertObjectId);
             priceAlert.set("priceType", priceType);
+            pricealert.set("currentPrice", prices[priceType]);
             priceAlert.save(null, {
               success: function(priceAlert) {
                 console.log('Updated price alert with objectId: ' + priceAlert.id);
-                
+
                 sendSetDesiredPriceGenericMessage(senderID, user, prices[priceType], productTitle);
               },
               error: function(priceAlert, error) {
                 console.log('Failed to update price alert, with error code: ' + error.message);
               }
             });
-            
+
             break;
 
           default:
@@ -1099,13 +1100,13 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices, productTitle)
   var parseUserLanguage = user.parseUserLanguage;
   var productTitle = productTitle;
   var buttons = [];
-  
+
   var priceTypeTitles = {
     "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
     "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
     "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
   };
-  
+
   for (var priceType in prices) {
     buttons.push({
       type: "postback",
@@ -1120,7 +1121,7 @@ function sendSetPriceTypeGenericMessage(recipientId, user, prices, productTitle)
       })
     });
   }
-  
+
   var messageData = {
     recipient: {
       id: recipientId

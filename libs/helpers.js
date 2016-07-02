@@ -1,4 +1,9 @@
 var objectPath = require('object-path'); // Access deep properties using a path
+var accounting = require('accounting'); // A simple and advanced number, money and currency formatting library
+var config = require('config');
+
+// Configure accounting.js
+accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
 /*
  * Returns a random element from an array.
@@ -18,8 +23,15 @@ function randomIntFromIntervall(min, max) {
 }
 
 /*
- * Returns formatted price by currency code.
+ * Returns formatted price by currency code. Accepts prices in terms of the lowest currency denomination,
+ * for example, pennies.
  *
  */
-exports.formattedPriceByCurrencyCode = function(price, currencyCode) {
+exports.formatPriceByCurrencyCode = function(price, currencyCode) {
+	var currencySymbol = config.get('currencySymbol_' + currencyCode);
+	var decimalPointSeparator = config.get('decimalPointSeparator_' + currencyCode);
+	var thousandsSeparator = config.get('thousandsSeparator_' + currencyCode);
+	var decimalPlaces = config.get('decimalPlaces_' + currencyCode);
+
+	return accounting.formatMoney(price / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
 };

@@ -289,7 +289,7 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
-  // Save every message
+  // Save message
   var Message = Parse.Object.extend("Message");
   var message = new Message();
   message.save({senderId: senderID, text: messageText});
@@ -309,9 +309,9 @@ function receivedMessage(event) {
         var responseText;
 
         // Check if user locale is supported
-        if (parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' || parseUserLocale === 'de_DE' ||
-            parseUserLocale === 'it_IT' || parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'|| parseUserLocale === 'en_GB' ||
-            parseUserLocale === 'en_US') {
+        if (parseUserLocale === 'fr_CA' || parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' ||
+            parseUserLocale === 'de_DE' || parseUserLocale === 'it_IT' || parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'||
+            parseUserLocale === 'en_GB' || parseUserLocale === 'en_US') {
 
           if (messageText) {
 
@@ -361,8 +361,6 @@ function receivedMessage(event) {
 
               var greeting = helpers.randomElementFromArray(greetings);
               sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
-            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
-              sendTextMessage(senderID, '');
             } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
               sendTextMessage(senderID, '');
             } else {
@@ -855,19 +853,12 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
     var thirdPartyNewPrice = lowestNewPrice.amount;
     var thirdPartyUsedPrice = lowestUsedPrice.amount;
 
-    var anyCurrencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
+    var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
     var anyAmount = amazonPrice || thirdPartyNewPrice || thirdPartyUsedPrice;
 
-    if (anyCurrencyCode !== undefined) {
-      var currencySymbol = config.get('currencySymbol_' + anyCurrencyCode);
-      var decimalPointSeparator = config.get('decimalPointSeparator_' + anyCurrencyCode);
-      var thousandsSeparator = config.get('thousandsSeparator_' + anyCurrencyCode);
-      var decimalPlaces = config.get('decimalPlaces_' + anyCurrencyCode);
-
-      var amazonPriceFormatted = amazonPrice !== undefined ? accounting.formatMoney(amazonPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-      var thirdPartyNewPriceFormatted = thirdPartyNewPrice !== undefined ? accounting.formatMoney(thirdPartyNewPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-      var thirdPartyUsedPriceFormatted = thirdPartyUsedPrice !== undefined ? accounting.formatMoney(thirdPartyUsedPrice / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-    }
+    var amazonPriceFormatted = amazonPrice !== undefined ? helpers.formatPriceByCurrencyCode(amazonPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    var thirdPartyNewPriceFormatted = thirdPartyNewPrice !== undefined ? helpers.formatPriceByCurrencyCode(thirdPartyNewPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    var thirdPartyUsedPriceFormatted = thirdPartyUsedPrice !== undefined ? helpers.formatPriceByCurrencyCode(thirdPartyUsedPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
 
     // Check if required item properties are available, otherwise exclude item from the article search results list
     if (asin !== undefined && detailPageUrl !== undefined && title !== undefined && anyAmount !== undefined) {
@@ -1241,7 +1232,7 @@ function callUserProfileAPI(userId, event) {
     } else {
       console.error("Unable to call User Profile API for user with id %s",
         userId);
-      console.error(response);
+      // console.error(response);
       console.error(error);
     }
   });

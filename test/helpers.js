@@ -11,7 +11,7 @@ describe("Helper functions", function() {
     });
   });
 
-  describe("Currency formatting by currency code", function() {
+  describe("Currency formatting", function() {
     it("formats price by currency code (EUR)", function() {
     	var currencyCode = "EUR";
 

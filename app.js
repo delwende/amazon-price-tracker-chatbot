@@ -26,7 +26,8 @@ const
   Gettext = require('node-gettext'), // Gettext client for Node.js to use .mo files for I18N
   sprintf = require('sprintf-js').sprintf,
   vsprintf = require('sprintf-js').vsprintf,
-  helpers = require(__dirname + '/libs/helpers'); // Custom mixed helper functions
+  helpers = require(__dirname + '/libs/helpers'), // Custom mixed helper functions
+  moment = require('moment'); // Parse, validate, manipulate, and display dates
 
 
 var app = express();
@@ -520,17 +521,13 @@ function receivedPostback(event) {
 
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
-                sendSetPriceTypeGenericMessage(senderID, user, item);
-
-                redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
+                sendSetPriceTypeGenericMessage(senderID, user, item, result);
               }
 
 
             }).then(function(result) {
               if (result) {
-                sendSetPriceTypeGenericMessage(senderID, user, item);
-
-                redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
+                sendSetPriceTypeGenericMessage(senderID, user, item, result);
               }
             }, function(error) {
               console.log("Error: " + error);
@@ -543,11 +540,11 @@ function receivedPostback(event) {
             break;
 
           case 'setDesiredPrice':
+            var priceAlertObjectId = user.incompletePriceAlertObjectId;
+
             var customPriceInput = json.entities.customPriceInput;
             var desiredPrice = json.entities.desiredPrice;
             var productTitle = json.entities.productTitle;
-
-            var priceAlertObjectId = user.incompletePriceAlertObjectId;
 
             // Check if user wants to enter a custom price
             if (customPriceInput) {
@@ -584,44 +581,57 @@ function receivedPostback(event) {
             break;
 
           case 'setPriceType':
-            var priceAlertObjectId = user.incompletePriceAlertObjectId;
+            var priceAlertCreatedAt = json.entities.priceAlertCreatedAt;
+
+            // Calculate time difference between price alert creation and
+            // attempt to set the price type
+            var timeDifference = moment().diff(priceAlertCreatedAt, 'minutes');
             
-            var priceType = json.entities.priceType; // User selected price type
-            var item = json.entities.item;
 
-            var price = item.prices[priceType];
-            var currencyCode = item.currencyCode;
+            // Check if calculated time difference is greater than one hour
+            if (timeDifference > 60) {
+              // Inform the user that prices and availability information are
+              // subject to changes
+            } else {
 
-            // Update price alert
-            var PriceAlert = Parse.Object.extend("PriceAlert");
-            var priceAlert = new PriceAlert();
+            }
+            
+            // var priceType = json.entities.priceType; // User selected price type
+            // var item = json.entities.item;
 
-            priceAlert.set("objectId", priceAlertObjectId);
-            priceAlert.set("priceType", priceType);
-            priceAlert.set("currentPrice", Number(item.prices[priceType])); // Convert price from string to number
-            priceAlert.save(null, {
-              success: function(priceAlert) {
-                console.log('Updated price alert with objectId: ' + priceAlert.id);
+            // var price = item.prices[priceType];
+            // var currencyCode = item.currencyCode;
 
-                var priceTypeTitles = {
-                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
-                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
-                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
-                };
+            // // Update price alert
+            // var PriceAlert = Parse.Object.extend("PriceAlert");
+            // var priceAlert = new PriceAlert();
 
-                var priceTypeTitle = priceTypeTitles[priceType];
-                var priceFormatted = helpers.formatPriceByCurrencyCode(price, currencyCode);
+            // priceAlert.set("objectId", priceAlertObjectId);
+            // priceAlert.set("priceType", priceType);
+            // priceAlert.set("currentPrice", Number(item.prices[priceType])); // Convert price from string to number
+            // priceAlert.save(null, {
+            //   success: function(priceAlert) {
+            //     console.log('Updated price alert with objectId: ' + priceAlert.id);
 
-                // Inform the user about the current price
-                responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
-                sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
+            //     var priceTypeTitles = {
+            //       "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+            //       "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+            //       "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
+            //     };
 
-                sendSetDesiredPriceGenericMessage(senderID, user, item, priceType);
-              },
-              error: function(priceAlert, error) {
-                console.log('Failed to update price alert, with error code: ' + error.message);
-              }
-            });
+            //     var priceTypeTitle = priceTypeTitles[priceType];
+            //     var priceFormatted = helpers.formatPriceByCurrencyCode(price, currencyCode);
+
+            //     // Inform the user about the current price
+            //     responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
+            //     sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
+
+            //     sendSetDesiredPriceGenericMessage(senderID, user, item, priceType);
+            //   },
+            //   error: function(priceAlert, error) {
+            //     console.log('Failed to update price alert, with error code: ' + error.message);
+            //   }
+            // });
 
             break;
 
@@ -939,7 +949,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
  * Send a Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetPriceTypeGenericMessage(recipientId, user, item) {
+function sendSetPriceTypeGenericMessage(recipientId, user, item, priceAlert) {
   var buttons = [];
   var parseUserLanguage = user.parseUserLanguage;
 
@@ -957,7 +967,9 @@ function sendSetPriceTypeGenericMessage(recipientId, user, item) {
         "intent": "setPriceType",
         "entities": {
           "item": item,
-          "priceType": priceType
+          "priceType": priceType,
+          "priceAlertObjectId": priceAlert.objectId,
+          "priceAlertCreatedAt": priceAlert.createdAt
         }
       })
     });

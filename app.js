@@ -517,7 +517,6 @@ function receivedPostback(event) {
 
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
-                // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
                 sendSetPriceTypeGenericMessage(senderID, user, item);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
@@ -526,7 +525,6 @@ function receivedPostback(event) {
 
             }).then(function(result) {
               if (result) {
-                // sendSetDesiredPriceGenericMessage(senderID, user, item.lowestNewPrice.amount, item.title);
                 sendSetPriceTypeGenericMessage(senderID, user, item);
 
                 redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', result.id);
@@ -541,9 +539,9 @@ function receivedPostback(event) {
 
             break;
 
-          case 'completePriceAlert':
+          case 'setDesiredPrice':
             var customPriceInput = json.entities.customPriceInput;
-            var priceDesired = json.entities.priceDesired;
+            var desiredPrice = json.entities.desiredPrice;
             var productTitle = json.entities.productTitle;
 
             var priceAlertObjectId = user.incompletePriceAlertObjectId;
@@ -563,7 +561,7 @@ function receivedPostback(event) {
               query.find().then(function(results) {
 
                 if (results.length === 1) {
-                  return results[0].save({ priceDesired: priceDesired, active: true });
+                  return results[0].save({ desiredPrice: desiredPrice, active: true });
                 } else {
 
                 }
@@ -586,6 +584,9 @@ function receivedPostback(event) {
             var priceType = json.entities.priceType; // User selected price type
             var item = json.entities.item;
 
+            var price = item.prices[priceType];
+            var currencyCode = item.currencyCode;
+
             // Update price alert
             var PriceAlert = Parse.Object.extend("PriceAlert");
             var priceAlert = new PriceAlert();
@@ -598,16 +599,19 @@ function receivedPostback(event) {
                 console.log('Updated price alert with objectId: ' + priceAlert.id);
 
                 var priceTypeTitles = {
-                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon'),
-                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New'),
-                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used')
+                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
                 };
 
-                // Inform the user about the current price
-                responseText = gt.dgettext(parseUserLanguage, 'The current %s price for this item is %s');
-                sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitles[priceType], item.prices[priceType]]));
+                var priceTypeTitle = priceTypeTitles[priceType];
+                var priceFormatted = helpers.formatPriceByCurrencyCode(price, currencyCode);
 
-                sendSetDesiredPriceGenericMessage(senderID, user, item.prices[priceType], item.title);
+                // Inform the user about the current price
+                responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
+                sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
+
+                sendSetDesiredPriceGenericMessage(senderID, user, item, priceType);
               },
               error: function(priceAlert, error) {
                 console.log('Failed to update price alert, with error code: ' + error.message);
@@ -885,7 +889,8 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                   "amazonPrice": amazonPrice,
                   "thirdPartyNewPrice": thirdPartyNewPrice,
                   "thirdPartyUsedPrice": thirdPartyUsedPrice
-                }
+                },
+                "currencyCode": currencyCode
               }
             }
           })
@@ -979,25 +984,24 @@ function sendSetPriceTypeGenericMessage(recipientId, user, item) {
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitle) {
+function sendSetDesiredPriceGenericMessage(recipientId, user, item, selectedPriceType) {
   var parseUserLocale = user.parseUserLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
-  var currencySymbol = config.get('currencySymbol_' + parseUserLocale);
-  var decimalPointSeparator = config.get('decimalPointSeparator_' + parseUserLocale);
-  var thousandsSeparator = config.get('thousandsSeparator_' + parseUserLocale);
-  var decimalPlaces = config.get('decimalPlaces_' + parseUserLocale);
+  var price = item.prices[selectedPriceType];
+  var currencyCode = item.currencyCode;
+  var productTitle = item.title;
 
   var priceMinusOnePercent = price - 1;
   var priceMinusThreePercent = price * 0.97;
   var priceMinusFivePercent = price * 0.95;
   var priceMinusSevenPercent = price * 0.93;
   var priceMinusTenPercent = price * 0.9;
-  var priceMinusOneFormatted = accounting.formatMoney(priceMinusOnePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
-  var priceMinusThreePercentFormatted = accounting.formatMoney(priceMinusThreePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
-  var priceMinusFivePercentFormatted = accounting.formatMoney(priceMinusFivePercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
-  var priceMinusSevenPercentFormatted = accounting.formatMoney(priceMinusSevenPercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
-  var priceMinusTenPercentFormatted = accounting.formatMoney(priceMinusTenPercent / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+  var priceMinusOneFormatted = helpers.formatPriceByCurrencyCode(priceMinusOnePercent, currencyCode);
+  var priceMinusThreePercentFormatted = helpers.formatPriceByCurrencyCode(priceMinusThreePercent, currencyCode);
+  var priceMinusFivePercentFormatted = helpers.formatPriceByCurrencyCode(priceMinusFivePercent, currencyCode);
+  var priceMinusSevenPercentFormatted = helpers.formatPriceByCurrencyCode(priceMinusSevenPercent, currencyCode);
+  var priceMinusTenPercentFormatted = helpers.formatPriceByCurrencyCode(priceMinusTenPercent, currencyCode);
 
   var messageData = {
     recipient: {
@@ -1017,9 +1021,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, '-0,01') + ' (' + priceMinusOneFormatted + ')',
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": priceMinusOnePercent,
+                  "desiredPrice": priceMinusOnePercent,
                   "customPriceInput": false,
                   "productTitle": productTitle
                 }
@@ -1028,9 +1032,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, '-3%') + ' (' + priceMinusThreePercentFormatted + ')',
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": priceMinusThreePercent,
+                  "desiredPrice": priceMinusThreePercent,
                   "customPriceInput": false,
                   "productTitle": productTitle
                 }
@@ -1039,9 +1043,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, '-5%') + ' (' + priceMinusFivePercentFormatted + ')',
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": priceMinusFivePercent,
+                  "desiredPrice": priceMinusFivePercent,
                   "customPriceInput": false,
                   "productTitle": productTitle
                 }
@@ -1056,9 +1060,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, '-7%') + ' (' + priceMinusSevenPercentFormatted + ')',
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": priceMinusSevenPercent,
+                  "desiredPrice": priceMinusSevenPercent,
                   "customPriceInput": false,
                   "productTitle": productTitle
                 }
@@ -1067,9 +1071,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, '-10%') + ' (' + priceMinusTenPercentFormatted + ')',
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": priceMinusTenPercent,
+                  "desiredPrice": priceMinusTenPercent,
                   "customPriceInput": false,
                   "productTitle": productTitle
                 }
@@ -1078,9 +1082,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, price, productTitl
               type: "postback",
               title: gt.dgettext(parseUserLanguage, 'Custom Input'),
               payload: JSON.stringify({
-                "intent": "completePriceAlert",
+                "intent": "setDesiredPrice",
                 "entities": {
-                  "priceDesired": 0,
+                  "desiredPrice": 0,
                   "customPriceInput": true,
                   "customPriceInputExample": priceMinusTenPercentFormatted, // Used as price example for the custom price input instructions
                   "productTitle": productTitle
@@ -1259,7 +1263,7 @@ function callSendAPI(messageData) {
         messageId, recipientId);
     } else {
       console.error("Unable to send message.");
-      // console.error(response);
+      console.error(response);
       // console.error(error);
     }
   });

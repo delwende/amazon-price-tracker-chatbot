@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-02 09:21+0200\n"
-"PO-Revision-Date: 2016-07-02 09:21+0200\n"
+"POT-Creation-Date: 2016-07-02 11:10+0200\n"
+"PO-Revision-Date: 2016-07-02 11:11+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "search "
 msgstr "suche "
 
-#: app.js:339 app.js:927
+#: app.js:339 app.js:918
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -114,89 +114,104 @@ msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
 
-#: app.js:556
+#: app.js:554
 #, javascript-format
 msgid "Please enter a valid price, excluding currency symbol (e.g. %s)"
 msgstr "Gib bitte einen gültigen Preis ein, ohne das Währungssymbol (z.B. %s)"
 
-#: app.js:574
+#: app.js:572
 #, javascript-format
 msgid "Price alert for %s has been activated."
 msgstr "Der Preisalarm für %s wurde aktiviert."
 
-#: app.js:601 app.js:942
-msgid "Amazon"
-msgstr "Amazon"
+#: app.js:599
+msgid "Amazon price"
+msgstr "Amazon Preis"
 
-#: app.js:602 app.js:943
-msgid "3rd Party New"
-msgstr "Drittanb. Neu"
+#: app.js:600
+msgid "3rd Party New price"
+msgstr "Drittanbieter Neupreis"
 
-#: app.js:603 app.js:944
-msgid "3rd Party Used"
-msgstr "Drittanb. Gebraucht"
+#: app.js:601
+msgid "3rd Party Used price"
+msgstr "Drittanbieter Gebrauchtpreis"
 
-#: app.js:607
+#: app.js:605
 #, javascript-format
-msgid "The current %s price for this item is %s"
-msgstr "Der aktuelle %s Preis für diesen Artikel beträgt %s"
+msgid "The current %s for this item is %s"
+msgstr "Der aktuelle %s für diesen Artikel beträgt %s"
 
-#: app.js:865 app.js:866 app.js:867
+#: app.js:857 app.js:858 app.js:859
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:874
+#: app.js:865
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:879
+#: app.js:870
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:902
+#: app.js:893
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:971
+#: app.js:933
+msgid "Amazon"
+msgstr "Amazon"
+
+#: app.js:934
+msgid "3rd Party New"
+msgstr "Drittanb. Neu"
+
+#: app.js:935
+msgid "3rd Party Used"
+msgstr "Drittanb. Gebrauch"
+
+#: app.js:962
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:972
+#: app.js:963
 msgid "What price type do you want to track"
 msgstr "Welchen Preistyp möchtest du verfolgen"
 
-#: app.js:1019 app.js:1058
+#: app.js:1010 app.js:1049
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:1020 app.js:1059
+#: app.js:1011 app.js:1050
 msgid "Please choose one of the following options"
 msgstr "Bitte wähle eine der nachfolgenden Optionen"
 
-#: app.js:1025
+#: app.js:1016
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1036
+#: app.js:1027
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1047
+#: app.js:1038
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1064
+#: app.js:1055
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1075
+#: app.js:1066
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1086
+#: app.js:1077
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
+
+#~ msgid "The current %s price for this item is %s"
+#~ msgstr "Der aktuelle %s Preis für diesen Artikel beträgt %s"
 
 #~ msgid ""
 #~ "Amazon: %s\n"

@@ -468,6 +468,10 @@ function receivedPostback(event) {
 
             var item = json.entities.item;
 
+            // Inform the user about the item title he is setting a price alert
+            responseText = gt.dgettext(parseUserLanguage, 'Ok, you are about to create a price watch for "%s".');
+            sendTextMessage(senderID, sprintf(responseText, item.title));
+
             // Check if the product already exists on the Backend
             var Product = Parse.Object.extend("Product");
             var query = new Parse.Query(Product);
@@ -485,6 +489,7 @@ function receivedPostback(event) {
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", false);
+                priceAlert.set("awsLocale", item.awsLocale);
 
                 return priceAlert.save();
               } else {
@@ -514,6 +519,7 @@ function receivedPostback(event) {
                 priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: result.id});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", false);
+                priceAlert.set("awsLocale", item.awsLocale);
 
                 return priceAlert.save();
               } else if (className === 'PriceAlert') {
@@ -569,7 +575,7 @@ function receivedPostback(event) {
                 console.log('Updated price alert with objectId: ' + result.id);
 
                 // Inform the user that the price alert is now active
-                responseText = gt.dgettext(parseUserLanguage, 'Price alert for %s has been activated.');
+                responseText = gt.dgettext(parseUserLanguage, 'Price alert for "%s" has been activated.');
                 sendTextMessage(senderID, sprintf(responseText, productTitle));
               }, function(error) {
                 // there was some error.
@@ -822,6 +828,7 @@ function sendReceiptMessage(recipientId) {
 function sendListArticleSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
   var parseUserLanguage = user.parseUserLanguage;
+  var parseUserLocale = user.parseUserLocale;
   var responseText;
 
   for (var i = 0; i < results.length; i++) {
@@ -890,7 +897,8 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
                   "thirdPartyNewPrice": thirdPartyNewPrice,
                   "thirdPartyUsedPrice": thirdPartyUsedPrice
                 },
-                "currencyCode": currencyCode
+                "currencyCode": currencyCode,
+                "awsLocale": parseUserLocale
               }
             }
           })
@@ -967,7 +975,7 @@ function sendSetPriceTypeGenericMessage(recipientId, user, item) {
           template_type: "generic",
           elements: [{
             title: gt.dgettext(parseUserLanguage, 'Set price type'),
-            subtitle: gt.dgettext(parseUserLanguage, 'What price type do you want to track'),
+            subtitle: gt.dgettext(parseUserLanguage, 'What price type do you want to track?'),
             item_url: "",
             image_url: "",
             buttons: buttons,
@@ -1014,7 +1022,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, selectedPric
           template_type: "generic",
           elements: [{
             title: gt.dgettext(parseUserLanguage, 'Set desired price'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            subtitle: gt.dgettext(parseUserLanguage, 'At what price would you like to receive an alert?'),
             item_url: "",
             image_url: "",
             buttons: [{

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-02 11:10+0200\n"
-"PO-Revision-Date: 2016-07-02 11:11+0200\n"
+"POT-Creation-Date: 2016-07-02 12:56+0200\n"
+"PO-Revision-Date: 2016-07-02 12:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "search "
 msgstr "suche "
 
-#: app.js:339 app.js:918
+#: app.js:339 app.js:929
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -114,101 +114,125 @@ msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
 
-#: app.js:554
+#: app.js:472
+#, javascript-format
+msgid "Ok, you are about to create a price watch for \"%s\"."
+msgstr "Ok, du bist dabei einen Preisalarm für \"%s\" zu aktivieren."
+
+#: app.js:558
 #, javascript-format
 msgid "Please enter a valid price, excluding currency symbol (e.g. %s)"
 msgstr "Gib bitte einen gültigen Preis ein, ohne das Währungssymbol (z.B. %s)"
 
-#: app.js:572
+#: app.js:576
 #, javascript-format
-msgid "Price alert for %s has been activated."
-msgstr "Der Preisalarm für %s wurde aktiviert."
+msgid "Price alert for \"%s\" has been activated."
+msgstr "Preisalarm für \"%s\" wurde aktiviert."
 
-#: app.js:599
+#: app.js:606
 msgid "Amazon price"
 msgstr "Amazon Preis"
 
-#: app.js:600
+#: app.js:607
 msgid "3rd Party New price"
 msgstr "Drittanbieter Neupreis"
 
-#: app.js:601
+#: app.js:608
 msgid "3rd Party Used price"
 msgstr "Drittanbieter Gebrauchtpreis"
 
-#: app.js:605
+#: app.js:615
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "Der aktuelle %s für diesen Artikel beträgt %s"
 
-#: app.js:857 app.js:858 app.js:859
+#: app.js:867 app.js:868 app.js:869
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:865
+#: app.js:875
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:870
+#: app.js:880
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:893
+#: app.js:904
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:933
+#: app.js:944
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:934
+#: app.js:945
 msgid "3rd Party New"
 msgstr "Drittanb. Neu"
 
-#: app.js:935
+#: app.js:946
 msgid "3rd Party Used"
 msgstr "Drittanb. Gebrauch"
 
-#: app.js:962
+#: app.js:973
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:963
-msgid "What price type do you want to track"
-msgstr "Welchen Preistyp möchtest du verfolgen"
+#: app.js:974
+msgid "What price type do you want to track?"
+msgstr "Welchen Preistyp möchtest du verfolgen?"
 
-#: app.js:1010 app.js:1049
+#: app.js:1020 app.js:1059
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:1011 app.js:1050
-msgid "Please choose one of the following options"
-msgstr "Bitte wähle eine der nachfolgenden Optionen"
+#: app.js:1021
+msgid "At what price would you like to receive an alert?"
+msgstr "Bei welchem Preis möchtest du eine Benachrichtigung erhalten?"
 
-#: app.js:1016
+#: app.js:1026
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1027
+#: app.js:1037
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1038
+#: app.js:1048
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1055
+#: app.js:1060
+msgid "Please choose one of the following options"
+msgstr "Bitte wähle eine der nachfolgenden Optionen"
+
+#: app.js:1065
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1066
+#: app.js:1076
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1077
+#: app.js:1087
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
+
+#~ msgid "What price type do you want to track"
+#~ msgstr "Welchen Preistyp möchtest du verfolgen"
+
+#~ msgid "Your are about to create a price watch for \"%s\"."
+#~ msgstr "Du bist dabei einen Preisalarm für \"%s\" zu aktivieren."
+
+#~ msgid "Your are about to create a price watch for \"%s\""
+#~ msgstr "Du bist dabei einen Preisalarm für \"%s\" zu aktivieren."
+
+#~ msgid "Create price watch for \"%s\""
+#~ msgstr "Aktiviere einen Preisalarm für \"%s\""
+
+#~ msgid "Price alert for %s has been activated."
+#~ msgstr "Der Preisalarm für %s wurde aktiviert."
 
 #~ msgid "The current %s price for this item is %s"
 #~ msgstr "Der aktuelle %s Preis für diesen Artikel beträgt %s"

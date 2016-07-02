@@ -35,3 +35,16 @@ exports.formatPriceByCurrencyCode = function(price, currencyCode) {
 
 	return accounting.formatMoney(price / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
 };
+
+/*
+ * Extracts and returns Amazon price, if available for item.
+ *
+ */
+exports.extractAmazonPriceIfAvailable = function(offer) {
+
+	if (offer === undefined) return undefined;
+
+	var offerAvailable = offer.merchant !== undefined; // Checks if any offer is available
+
+    return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
+};

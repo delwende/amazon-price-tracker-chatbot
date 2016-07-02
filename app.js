@@ -498,12 +498,9 @@ function receivedPostback(event) {
                 var product = new Product();
 
                 product.set("asin", item.asin);
-                product.set("detailPageUrl", item.detailPageUrl);
                 product.set("imageUrl", item.imageUrl);
-                product.set("title", item.title);
                 product.set("ean", item.ean);
                 product.set("model", item.model);
-                product.set("productGroup", item.productGroup);
 
                 return product.save();
               }
@@ -573,6 +570,8 @@ function receivedPostback(event) {
                 }
               }).then(function(result) {
                 console.log('Updated price alert with objectId: ' + result.id);
+
+                redisClient.hmset('user:' + senderID, 'incompletePriceAlertObjectId', '');
 
                 // Inform the user that the price alert is now active
                 responseText = gt.dgettext(parseUserLanguage, 'Price alert for "%s" has been activated.');
@@ -860,7 +859,7 @@ function sendListArticleSearchResultsGenericMessage(recipientId, results, user, 
       "formattedPrice": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
     };
 
-    var amazonPrice = offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
+    var amazonPrice = helpers.extractAmazonPriceIfAvailable(offer);
     var thirdPartyNewPrice = lowestNewPrice.amount;
     var thirdPartyUsedPrice = lowestUsedPrice.amount;
 

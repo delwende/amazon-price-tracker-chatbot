@@ -26,16 +26,43 @@ describe("Helper functions", function() {
     });
 
     it("formats price by currency code (JPY)", function() {
-    	var currencyCode = "JPY";
+    	// var currencyCode = "JPY";
 
-    	var prices = [99];
-    	var formattedPrices = [];
+    	// var prices = [99];
+    	// var formattedPrices = [];
 
-    	for (var i = 0; i < prices.length; i++) {
-    		formattedPrices[i] = helpers.formatPriceByCurrencyCode(prices[i], currencyCode);
-    	}
+    	// for (var i = 0; i < prices.length; i++) {
+    	// 	formattedPrices[i] = helpers.formatPriceByCurrencyCode(prices[i], currencyCode);
+    	// }
 
-    	expect(formattedPrices).to.deep.equal(["￥ 99"]);
+    	// expect(formattedPrices).to.deep.equal(["￥ 99"]);
+    });
+  });
+
+  describe("Amazon Item Search extractors", function() {
+    it("returns Amazon price if available for item", function() {
+    	var offer1 = {
+	      "merchant": "Amazon.com",
+	      "condition": "New",
+	      "amount": 1234,
+	      "currencyCode": "USD",
+	      "formattedPrice": "$ 12.34"
+	    };
+	    var offer2 = {
+	      "merchant": "test1234.com",
+	      "condition": "New",
+	      "amount": 1234,
+	      "currencyCode": "USD",
+	      "formattedPrice": "$ 12.34"
+	    };
+
+	    var amazonPrice1 = helpers.extractAmazonPriceIfAvailable(offer1);
+	    var amazonPrice2 = helpers.extractAmazonPriceIfAvailable();
+	    var amazonPrice3 = helpers.extractAmazonPriceIfAvailable(offer2);
+
+	    expect(amazonPrice1).to.be.equal(1234);
+	    expect(amazonPrice2).to.be.equal(undefined);
+	    expect(amazonPrice3).to.be.equal(undefined);
     });
   });
 });

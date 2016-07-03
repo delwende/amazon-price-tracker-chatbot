@@ -574,7 +574,7 @@ function receivedPostback(event) {
               var desiredPrice = json.entities.desiredPrice;
               var productTitle = json.entities.productTitle;
 
-              // Check if user wants to enter a custom desired price
+              // Check if user wants to enter a custom price
               if (customPriceInput) {
                 var examplePrice = customPriceInputExamplePrice.split(" ")[1]; // Extract only price amount, without currency symbol
 

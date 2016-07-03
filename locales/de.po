@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-03 13:15+0200\n"
-"PO-Revision-Date: 2016-07-03 13:16+0200\n"
+"POT-Creation-Date: 2016-07-03 15:49+0200\n"
+"PO-Revision-Date: 2016-07-03 15:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -37,7 +37,7 @@ msgstr ""
 msgid "search "
 msgstr "suche "
 
-#: app.js:340 app.js:960
+#: app.js:340 app.js:980
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -114,12 +114,7 @@ msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
 
-#: app.js:473
-#, javascript-format
-msgid "Ok, you are about to create a price watch for \"%s\"."
-msgstr "Ok, du bist dabei einen Preisalarm für \"%s\" zu aktivieren."
-
-#: app.js:553
+#: app.js:481 app.js:568
 msgid ""
 "Price and availability information for this item may have changed. In order "
 "to create a price watch for this item, type \"search [product name]\" again."
@@ -128,17 +123,22 @@ msgstr ""
 "Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
 "diesen Artikel zu aktivieren, tippe erneut “suche [produktname]”."
 
-#: app.js:569
+#: app.js:486
+#, javascript-format
+msgid "Ok, you are about to create a price watch for \"%s\"."
+msgstr "Ok, du bist dabei einen Preisalarm für \"%s\" zu aktivieren."
+
+#: app.js:582
 #, javascript-format
 msgid "Please enter a valid price, excluding currency symbol (e.g. %s)"
 msgstr "Gib bitte einen gültigen Preis ein, ohne das Währungssymbol (z.B. %s)"
 
-#: app.js:584
+#: app.js:602
 #, javascript-format
 msgid "Price alert for \"%s\" has been activated."
 msgstr "Preisalarm für \"%s\" wurde aktiviert."
 
-#: app.js:607
+#: app.js:623
 msgid ""
 "Price and availability information for this item may have changed in the "
 "meantime. In order to create a price watch for this item, type again "
@@ -148,95 +148,98 @@ msgstr ""
 "Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
 "diesen Artikel zu aktivieren, tippe erneut “suche [produktname]”."
 
-#: app.js:636
+#: app.js:652
 msgid "Amazon price"
 msgstr "Amazon Preis"
 
-#: app.js:637
+#: app.js:653
 msgid "3rd Party New price"
 msgstr "Drittanbieter Neupreis"
 
-#: app.js:638
+#: app.js:654
 msgid "3rd Party Used price"
 msgstr "Drittanbieter Gebrauchtpreis"
 
-#: app.js:645
+#: app.js:661
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "Der aktuelle %s für diesen Artikel beträgt %s"
 
-#: app.js:897 app.js:898 app.js:899
+#: app.js:916 app.js:917 app.js:918
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:905
+#: app.js:924
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:910
+#: app.js:929
 msgid "Activate price alert"
 msgstr "Aktiviere Preisalarm"
 
-#: app.js:935
+#: app.js:955
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:975
+#: app.js:995
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:976
+#: app.js:996
 msgid "3rd Party New"
 msgstr "Drittanb. Neu"
 
-#: app.js:977
+#: app.js:997
 msgid "3rd Party Used"
 msgstr "Drittanb. Gebrauch"
 
-#: app.js:1006
+#: app.js:1026
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:1007
+#: app.js:1027
 msgid "What price type do you want to track?"
 msgstr "Welchen Preistyp möchtest du verfolgen?"
 
-#: app.js:1050 app.js:1095
+#: app.js:1070 app.js:1112
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:1051
+#: app.js:1071
 msgid "At what price would you like to receive an alert?"
 msgstr "Bei welchem Preis möchtest du eine Benachrichtigung erhalten?"
 
-#: app.js:1056
+#: app.js:1076
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1069
+#: app.js:1088
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1082
+#: app.js:1100
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1096
+#: app.js:1113
 msgid "Please choose one of the following options"
 msgstr "Bitte wähle eine der nachfolgenden Optionen"
 
-#: app.js:1101
+#: app.js:1118
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1114
+#: app.js:1130
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1127
+#: app.js:1142
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
+
+#~ msgid "Please enter a valid price, excluding currency symbol."
+#~ msgstr "Bitte gib einen gültigen Preis ein, ohne das Währungssymbol."
 
 #~ msgid ""
 #~ "Price and availability information for this item may have changed. In "

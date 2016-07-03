@@ -48,3 +48,22 @@ exports.extractAmazonPriceIfAvailable = function(offer) {
 
     return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
 };
+
+/*
+ * Calculates and returns desired price examples. Returns an array containing price examples
+ * in the following format [(price - 1), (price * 0.97), (price * 0.95), (price * 0.93),
+ * (price * 0.9)].
+ *
+ */
+exports.calculateDesiredPriceExamples = function(price) {
+
+	var examplePrices = [
+		price - 1,
+		Math.round(price * 0.97),
+		Math.round(price * 0.95),
+		Math.round(price * 0.93),
+		Math.round(price * 0.9)
+	];
+
+	return examplePrices;
+};

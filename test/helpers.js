@@ -65,4 +65,14 @@ describe("Helper functions", function() {
 	    expect(amazonPrice3).to.be.equal(undefined);
     });
   });
+
+  describe("Price calculations", function() {
+    it("returns array of desired price examples", function() {
+    	var price = 1099;
+
+    	var examplePrices = helpers.calculateDesiredPriceExamples(price);
+
+	    expect(examplePrices).to.deep.equal([1098, 1066, 1044, 1022, 989]);
+    });
+  });
 });

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-03 15:47+0200\n"
-"PO-Revision-Date: 2016-07-03 15:47+0200\n"
+"POT-Creation-Date: 2016-07-03 17:25+0200\n"
+"PO-Revision-Date: 2016-07-03 17:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -15,11 +15,16 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:321
+#: app.js:327 app.js:607
+#, javascript-format
+msgid "Please enter a valid price, excluding currency symbol (e.g. %s)"
+msgstr "Please enter a valid price, excluding currency symbol (e.g. %s)"
+
+#: app.js:332
 msgid "help"
 msgstr "hilfe"
 
-#: app.js:322
+#: app.js:333
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
@@ -33,11 +38,11 @@ msgstr ""
 "- \"search [product name]\", e.g. \"search iphone6\"\n"
 "- \"list\" to show your price watches"
 
-#: app.js:326 app.js:327
+#: app.js:337 app.js:338
 msgid "search "
 msgstr "search "
 
-#: app.js:340 app.js:980
+#: app.js:351 app.js:1007
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -48,42 +53,42 @@ msgstr ""
 "- Using more general terms\n"
 "- Checking your spelling"
 
-#: app.js:347
+#: app.js:358
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:354
+#: app.js:365
 msgid "list"
 msgstr "list"
 
-#: app.js:356
+#: app.js:367
 msgid "hi"
 msgstr "hi"
 
-#: app.js:356
+#: app.js:367
 msgid "hello"
 msgstr "hello"
 
-#: app.js:358
+#: app.js:369
 #, javascript-format
 msgid "Hi %s!"
 msgstr "Hi %s!"
 
-#: app.js:359
+#: app.js:370
 #, javascript-format
 msgid "Oh, hello %s!"
 msgstr "Oh, hello %s!"
 
-#: app.js:360
+#: app.js:371
 msgid "Oh, hi. I didn't see you there."
 msgstr "Oh, hi. I didn't see you there."
 
-#: app.js:365
+#: app.js:376
 msgid "settings"
 msgstr "settings"
 
-#: app.js:369
+#: app.js:380
 msgid ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
@@ -91,25 +96,25 @@ msgstr ""
 "I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
 "to search a product or type \"help\"."
 
-#: app.js:371
+#: app.js:382
 msgid ""
 "So, I'm good at alerting you when prices on Amazon drop. Other stuff, not so "
 "good. If you need help just enter \"help\"."
 msgstr ""
 "So, I'm good at alerting you when prices on Amazon drop. Other stuff, not so "
 "good. If you need help just enter \"help\"."
-
-#: app.js:373
-msgid ""
-"Oops, I didn't catch that. For things I can help you with, type \"help\"."
-msgstr ""
-"Oops, I didn't catch that. For things I can help you with, type \"help\"."
 
 #: app.js:384
+msgid ""
+"Oops, I didn't catch that. For things I can help you with, type \"help\"."
+msgstr ""
+"Oops, I didn't catch that. For things I can help you with, type \"help\"."
+
+#: app.js:397
 msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr "I'm sorry. I'm not yet available in your country. Stay tuned!"
 
-#: app.js:481 app.js:568
+#: app.js:494 app.js:581
 msgid ""
 "Price and availability information for this item may have changed. In order "
 "to create a price watch for this item, type \"search [product name]\" again."
@@ -117,21 +122,17 @@ msgstr ""
 "Price and availability information for this item may have changed. In order "
 "to create a price watch for this item, type \"search [product name]\" again."
 
-#: app.js:486
+#: app.js:499
 #, javascript-format
 msgid "Ok, you are about to create a price watch for \"%s\"."
 msgstr "Ok, you are about to create a price watch for \"%s\"."
 
-#: app.js:582
-msgid "Please enter a valid price, excluding currency symbol."
-msgstr "Please enter a valid price, excluding currency symbol."
-
-#: app.js:602
+#: app.js:629
 #, javascript-format
 msgid "Price alert for \"%s\" has been activated."
 msgstr "Price alert for \"%s\" has been activated."
 
-#: app.js:623
+#: app.js:650
 msgid ""
 "Price and availability information for this item may have changed in the "
 "meantime. In order to create a price watch for this item, type again "
@@ -141,98 +142,98 @@ msgstr ""
 "meantime. In order to create a price watch for this item, type again "
 "\"search [product name]\"."
 
-#: app.js:652
+#: app.js:679
 msgid "Amazon price"
 msgstr "Amazon price"
 
-#: app.js:653
+#: app.js:680
 msgid "3rd Party New price"
 msgstr "3rd Party New price"
 
-#: app.js:654
+#: app.js:681
 msgid "3rd Party Used price"
 msgstr "3rd Party Used price"
 
-#: app.js:661
+#: app.js:688
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "The current %s for this item is %s"
 
-#: app.js:916 app.js:917 app.js:918
+#: app.js:943 app.js:944 app.js:945
 msgid "Not in Stock"
 msgstr "Not in Stock"
 
-#: app.js:924
+#: app.js:951
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:929
+#: app.js:956
 msgid "Activate price alert"
 msgstr "Activate price alert"
 
-#: app.js:955
+#: app.js:982
 msgid "Buy"
 msgstr "Buy"
 
-#: app.js:995
+#: app.js:1022
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:996
+#: app.js:1023
 msgid "3rd Party New"
 msgstr "3rd Party New"
 
-#: app.js:997
+#: app.js:1024
 msgid "3rd Party Used"
 msgstr "3rd Party Used"
 
-#: app.js:1026
+#: app.js:1053
 msgid "Set price type"
 msgstr "Set price type"
 
-#: app.js:1027
+#: app.js:1054
 msgid "What price type do you want to track?"
 msgstr "What price type do you want to track?"
 
-#: app.js:1070 app.js:1112
+#: app.js:1097 app.js:1139
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:1071
+#: app.js:1098
 msgid "At what price would you like to receive an alert?"
 msgstr "At what price would you like to receive an alert?"
 
-#: app.js:1076
+#: app.js:1103
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1088
+#: app.js:1115
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1100
+#: app.js:1127
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1113
+#: app.js:1140
 msgid "Please choose one of the following options"
 msgstr "Please choose one of the following options"
 
-#: app.js:1118
+#: app.js:1145
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1130
+#: app.js:1157
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1142
+#: app.js:1169
 msgid "Custom Input"
 msgstr "Custom Input"
 
-#~ msgid "Please enter a valid price, excluding currency symbol (e.g. %s)"
-#~ msgstr "Please enter a valid price, excluding currency symbol (e.g. %s)"
+#~ msgid "Please enter a valid price, excluding currency symbol."
+#~ msgstr "Please enter a valid price, excluding currency symbol."
 
 #~ msgid ""
 #~ "Price and availability information for this item may have changed in the "

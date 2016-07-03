@@ -316,66 +316,90 @@ function receivedMessage(event) {
 
           if (messageText) {
 
-            // Check if any transactions have been started
+            // Check if user has started any transactions
+            var transaction = user.customPriceInputTransaction;
 
-            if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
-              responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
-              'when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g' +
-              '. "search iphone6"\n- "list" to show your price watches');
-              sendTextMessage(senderID, responseText);
-            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
-              var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
-              // Search items
-              var query = {
-                searchIndex: 'All',
-                responseGroup: 'ItemAttributes,OfferFull,Images',
-                keywords: keywords,
-                domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
-              };
-              amazonClient.itemSearch(query, function (error, results) {
-                if (error) {
-                  console.log("Error: " + JSON.stringify(error));
+            if (transaction === 'true') {
+              if (user.customPriceInputTransaction) {
 
-                  // Inform the user that the search for his keywords did not match any products
-                  responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
-                  'Using more general terms\n- Checking your spelling');
-                  sendTextMessage(senderID, sprintf(responseText, keywords));
+                // Generate price suggestions from user price input
+                var priceSuggestions = helpers.generatePriceSuggestionsFromCustomPriceInput(messageText);
+
+                if (priceSuggestions.length === 0) {
+                  var examplePrice = user.customPriceInputExamplePrice;
+
+                  // Give to the user instructions on how to enter a valid price
+                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.\n\nPlease enter ' +
+                    'a valid price, e.g. %s');
+                  sendTextMessage(senderID, sprintf(responseText, examplePrice));
                 } else {
-                  console.log("Successfully retrieved " + results.length + " items.");
-
-                  // Inform the user that search results are displayed
-                  responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
-                  sendTextMessage(senderID, sprintf(responseText, keywords));
-
-                  // Show to the user the search results
-                  sendListSearchResultsGenericMessage(senderID, results, user, keywords);
+                  // Show to the user some valid price suggestions
+                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceSuggestions);
                 }
-              });
-            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-              sendTextMessage(senderID, '');
-            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
-              var greetings = [
-                gt.dgettext(parseUserLanguage, 'Hi %s!'),
-                gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
-                gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
-              ];
-
-              var greeting = helpers.randomElementFromArray(greetings);
-              sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
-            } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
-              sendTextMessage(senderID, '');
+                
+              }
             } else {
-              var helpInstructions = [
-                gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
-                'search a product or type "help".'),
-                gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
-                'If you need help just enter "help".'),
-                gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
-              ];
 
-              var helpInstruction = helpers.randomElementFromArray(helpInstructions);
-              sendTextMessage(senderID, sprintf(helpInstruction));
+              if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
+                responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
+                'when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g' +
+                '. "search iphone6"\n- "list" to show your price watches');
+                sendTextMessage(senderID, responseText);
+              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
+                var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
+                // Search items
+                var query = {
+                  searchIndex: 'All',
+                  responseGroup: 'ItemAttributes,OfferFull,Images',
+                  keywords: keywords,
+                  domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
+                };
+                amazonClient.itemSearch(query, function (error, results) {
+                  if (error) {
+                    console.log("Error: " + JSON.stringify(error));
+
+                    // Inform the user that the search for his keywords did not match any products
+                    responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
+                    'Using more general terms\n- Checking your spelling');
+                    sendTextMessage(senderID, sprintf(responseText, keywords));
+                  } else {
+                    console.log("Successfully retrieved " + results.length + " items.");
+
+                    // Inform the user that search results are displayed
+                    responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
+                    sendTextMessage(senderID, sprintf(responseText, keywords));
+
+                    // Show to the user the search results
+                    sendListSearchResultsGenericMessage(senderID, results, user, keywords);
+                  }
+                });
+              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
+                sendTextMessage(senderID, '');
+              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
+                var greetings = [
+                  gt.dgettext(parseUserLanguage, 'Hi %s!'),
+                  gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
+                  gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
+                ];
+
+                var greeting = helpers.randomElementFromArray(greetings);
+                sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
+              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
+                sendTextMessage(senderID, '');
+              } else {
+                var helpInstructions = [
+                  gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
+                  'search a product or type "help".'),
+                  gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
+                  'If you need help just enter "help".'),
+                  gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
+                ];
+
+                var helpInstruction = helpers.randomElementFromArray(helpInstructions);
+                sendTextMessage(senderID, sprintf(helpInstruction));
+              }
             }
+
           } else if (messageAttachments) {
             sendTextMessage(senderID, "Message with attachment received");
           }
@@ -576,11 +600,26 @@ function receivedPostback(event) {
 
               // Check if user wants to enter a custom price
               if (customPriceInput) {
-                var examplePrice = customPriceInputExamplePrice.split(" ")[1]; // Extract only price amount, without currency symbol
+                var examplePrice = customPriceInputExamplePrice;
 
-                // Give to the user instructions on how to enter a valid price
-                responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, excluding currency symbol (e.g. %s)');
-                sendTextMessage(senderID, sprintf(responseText, examplePrice));
+                // Create new key-value pair with key user:senderID
+                redisClient.hmset('user:' + senderID, {
+                  'incompletePriceAlertObjectId': priceAlert.objectId,
+                  'incompletePriceAlertCreatedAt': priceAlert.createdAt,
+                  'incompletePriceAlertAwsLocale': priceAlert.awsLocale,
+                  'customPriceInputTransaction': 'true',
+                  'customPriceInputExamplePrice': examplePrice
+                }, function(error, reply) {
+                  if (error) {
+                    console.log("Error: " + error);
+                  } else {
+                    console.log("New key-value pair created with key: user:" + senderID);
+
+                    // Give to the user instructions on how to enter a valid price
+                    responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, e.g. %s');
+                    sendTextMessage(senderID, sprintf(responseText, examplePrice));
+                  }
+                });
               } else {
                 // Update price alert
                 var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1145,7 +1184,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": 0,
                   "customPriceInput": true,
-                  "customPriceInputExamplePrice": priceMinusTenPercentFormatted, // Used as price example for the custom price input instructions
+                  "customPriceInputExamplePrice": priceMinusOneFormatted, // Used as price example for the custom price input instructions
                   "productTitle": productTitle,
                   "priceAlert": priceAlert
                 }
@@ -1153,6 +1192,52 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
             }],
           }]
         }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Custom Price Input Price Suggestions button message using the Send API.
+ *
+ */
+function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceSuggestions) {
+  if (priceSuggestions.length === 1) {
+    var payload = {
+      template_type: "button",
+      text: "Did you mean one of the following prices? Otherwise try again to enter a valid price.",
+      buttons:[{
+        type: "postback",
+        title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
+        payload: "Developer defined postback"
+      }]
+    };
+  } else {
+    var payload = {
+      template_type: "button",
+      text: "Did you mean one of the following prices? Otherwise try again to enter a valid price.",
+      buttons:[{
+        type: "postback",
+        title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
+        payload: "Developer defined postback"
+      }, {
+        type: "postback",
+        title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
+        payload: "Developer defined postback"
+      }]
+    };
+  }
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: payload
       }
     }
   };
@@ -1275,6 +1360,8 @@ function callUserProfileAPI(userId, event) {
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
             'incompletePriceAlertObjectId': '',
+            'incompletePriceAlertCreatedAt': '',
+            'incompletePriceAlertAwsLocale': '',
             'customPriceInputTransaction': 'false',
             'customPriceInputExamplePrice': ''
           }, function(error, reply) {

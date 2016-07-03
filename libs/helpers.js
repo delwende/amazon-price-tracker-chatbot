@@ -37,6 +37,60 @@ exports.formatPriceByCurrencyCode = function(price, currencyCode) {
 };
 
 /*
+ * Returns formatted price by user locale. Accepts prices in terms of the lowest currency denomination,
+ * for example, pennies.
+ *
+ */
+exports.formatPriceByUserLocale = function(price, userLocale) {
+	var currencySymbol = config.get('currencySymbol_' + userLocale);
+	var decimalPointSeparator = config.get('decimalPointSeparator_' + userLocale);
+	var thousandsSeparator = config.get('thousandsSeparator_' + userLocale);
+	var decimalPlaces = config.get('decimalPlaces_' + userLocale);
+
+	return accounting.formatMoney(price / 100, currencySymbol, decimalPlaces, thousandsSeparator, decimalPointSeparator);
+};
+
+/*
+ * Generates and returns price suggestions from custom price input.
+ */
+exports.generatePriceSuggestionsFromCustomPriceInput = function(customPriceInput) {
+	if (stringContainsNumber(customPriceInput)) {
+		var priceSuggestions = [
+			accounting.unformat(customPriceInput) * 100,
+			accounting.unformat(customPriceInput, ",") * 100
+		];
+
+		return priceSuggestions[0] === priceSuggestions[1] ? [priceSuggestions[0]] : priceSuggestions;
+	} else {
+		return [];
+	}
+
+	// if(isNumeric(customPriceInput)) {
+
+	// 	var priceSuggestions = [
+	// 		accounting.unformat(customPriceInput) * 100,
+	// 		accounting.unformat(customPriceInput, ",") * 100
+	// 	];
+
+	// 	return priceSuggestions[0] === priceSuggestions[1] ? [priceSuggestions[0]] : priceSuggestions;
+	// } else {
+	// 	return [];
+	// }
+};
+
+/*
+ * Checks if a string contains a number.
+ *
+ */
+function stringContainsNumber(string) {
+  	var matches = string.match(/\d+/g);
+	if (matches != null) {
+	    return true;
+	}
+	return false;
+}
+
+/*
  * Extracts and returns Amazon price, if available for item.
  *
  */

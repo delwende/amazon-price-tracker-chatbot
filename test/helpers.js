@@ -12,8 +12,6 @@ describe("Helper functions", function() {
   });
 
   describe("Currency formatting", function() {
-  	var currencyCode = "EUR";
-
     it("formats price by currency code (EUR)", function() {
     	var currencyCode = "EUR";
 
@@ -75,6 +73,23 @@ describe("Helper functions", function() {
     	var examplePrices = helpers.calculateDesiredPriceExamples(price);
 
 	    expect(examplePrices).to.deep.equal([1098, 1066, 1044, 1022, 989]);
+    });
+
+    it("returns price suggestions from custom price input", function() {
+        // var prices = ["1234", "12.34", "12,34"];
+        // var priceSuggestions = [];
+
+        // for (var i = 0; i<prices.length; i++) {
+        //     priceSuggestions[i] = helpers.generatePriceSuggestionsFromCustomInput(prices[i]);
+        // }
+
+        // var truePriceSuggestions = [
+        //     [123400],
+        //     [1234, 123400],
+        //     [123400, 1234]
+        // ];
+
+        // expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
     });
   });
 });

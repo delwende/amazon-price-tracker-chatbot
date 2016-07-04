@@ -329,7 +329,7 @@ function receivedMessage(event) {
                   var examplePrice = user.customPriceInputExamplePrice;
 
                   // Give to the user instructions on how to enter a valid price
-                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.\n\nPlease enter ' +
+                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
                     'a valid price, e.g. %s');
                   sendTextMessage(senderID, sprintf(responseText, examplePrice));
                 } else {

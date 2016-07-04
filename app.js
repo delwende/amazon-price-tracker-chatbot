@@ -322,22 +322,39 @@ function receivedMessage(event) {
             if (transaction === 'true') {
               if (user.customPriceInputTransaction) {
 
-                // Generate price suggestions from user price input
-                var priceSuggestions = helpers.generatePriceSuggestionsFromCustomPriceInput(messageText);
+                // Update key-value pair with key user:senderID
+                redisClient.hmset('user:' + senderID, {
+                  'incompletePriceAlert': '',
+                  'incompletePriceAlertObjectId': '',
+                  'incompletePriceAlertCreatedAt': '',
+                  'incompletePriceAlertAwsLocale': '',
+                  'incompletePriceAlertProductTitle': '',
+                  'customPriceInputTransaction': 'false',
+                  'customPriceInputExamplePrice': ''
+                }, function(error, reply) {
+                  if (error) {
+                    console.log("Error: " + error);
+                  } else {
+                    console.log("Updated key-value pair created with key: user:" + senderID);
+                  }
+                });
 
-                if (priceSuggestions.length === 0) {
-                  var examplePrice = user.customPriceInputExamplePrice;
-
-                  // Give to the user instructions on how to enter a valid price
-                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
-                    'a valid price, e.g. %s');
-                  sendTextMessage(senderID, sprintf(responseText, examplePrice));
-                } else {
-                  var priceAlert = user.incompletePriceAlert;
-                  var productTitle = user.incompletePriceAlertProductTitle;
-                  // Show to the user some valid price suggestions
-                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions, productTitle);
-                }
+                // // Generate price suggestions from user price input
+                // var priceSuggestions = helpers.generatePriceSuggestionsFromCustomPriceInput(messageText);
+                //
+                // if (priceSuggestions.length === 0) {
+                //   var examplePrice = user.customPriceInputExamplePrice;
+                //
+                //   // Give to the user instructions on how to enter a valid price
+                //   responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
+                //     'a valid price, e.g. %s');
+                //   sendTextMessage(senderID, sprintf(responseText, examplePrice));
+                // } else {
+                //   var priceAlert = user.incompletePriceAlert;
+                //   var productTitle = user.incompletePriceAlertProductTitle;
+                //   // Show to the user some valid price suggestions
+                //   sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions, productTitle);
+                // }
 
               }
             } else {

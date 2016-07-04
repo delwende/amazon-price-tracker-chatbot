@@ -334,8 +334,9 @@ function receivedMessage(event) {
                   sendTextMessage(senderID, sprintf(responseText, examplePrice));
                 } else {
                   var priceAlert = user.incompletePriceAlert;
+                  var productTitle = user.incompletePriceAlertProductTitle;
                   // Show to the user some valid price suggestions
-                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions);
+                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions, productTitle);
                 }
 
               }
@@ -609,6 +610,7 @@ function receivedPostback(event) {
                   'incompletePriceAlertObjectId': priceAlert.objectId,
                   'incompletePriceAlertCreatedAt': priceAlert.createdAt,
                   'incompletePriceAlertAwsLocale': priceAlert.awsLocale,
+                  'incompletePriceAlertProductTitle': productTitle,
                   'customPriceInputTransaction': 'true',
                   'customPriceInputExamplePrice': examplePrice
                 }, function(error, reply) {
@@ -1211,7 +1213,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'If you meant the following price, please click on it. Otherwise try again to enter ' +
+      text: gt.dgettext(parseUserLanguage, 'Did you mean the following price? If yes click on it, otherwise try again to enter ' +
       'a valid price.'),
       buttons:[{
         type: "postback",
@@ -1222,7 +1224,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'If you meant one of the following prices, please click on it. Otherwise try again ' +
+      text: gt.dgettext(parseUserLanguage, 'Did you mean one of the following prices? If yes click on it, otherwise try again ' +
       'to enter a valid price.'),
       buttons:[{
         type: "postback",
@@ -1369,6 +1371,7 @@ function callUserProfileAPI(userId, event) {
             'incompletePriceAlertObjectId': '',
             'incompletePriceAlertCreatedAt': '',
             'incompletePriceAlertAwsLocale': '',
+            'incompletePriceAlertProductTitle': '',
             'customPriceInputTransaction': 'false',
             'customPriceInputExamplePrice': ''
           }, function(error, reply) {

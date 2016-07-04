@@ -335,7 +335,7 @@ function receivedMessage(event) {
                 } else {
                   var priceAlert = user.incompletePriceAlert;
                   // Show to the user some valid price suggestions
-                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions);
+                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceSuggestions);
                 }
 
               }
@@ -1205,7 +1205,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
  * Send a Custom Price Input Price Suggestions button message using the Send API.
  *
  */
-function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceAlert, priceSuggestions) {
+function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceSuggestions) {
   var parseUserLanguage = user.parseUserLanguage;
 
   if (priceSuggestions.length === 1) {
@@ -1216,16 +1216,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
-        })
+        payload: "test"
       }]
     };
   } else {
@@ -1236,28 +1227,12 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
+        payload: "test"
         })
       }, {
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
+        payload: "test"
         })
       }]
     };

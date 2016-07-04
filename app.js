@@ -316,31 +316,29 @@ function receivedMessage(event) {
 
           if (messageText) {
 
-            // Check if user has started any transactions
-            var transaction = user.customPriceInputTransaction;
+            // // Check if user has started any transactions
+            // var transaction = user.customPriceInputTransaction;
 
-            if (transaction === 'true') {
-              if (user.customPriceInputTransaction) {
+            // if (transaction === 'true') {
+            //   if (user.customPriceInputTransaction) {
 
-                // Generate price suggestions from user price input
-                var priceSuggestions = helpers.generatePriceSuggestionsFromCustomPriceInput(messageText);
+            //     // Generate price suggestions from user price input
+            //     var priceSuggestions = helpers.generatePriceSuggestionsFromCustomPriceInput(messageText);
 
-                if (priceSuggestions.length === 0) {
-                  var examplePrice = user.customPriceInputExamplePrice;
+            //     if (priceSuggestions.length === 0) {
+            //       var examplePrice = user.customPriceInputExamplePrice;
 
-                  // Give to the user instructions on how to enter a valid price
-                  responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
-                    'a valid price, e.g. %s');
-                  sendTextMessage(senderID, sprintf(responseText, examplePrice));
-                } else {
-                  var priceAlert = user.incompletePriceAlert;
-                  var productTitle = user.incompletePriceAlertProductTitle;
-                  // Show to the user some valid price suggestions
-                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions, productTitle);
-                }
+            //       // Give to the user instructions on how to enter a valid price
+            //       responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.\n\nPlease enter ' +
+            //         'a valid price, e.g. %s');
+            //       sendTextMessage(senderID, sprintf(responseText, examplePrice));
+            //     } else {
+            //       // Show to the user some valid price suggestions
+            //       sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceSuggestions);
+            //     }
 
-              }
-            } else {
+            //   }
+            // } else {
 
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
@@ -400,7 +398,7 @@ function receivedMessage(event) {
                 var helpInstruction = helpers.randomElementFromArray(helpInstructions);
                 sendTextMessage(senderID, sprintf(helpInstruction));
               }
-            }
+            // }
 
           } else if (messageAttachments) {
             sendTextMessage(senderID, "Message with attachment received");
@@ -508,8 +506,8 @@ function receivedPostback(event) {
                 'to create a price watch for this item, type "search \[product name\]" again.');
               sendTextMessage(senderID, responseText);
             } else {
-              // Inform the user about the item title he is setting a price alert
-              responseText = gt.dgettext(parseUserLanguage, 'Ok, you are about to create a price watch for "%s".');
+              // Prompt the user to set a price alert
+              responseText = gt.dgettext(parseUserLanguage, 'Create an Amazon price watch for: %s');
               sendTextMessage(senderID, sprintf(responseText, item.title));
 
               // Check if the product already exists on the Backend
@@ -628,7 +626,7 @@ function receivedPostback(event) {
                 // Update price alert
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var query = new Parse.Query(PriceAlert);
-                query.equalTo("objectId", priceAlert.objectId);
+                query.equalTo("objectId", priceAlert.id);
                 query.find().then(function(results) {
 
                   if (results.length === 1) {
@@ -1172,7 +1170,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
             }],
           }, {
             title: gt.dgettext(parseUserLanguage, 'Set desired price'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            subtitle: gt.dgettext(parseUserLanguage, 'At what price would you like to receive an alert?'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -1232,7 +1230,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Did you mean the following price? If yes click on it, otherwise try again to enter ' +
+      text: gt.dgettext(parseUserLanguage, 'Did you mean the following price? If so, click on it, otherwise try again to enter' +
       'a valid price.'),
       buttons:[{
         type: "postback",
@@ -1252,7 +1250,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Did you mean one of the following prices? If yes click on the right one, otherwise ' +
+      text: gt.dgettext(parseUserLanguage, 'Which one of the following prices did you mean? Choose the correct one or ' +
       'try again to enter a valid price.'),
       buttons:[{
         type: "postback",
@@ -1413,11 +1411,11 @@ function callUserProfileAPI(userId, event) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
-            'incompletePriceAlert': '',
-            'incompletePriceAlertObjectId': '',
-            'incompletePriceAlertCreatedAt': '',
-            'incompletePriceAlertAwsLocale': '',
-            'incompletePriceAlertProductTitle': '',
+            // 'incompletePriceAlert': '',
+            // 'incompletePriceAlertObjectId': '',
+            // 'incompletePriceAlertCreatedAt': '',
+            // 'incompletePriceAlertAwsLocale': '',
+            // 'incompletePriceAlertProductTitle': '',
             'customPriceInputTransaction': 'false',
             'customPriceInputExamplePrice': ''
           }, function(error, reply) {

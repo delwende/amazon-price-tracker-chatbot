@@ -104,6 +104,19 @@ exports.extractAmazonPriceIfAvailable = function(offer) {
 };
 
 /*
+ * Extracts and returns Amazon item.
+ *
+ */
+exports.extractAmazonItem = function(result) {
+
+	if (offer === undefined) return undefined;
+
+	var offerAvailable = offer.merchant !== undefined; // Checks if any offer is available
+
+    return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
+};
+
+/*
  * Calculates and returns desired price examples. Returns an array containing price examples
  * in the following format [(price - 1), (price * 0.97), (price * 0.95), (price * 0.93),
  * (price * 0.9)].

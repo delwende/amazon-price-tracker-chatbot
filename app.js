@@ -1226,7 +1226,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
  * Send a Custom Price Input Price Suggestions button message using the Send API.
  *
  */
-function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceAlert, priceSuggestions, priceTitle) {
+function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceAlert, priceSuggestions, productTitle) {
   var parseUserLanguage = user.parseUserLanguage;
 
   if (priceSuggestions.length === 1) {

@@ -1234,7 +1234,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
     if (error) {
       console.log("Error: " + error);
     } else {
-      console.log("Updated key-value pair created with key: user:" + senderID);
+      console.log("Updated key-value pair created with key: user:" + recipientId);
 
       // Inform the user that prices and availability information
       // may have changed in the meantime.

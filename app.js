@@ -1221,7 +1221,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
     var payload = {
       template_type: "button",
       text: gt.dgettext(parseUserLanguage, 'If you meant one of the following prices, please click on it. Otherwise try again ' +
-      'to enter a valid price.",
+      'to enter a valid price.'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),

@@ -333,8 +333,9 @@ function receivedMessage(event) {
                     'a valid price, e.g. %s');
                   sendTextMessage(senderID, sprintf(responseText, examplePrice));
                 } else {
+                  var priceAlert = user.incompletePriceAlert;
                   // Show to the user some valid price suggestions
-                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceSuggestions);
+                  sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions);
                 }
                 
               }
@@ -587,11 +588,27 @@ function receivedPostback(event) {
 
             // Check if calculated time difference is greater than 5 minutes
             if (timeDifference > 5) {
-              // Inform the user that prices and availability information
-              // may have changed in the meantime.
-              responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
-                'to create a price watch for this item, type "search \[product name\]" again.');
-              sendTextMessage(senderID, responseText);
+              // Update key-value pair with key user:senderID
+              redisClient.hmset('user:' + senderID, {
+                'incompletePriceAlert': '',
+                'incompletePriceAlertObjectId': '',
+                'incompletePriceAlertCreatedAt': '',
+                'incompletePriceAlertAwsLocale': '',
+                'customPriceInputTransaction': 'false',
+                'customPriceInputExamplePrice': ''
+              }, function(error, reply) {
+                if (error) {
+                  console.log("Error: " + error);
+                } else {
+                  console.log("Updated key-value pair created with key: user:" + senderID);
+
+                  // Inform the user that prices and availability information
+                  // may have changed in the meantime.
+                  responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
+                    'to create a price watch for this item, type "search \[product name\]" again.');
+                  sendTextMessage(senderID, responseText);
+                }
+              });
             } else {
               var customPriceInput = json.entities.customPriceInput;
               var customPriceInputExamplePrice = json.entities.customPriceInputExamplePrice;
@@ -602,8 +619,9 @@ function receivedPostback(event) {
               if (customPriceInput) {
                 var examplePrice = customPriceInputExamplePrice;
 
-                // Create new key-value pair with key user:senderID
+                // Update key-value pair with key user:senderID
                 redisClient.hmset('user:' + senderID, {
+                  'incompletePriceAlert': priceAlert,
                   'incompletePriceAlertObjectId': priceAlert.objectId,
                   'incompletePriceAlertCreatedAt': priceAlert.createdAt,
                   'incompletePriceAlertAwsLocale': priceAlert.awsLocale,
@@ -613,7 +631,7 @@ function receivedPostback(event) {
                   if (error) {
                     console.log("Error: " + error);
                   } else {
-                    console.log("New key-value pair created with key: user:" + senderID);
+                    console.log("Updated key-value pair created with key: user:" + senderID);
 
                     // Give to the user instructions on how to enter a valid price
                     responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, e.g. %s');
@@ -1203,7 +1221,7 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
  * Send a Custom Price Input Price Suggestions button message using the Send API.
  *
  */
-function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceSuggestions) {
+function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceAlert, priceSuggestions) {
   var parseUserLanguage = user.parseUserLanguage;
   
   if (priceSuggestions.length === 1) {
@@ -1214,7 +1232,16 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: "Developer defined postback"
+        payload: JSON.stringify({
+          "intent": "setDesiredPrice",
+          "entities": {
+            "desiredPrice": priceSuggestions[0],
+            "customPriceInput": false,
+            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+            "productTitle": productTitle,
+            "priceAlert": priceAlert
+          }
+        })
       }]
     };
   } else {
@@ -1225,11 +1252,29 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: "Developer defined postback"
+        payload: JSON.stringify({
+          "intent": "setDesiredPrice",
+          "entities": {
+            "desiredPrice": priceSuggestions[0],
+            "customPriceInput": false,
+            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+            "productTitle": productTitle,
+            "priceAlert": priceAlert
+          }
+        })
       }, {
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
-        payload: "Developer defined postback"
+        payload: JSON.stringify({
+          "intent": "setDesiredPrice",
+          "entities": {
+            "desiredPrice": priceSuggestions[0],
+            "customPriceInput": false,
+            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+            "productTitle": productTitle,
+            "priceAlert": priceAlert
+          }
+        })
       }]
     };
   }
@@ -1363,6 +1408,7 @@ function callUserProfileAPI(userId, event) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
+            'incompletePriceAlert': '',
             'incompletePriceAlertObjectId': '',
             'incompletePriceAlertCreatedAt': '',
             'incompletePriceAlertAwsLocale': '',

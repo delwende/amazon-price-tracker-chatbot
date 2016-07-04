@@ -1228,12 +1228,10 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
         payload: "test"
-        })
       }, {
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
         payload: "test"
-        })
       }]
     };
   }

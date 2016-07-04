@@ -337,7 +337,7 @@ function receivedMessage(event) {
                   // Show to the user some valid price suggestions
                   sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceAlert, priceSuggestions);
                 }
-                
+
               }
             } else {
 
@@ -1222,76 +1222,96 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
  *
  */
 function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceAlert, priceSuggestions) {
-  var parseUserLanguage = user.parseUserLanguage;
-  
-  if (priceSuggestions.length === 1) {
-    var payload = {
-      template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'If you meant the following price, please click on it. Otherwise try again to enter ' +
-      'a valid price.'),
-      buttons:[{
-        type: "postback",
-        title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
-        })
-      }]
-    };
-  } else {
-    var payload = {
-      template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'If you meant one of the following prices, please click on it. Otherwise try again ' +
-      'to enter a valid price.'),
-      buttons:[{
-        type: "postback",
-        title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
-        })
-      }, {
-        type: "postback",
-        title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
-        payload: JSON.stringify({
-          "intent": "setDesiredPrice",
-          "entities": {
-            "desiredPrice": priceSuggestions[0],
-            "customPriceInput": false,
-            "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
-            "productTitle": productTitle,
-            "priceAlert": priceAlert
-          }
-        })
-      }]
-    };
-  }
+  // Update key-value pair with key user:senderID
+  redisClient.hmset('user:' + recipientId, {
+    'incompletePriceAlert': '',
+    'incompletePriceAlertObjectId': '',
+    'incompletePriceAlertCreatedAt': '',
+    'incompletePriceAlertAwsLocale': '',
+    'customPriceInputTransaction': 'false',
+    'customPriceInputExamplePrice': ''
+  }, function(error, reply) {
+    if (error) {
+      console.log("Error: " + error);
+    } else {
+      console.log("Updated key-value pair created with key: user:" + senderID);
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: payload
-      }
+      // Inform the user that prices and availability information
+      // may have changed in the meantime.
+      responseText = gt.dgettext(user.parseUserLanguage, 'ok.');
+      sendTextMessage(recipientId, responseText);
     }
-  };
-
-  callSendAPI(messageData);
+  });
+  // var parseUserLanguage = user.parseUserLanguage;
+  //
+  // if (priceSuggestions.length === 1) {
+  //   var payload = {
+  //     template_type: "button",
+  //     text: gt.dgettext(parseUserLanguage, 'If you meant the following price, please click on it. Otherwise try again to enter ' +
+  //     'a valid price.'),
+  //     buttons:[{
+  //       type: "postback",
+  //       title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
+  //       payload: JSON.stringify({
+  //         "intent": "setDesiredPrice",
+  //         "entities": {
+  //           "desiredPrice": priceSuggestions[0],
+  //           "customPriceInput": false,
+  //           "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+  //           "productTitle": productTitle,
+  //           "priceAlert": priceAlert
+  //         }
+  //       })
+  //     }]
+  //   };
+  // } else {
+  //   var payload = {
+  //     template_type: "button",
+  //     text: gt.dgettext(parseUserLanguage, 'If you meant one of the following prices, please click on it. Otherwise try again ' +
+  //     'to enter a valid price.'),
+  //     buttons:[{
+  //       type: "postback",
+  //       title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
+  //       payload: JSON.stringify({
+  //         "intent": "setDesiredPrice",
+  //         "entities": {
+  //           "desiredPrice": priceSuggestions[0],
+  //           "customPriceInput": false,
+  //           "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+  //           "productTitle": productTitle,
+  //           "priceAlert": priceAlert
+  //         }
+  //       })
+  //     }, {
+  //       type: "postback",
+  //       title: helpers.formatPriceByCurrencyCode(priceSuggestions[1], user.incompletePriceAlertAwsLocale),
+  //       payload: JSON.stringify({
+  //         "intent": "setDesiredPrice",
+  //         "entities": {
+  //           "desiredPrice": priceSuggestions[0],
+  //           "customPriceInput": false,
+  //           "customPriceInputExamplePrice": 0, // Used as price example for the custom price input instructions
+  //           "productTitle": productTitle,
+  //           "priceAlert": priceAlert
+  //         }
+  //       })
+  //     }]
+  //   };
+  // }
+  //
+  // var messageData = {
+  //   recipient: {
+  //     id: recipientId
+  //   },
+  //   message: {
+  //     attachment: {
+  //       type: "template",
+  //       payload: payload
+  //     }
+  //   }
+  // };
+  //
+  // callSendAPI(messageData);
 }
 
 /*

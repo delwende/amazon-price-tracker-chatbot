@@ -1204,10 +1204,13 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
  *
  */
 function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, priceSuggestions) {
+  var parseUserLanguage = user.parseUserLanguage;
+  
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: "Did you mean one of the following prices? Otherwise try again to enter a valid price.",
+      text: gt.dgettext(parseUserLanguage, 'If you meant the following price, please click on it. Otherwise try again to enter ' +
+      'a valid price.'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),
@@ -1217,7 +1220,8 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: "Did you mean one of the following prices? Otherwise try again to enter a valid price.",
+      text: gt.dgettext(parseUserLanguage, 'If you meant one of the following prices, please click on it. Otherwise try again ' +
+      'to enter a valid price.",
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], user.incompletePriceAlertAwsLocale),

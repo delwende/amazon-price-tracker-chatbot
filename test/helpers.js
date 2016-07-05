@@ -40,32 +40,32 @@ describe("Helper functions", function() {
   });
 
   describe("Amazon Item Search extractors", function() {
-    it("returns Amazon price if available for item", function() {
-    	var offer1 = {
-	      "merchant": "Amazon.com",
-	      "condition": "New",
-	      "amount": 1234,
-	      "currencyCode": "USD",
-	      "formattedPrice": "$ 12.34"
-	    };
-	    var offer2 = {
-	      "merchant": "test1234.com",
-	      "condition": "New",
-	      "amount": 1234,
-	      "currencyCode": "USD",
-	      "formattedPrice": "$ 12.34"
-	    };
-
-	    var amazonPrice1 = helpers.extractAmazonPriceIfAvailable(offer1);
-	    var amazonPrice2 = helpers.extractAmazonPriceIfAvailable();
-	    var amazonPrice3 = helpers.extractAmazonPriceIfAvailable(offer2);
-
-	    expect(amazonPrice1).to.be.equal(1234);
-	    expect(amazonPrice2).to.be.equal(undefined);
-	    expect(amazonPrice3).to.be.equal(undefined);
+    it("returns Amazon item from JSON", function() {
     });
 
-    it("returns Amazon item from JSON", function() {
+    it("returns Amazon price if available for item", function() {
+      var offer1 = {
+        "merchant": "Amazon.com",
+        "condition": "New",
+        "amount": 1234,
+        "currencyCode": "USD",
+        "formattedPrice": "$ 12.34"
+      };
+      var offer2 = {
+        "merchant": "test1234.com",
+        "condition": "New",
+        "amount": 1234,
+        "currencyCode": "USD",
+        "formattedPrice": "$ 12.34"
+      };
+
+      var amazonPrice1 = helpers.extractAmazonPriceIfAvailable(offer1);
+      var amazonPrice2 = helpers.extractAmazonPriceIfAvailable();
+      var amazonPrice3 = helpers.extractAmazonPriceIfAvailable(offer2);
+
+      expect(amazonPrice1).to.be.equal(1234);
+      expect(amazonPrice2).to.be.equal(undefined);
+      expect(amazonPrice3).to.be.equal(undefined);
     });
   });
 
@@ -75,24 +75,24 @@ describe("Helper functions", function() {
 
     	var examplePrices = helpers.calculateDesiredPriceExamples(price);
 
-	    expect(examplePrices).to.deep.equal([1098, 1066, 1044, 1022, 989]);
-    });
+     expect(examplePrices).to.deep.equal([1098, 1066, 1044, 1022, 989]);
+   });
 
     it("returns price suggestions from custom price input", function() {
-        var prices = ["1234", "12.34", "12,34"];
-        var priceSuggestions = [];
+      var prices = ["1234", "12.34", "12,34"];
+      var priceSuggestions = [];
 
-        for (var i = 0; i<prices.length; i++) {
-            priceSuggestions[i] = helpers.generatePriceSuggestionsFromCustomPriceInput(prices[i]);
-        }
+      for (var i = 0; i<prices.length; i++) {
+        priceSuggestions[i] = helpers.generatePriceSuggestionsFromCustomPriceInput(prices[i]);
+      }
 
-        var truePriceSuggestions = [
-            [123400],
-            [1234, 123400],
-            [123400, 1234]
-        ];
+      var truePriceSuggestions = [
+      [123400],
+      [1234, 123400],
+      [123400, 1234]
+      ];
 
-        expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
+      expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
     });
   });
 });

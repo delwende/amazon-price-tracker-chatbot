@@ -128,19 +128,19 @@ exports.extractAmazonItem = function(result) {
 	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
 
 	var item = {
-	"asin": asin,
-	"detailPageUrl": detailPageUrl,
-	"imageUrl": imageUrl,
-	"title": title,
-	"ean": ean,
-	"model": model,
-	"productGroup": productGroup,
-	"price": {
-	  "amazonPrice": amazonPrice,
-	  "thirdPartyNewPrice": thirdPartyNewPrice,
-	  "thirdPartyUsedPrice": thirdPartyUsedPrice,
-	  "currencyCode": currencyCode
-	}
+		"asin": asin,
+		"detailPageUrl": detailPageUrl,
+		"imageUrl": imageUrl,
+		"title": title,
+		"ean": ean,
+		"model": model,
+		"productGroup": productGroup,
+		"price": {
+		  "amazonPrice": amazonPrice,
+		  "thirdPartyNewPrice": thirdPartyNewPrice,
+		  "thirdPartyUsedPrice": thirdPartyUsedPrice
+		},
+		"currencyCode": currencyCode
 	};
 
 	return item;

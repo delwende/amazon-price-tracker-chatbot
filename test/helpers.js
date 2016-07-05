@@ -64,6 +64,9 @@ describe("Helper functions", function() {
 	    expect(amazonPrice2).to.be.equal(undefined);
 	    expect(amazonPrice3).to.be.equal(undefined);
     });
+
+    it("returns Amazon item from JSON", function() {
+    });
   });
 
   describe("Price calculations", function() {
@@ -76,20 +79,20 @@ describe("Helper functions", function() {
     });
 
     it("returns price suggestions from custom price input", function() {
-        // var prices = ["1234", "12.34", "12,34"];
-        // var priceSuggestions = [];
+        var prices = ["1234", "12.34", "12,34"];
+        var priceSuggestions = [];
 
-        // for (var i = 0; i<prices.length; i++) {
-        //     priceSuggestions[i] = helpers.generatePriceSuggestionsFromCustomInput(prices[i]);
-        // }
+        for (var i = 0; i<prices.length; i++) {
+            priceSuggestions[i] = helpers.generatePriceSuggestionsFromCustomPriceInput(prices[i]);
+        }
 
-        // var truePriceSuggestions = [
-        //     [123400],
-        //     [1234, 123400],
-        //     [123400, 1234]
-        // ];
+        var truePriceSuggestions = [
+            [123400],
+            [1234, 123400],
+            [123400, 1234]
+        ];
 
-        // expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
+        expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
     });
   });
 });

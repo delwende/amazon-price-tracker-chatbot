@@ -930,88 +930,47 @@ function sendReceiptMessage(recipientId) {
  */
 function sendListSearchResultsGenericMessage(recipientId, results, user, keywords) {
   var elements = [];
+  var responseText;
+
   var parseUserLanguage = user.parseUserLanguage;
   var parseUserLocale = user.parseUserLocale;
-  var responseText;
 
   // Get current date and time
   var now = moment();
 
   for (var i = 0; i < results.length; i++) {
-    var item = results[i];
+    var result = results[i];
 
-    var asin = objectPath.get(item, "ASIN.0");
-    var detailPageUrl = objectPath.get(item, "DetailPageURL.0");
-    var imageUrl = objectPath.coalesce(item, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
-    var title = objectPath.get(item, "ItemAttributes.0.Title.0");
-    var ean = objectPath.get(item, "ItemAttributes.0.EAN.0");
-    var model = objectPath.get(item, "ItemAttributes.0.Model.0");
-    var productGroup = objectPath.get(item, "ItemAttributes.0.ProductGroup.0");
+    var item = helpers.extractAmazonItem(result);
+    var price = item.price;
 
-    var lowestNewPrice = {
-      "amount": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
-      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
-      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
-    };
-    var lowestUsedPrice = {
-      "amount": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.Amount.0"),
-      "currencyCode": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.CurrencyCode.0"),
-      "formattedPrice": objectPath.get(item, "OfferSummary.0.LowestUsedPrice.0.FormattedPrice.0")
-    };
-    var offer = {
-      "merchant": objectPath.get(item, "Offers.0.Offer.0.Merchant.0.Name.0"),
-      "condition": objectPath.get(item, "Offers.0.Offer.0.OfferAttributes.0.Condition.0"),
-      "amount": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.Amount.0"),
-      "currencyCode": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.CurrencyCode.0"),
-      "formattedPrice": objectPath.get(item, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
-    };
+    var anyAmount = price.amazonPrice || price.thirdPartyNewPrice || price.thirdPartyUsedPrice; // To check if any price is available
 
-    var amazonPrice = helpers.extractAmazonPriceIfAvailable(offer);
-    var thirdPartyNewPrice = lowestNewPrice.amount;
-    var thirdPartyUsedPrice = lowestUsedPrice.amount;
-
-    var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
-    var anyAmount = amazonPrice || thirdPartyNewPrice || thirdPartyUsedPrice;
-
-    var amazonPriceFormatted = amazonPrice !== undefined ? helpers.formatPriceByCurrencyCode(amazonPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-    var thirdPartyNewPriceFormatted = thirdPartyNewPrice !== undefined ? helpers.formatPriceByCurrencyCode(thirdPartyNewPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-    var thirdPartyUsedPriceFormatted = thirdPartyUsedPrice !== undefined ? helpers.formatPriceByCurrencyCode(thirdPartyUsedPrice, currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    var amazonPriceFormatted = price.amazonPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.amazonPrice, price.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    var thirdPartyNewPriceFormatted = price.thirdPartyNewPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyNewPrice, price.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+    var thirdPartyUsedPriceFormatted = price.thirdPartyUsedPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyUsedPrice, price.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
 
     // Check if required item properties are available, otherwise exclude item from the article search results list
-    if (asin !== undefined && detailPageUrl !== undefined && title !== undefined && anyAmount !== undefined) {
+    if (item.asin !== undefined && item.detailPageUrl !== undefined && item.title !== undefined && anyAmount !== undefined) {
       elements.push({
-        title: vsprintf('%s (%s)', [title, asin]),
+        title: vsprintf('%s (%s)', [item.title, item.asin]),
         subtitle: vsprintf(gt.dgettext(parseUserLanguage, 'Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s'), [amazonPriceFormatted, thirdPartyNewPriceFormatted, thirdPartyUsedPriceFormatted]),
         item_url: "",
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
+        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + item.imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
         buttons: [{
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Activate price alert'),
           payload: JSON.stringify({
             "intent": "activatePriceAlert",
             "entities": {
-              "item": {
-                "asin": asin,
-                "detailPageUrl": detailPageUrl,
-                "imageUrl": imageUrl,
-                "title": title,
-                "ean": ean,
-                "model": model,
-                "productGroup": productGroup,
-                "prices": {
-                  "amazonPrice": amazonPrice,
-                  "thirdPartyNewPrice": thirdPartyNewPrice,
-                  "thirdPartyUsedPrice": thirdPartyUsedPrice
-                },
-                "currencyCode": currencyCode,
-                "awsLocale": parseUserLocale
-              },
+              "item": item,
+              "awsLocale": parseUserLocale,
               "generatedAt": now // Time the element was created
             }
           })
         }, {
           type: "web_url",
-          url: detailPageUrl,
+          url: item.detailPageUrl,
           title: gt.dgettext(parseUserLanguage, 'Buy')
         }],
       });

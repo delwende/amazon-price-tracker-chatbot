@@ -91,23 +91,66 @@ function stringContainsNumber(string) {
 }
 
 /*
+ * Extracts and returns Amazon item elements.
+ *
+ */
+exports.extractAmazonItem = function(result) {
+	var asin = objectPath.get(result, "ASIN.0");
+	var detailPageUrl = objectPath.get(result, "DetailPageURL.0");
+	var imageUrl = objectPath.coalesce(result, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
+	var title = objectPath.get(result, "ItemAttributes.0.Title.0");
+	var ean = objectPath.get(result, "ItemAttributes.0.EAN.0");
+	var model = objectPath.get(result, "ItemAttributes.0.Model.0");
+	var productGroup = objectPath.get(result, "ItemAttributes.0.ProductGroup.0");
+
+	var lowestNewPrice = {
+		"amount": objectPath.get(result, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
+		"currencyCode": objectPath.get(result, "OfferSummary.0.LowestNewPrice.0.CurrencyCode.0"),
+		"formattedPrice": objectPath.get(result, "OfferSummary.0.LowestNewPrice.0.FormattedPrice.0")
+	};
+	var lowestUsedPrice = {
+		"amount": objectPath.get(result, "OfferSummary.0.LowestUsedPrice.0.Amount.0"),
+		"currencyCode": objectPath.get(result, "OfferSummary.0.LowestUsedPrice.0.CurrencyCode.0"),
+		"formattedPrice": objectPath.get(result, "OfferSummary.0.LowestUsedPrice.0.FormattedPrice.0")
+	};
+	var offer = {
+		"merchant": objectPath.get(result, "Offers.0.Offer.0.Merchant.0.Name.0"),
+		"condition": objectPath.get(result, "Offers.0.Offer.0.OfferAttributes.0.Condition.0"),
+		"amount": objectPath.get(result, "Offers.0.Offer.0.OfferListing.0.Price.0.Amount.0"),
+		"currencyCode": objectPath.get(result, "Offers.0.Offer.0.OfferListing.0.Price.0.CurrencyCode.0"),
+		"formattedPrice": objectPath.get(result, "Offers.0.Offer.0.OfferListing.0.Price.0.FormattedPrice.0")
+	};
+
+	var amazonPrice = this.extractAmazonPriceIfAvailable(offer);
+	var thirdPartyNewPrice = lowestNewPrice.amount;
+	var thirdPartyUsedPrice = lowestUsedPrice.amount;
+
+	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
+
+	var item = {
+	"asin": asin,
+	"detailPageUrl": detailPageUrl,
+	"imageUrl": imageUrl,
+	"title": title,
+	"ean": ean,
+	"model": model,
+	"productGroup": productGroup,
+	"price": {
+	  "amazonPrice": amazonPrice,
+	  "thirdPartyNewPrice": thirdPartyNewPrice,
+	  "thirdPartyUsedPrice": thirdPartyUsedPrice,
+	  "currencyCode": currencyCode
+	}
+	};
+
+	return item;
+};
+
+/*
  * Extracts and returns Amazon price, if available for item.
  *
  */
 exports.extractAmazonPriceIfAvailable = function(offer) {
-
-	if (offer === undefined) return undefined;
-
-	var offerAvailable = offer.merchant !== undefined; // Checks if any offer is available
-
-    return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
-};
-
-/*
- * Extracts and returns Amazon item.
- *
- */
-exports.extractAmazonItem = function(result) {
 
 	if (offer === undefined) return undefined;
 

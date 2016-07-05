@@ -584,7 +584,7 @@ function receivedPostback(event) {
             // Check if calculated time difference is greater than 5 minutes
             if (timeDifference > 5) {
               // Inform the user that prices and availability information
-              // may have changed.
+              // may have changed
               responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed ' +
                 'in the meantime. In order to create a price watch for this item, type again "search \[product name\]".');
               sendTextMessage(senderID, responseText);
@@ -594,7 +594,7 @@ function receivedPostback(event) {
 
               var item = json.entities.item;
               var price = item.price[priceType];
-              var currencyCode = item.price.currencyCode;
+              var currencyCode = item.currencyCode;
 
               // Update price alert
               var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -633,22 +633,18 @@ function receivedPostback(event) {
 
             break;
 
-          case 'disactivatePriceAlert':
-
-            break;
-
           case 'setDesiredPrice':
-
-            var priceAlert = json.entities.priceAlert;
+            var priceAlertCreateAt = json.entities.priceAlertCreateAt;
+            var priceAlertObjectId = json.entities.priceAlertObjectId;
 
             // Calculate time difference between price alert creation and
-            // attempt to set the price type
-            var timeDifference = moment().diff(priceAlert.createdAt, 'minutes');
+            // attempt to set the desired price
+            var timeDifference = moment().diff(priceAlertCreateAt, 'minutes');
 
             // Check if calculated time difference is greater than 5 minutes
             if (timeDifference > 5) {
               // Inform the user that prices and availability information
-              // may have changed in the meantime.
+              // may have changed in the meantime
               responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
                 'to create a price watch for this item, type "search \[product name\]" again.');
               sendTextMessage(senderID, responseText);
@@ -656,37 +652,37 @@ function receivedPostback(event) {
               var customPriceInput = json.entities.customPriceInput;
               var customPriceInputExamplePrice = json.entities.customPriceInputExamplePrice;
               var desiredPrice = json.entities.desiredPrice;
-              var productTitle = json.entities.productTitle;
+              var itemTitle = json.entities.itemTitle;
 
               // Check if user wants to enter a custom price
               if (customPriceInput) {
                 var examplePrice = customPriceInputExamplePrice;
 
-                // Update key-value pair with key user:senderID
-                redisClient.hmset('user:' + senderID, {
-                  'incompletePriceAlert': priceAlert,
-                  'incompletePriceAlertObjectId': priceAlert.objectId,
-                  'incompletePriceAlertCreatedAt': priceAlert.createdAt,
-                  'incompletePriceAlertAwsLocale': priceAlert.awsLocale,
-                  'incompletePriceAlertProductTitle': productTitle,
-                  'customPriceInputTransaction': 'true',
-                  'customPriceInputExamplePrice': examplePrice
-                }, function(error, reply) {
-                  if (error) {
-                    console.log("Error: " + error);
-                  } else {
-                    console.log("Updated key-value pair created with key: user:" + senderID);
+                // // Update key-value pair with key user:senderID
+                // redisClient.hmset('user:' + senderID, {
+                //   'incompletePriceAlert': priceAlert,
+                //   'incompletePriceAlertObjectId': priceAlert.objectId,
+                //   'incompletePriceAlertCreatedAt': priceAlert.createdAt,
+                //   'incompletePriceAlertAwsLocale': priceAlert.awsLocale,
+                //   'incompletePriceAlertItemTitle': itemTitle,
+                //   'customPriceInputTransaction': 'true',
+                //   'customPriceInputExamplePrice': examplePrice
+                // }, function(error, reply) {
+                //   if (error) {
+                //     console.log("Error: " + error);
+                //   } else {
+                //     console.log("Updated key-value pair created with key: user:" + senderID);
 
                     // Give to the user instructions on how to enter a valid price
                     responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, e.g. %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
-                  }
-                });
+                //   }
+                // });
               } else {
                 // Update price alert
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var query = new Parse.Query(PriceAlert);
-                query.equalTo("objectId", priceAlert.id);
+                query.equalTo("objectId", priceAlertObjectId);
                 query.find().then(function(results) {
 
                   if (results.length === 1) {
@@ -699,26 +695,26 @@ function receivedPostback(event) {
                 }).then(function(result) {
                   console.log('Updated price alert with objectId: ' + result.id);
 
-                  // Update key-value pair with key user:senderID
-                  redisClient.hmset('user:' + senderID, {
-                    'incompletePriceAlert': '',
-                    'incompletePriceAlertObjectId': '',
-                    'incompletePriceAlertCreatedAt': '',
-                    'incompletePriceAlertAwsLocale': '',
-                    'incompletePriceAlertProductTitle': '',
-                    'customPriceInputTransaction': 'false',
-                    'customPriceInputExamplePrice': ''
-                  }, function(error, reply) {
-                    if (error) {
-                      console.log("Error: " + error);
-                    } else {
-                      console.log("Updated key-value pair created with key: user:" + senderID);
+                  // // Update key-value pair with key user:senderID
+                  // redisClient.hmset('user:' + senderID, {
+                  //   'incompletePriceAlert': '',
+                  //   'incompletePriceAlertObjectId': '',
+                  //   'incompletePriceAlertCreatedAt': '',
+                  //   'incompletePriceAlertAwsLocale': '',
+                  //   'incompletePriceAlertItemTitle': '',
+                  //   'customPriceInputTransaction': 'false',
+                  //   'customPriceInputExamplePrice': ''
+                  // }, function(error, reply) {
+                  //   if (error) {
+                  //     console.log("Error: " + error);
+                  //   } else {
+                  //     console.log("Updated key-value pair created with key: user:" + senderID);
 
                       // Inform the user that the price alert is now active
                       responseText = gt.dgettext(parseUserLanguage, 'Price alert for "%s" has been activated.');
-                      sendTextMessage(senderID, sprintf(responseText, productTitle));
-                    }
-                  });
+                      sendTextMessage(senderID, sprintf(responseText, itemTitle));
+                  //   }
+                  // });
 
 
                 }, function(error) {
@@ -726,6 +722,10 @@ function receivedPostback(event) {
                 });
               }
             }
+
+            break;
+
+          case 'disactivatePriceAlert':
 
             break;
 
@@ -1066,9 +1066,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
   var parseUserLanguage = user.parseUserLanguage;
 
   var selectedPriceType = priceAlert.get("priceType");
-  var price = item.prices[selectedPriceType];
+  var price = item.price[selectedPriceType];
   var currencyCode = item.currencyCode;
-  var productTitle = item.title;
+  var itemTitle = item.title;
 
   var priceExamples = helpers.calculateDesiredPriceExamples(price);
   var priceMinusOneFormatted = helpers.formatPriceByCurrencyCode(priceExamples[0], currencyCode);
@@ -1099,8 +1099,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": priceExamples[0],
                   "customPriceInput": false,
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }, {
@@ -1111,8 +1112,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": priceExamples[1],
                   "customPriceInput": false,
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }, {
@@ -1123,8 +1125,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": priceExamples[2],
                   "customPriceInput": false,
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }],
@@ -1141,8 +1144,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": priceExamples[3],
                   "customPriceInput": false,
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }, {
@@ -1153,8 +1157,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                 "entities": {
                   "desiredPrice": priceExamples[4],
                   "customPriceInput": false,
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }, {
@@ -1166,8 +1171,9 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "desiredPrice": 0,
                   "customPriceInput": true,
                   "customPriceInputExamplePrice": priceMinusOneFormatted, // Used as price example for the custom price input instructions
-                  "productTitle": productTitle,
-                  "priceAlert": priceAlert
+                  "itemTitle": itemTitle,
+                  "priceAlertObjectId": priceAlert.id,
+                  "priceAlertCreateAt": priceAlert.createdAt
                 }
               })
             }],

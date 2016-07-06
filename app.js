@@ -333,12 +333,6 @@ function receivedMessage(event) {
                       'a valid price, e.g. %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
                   } else {
-                    var itemTitle = user.incompletePriceAlertItemTitle;
-                    var priceAlertObjectId = user.incompletePriceAlertObjectId;
-                    var priceAlertCreateAt = user.incompletePriceAlertCreateAt;
-                    var priceType = user.incompletePriceAlertPriceType;
-                    var priceAlertAwsLocale = user.incompletePriceAlertAwsLocale;
-
                     // Show to the user some valid price suggestions
                     sendCustomPriceInputPriceSuggestionsButtonMessage(senderID, user, priceSuggestions);
                   }

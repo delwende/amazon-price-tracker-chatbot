@@ -1318,6 +1318,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   var elements = [];
 
   var parseUserObjectId = user.parseUserObjectId;
+  var parseUserLocale = user.parseUserLocale;
 
   // Query price alert
   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1336,13 +1337,21 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         var product = priceAlert.get("product");
 
         elements.push({
-          title: product.get("asin"),
-          subtitle: "test",
+          title: product.get("title")[parseUserLocale], // Get product title according to user locale
+          subtitle: "",
           item_url: "",
-          image_url: "",
+          image_url: product.get("imageUrl"),
           buttons: [{
             type: "postback",
-            title: "Call Postback",
+            title: "Details anzeigen",
+            payload: "Payload for first bubble",
+          }, {
+            type: "postback",
+            title: "Wunschpreis ändern",
+            payload: "Payload for first bubble",
+          }, {
+            type: "postback",
+            title: "Löschen",
             payload: "Payload for first bubble",
           }],
         });

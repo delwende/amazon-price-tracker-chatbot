@@ -364,16 +364,18 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendTextMessage(senderID, '');
               } else {
-                var helpInstructions = [
-                  gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
-                  'search a product or type "help".'),
-                  gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
-                  'If you need help just enter "help".'),
-                  gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
-                ];
-
-                var helpInstruction = helpers.randomElementFromArray(helpInstructions);
-                sendTextMessage(senderID, sprintf(helpInstruction));
+                var keywords = messageText;
+                sendListSearchResultsGenericMessage(senderID, user, keywords);
+                // var helpInstructions = [
+                //   gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
+                //   'search a product or type "help".'),
+                //   gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
+                //   'If you need help just enter "help".'),
+                //   gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
+                // ];
+                //
+                // var helpInstruction = helpers.randomElementFromArray(helpInstructions);
+                // sendTextMessage(senderID, sprintf(helpInstruction));
               }
             }
 

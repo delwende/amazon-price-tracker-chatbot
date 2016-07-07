@@ -519,9 +519,10 @@ function receivedPostback(event) {
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
-                  product.set("title", {
-                    parseUserLocale: item.title
-                  });
+
+                  var title = {};
+                  title[parseUserLocale] = item.title;
+                  product.set("title", title);
 
                   return product.save();
                 }

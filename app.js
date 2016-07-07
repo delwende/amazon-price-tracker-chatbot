@@ -505,7 +505,7 @@ function receivedPostback(event) {
                   // Update product title. Just overrides already existing product title or adds new product title, if not already available
                   // for appropriate user locale
                   var title = product.get("title");
-                  objectPath.set(title, parseUserLocale, item.title);
+                  title[parseUserLocale] = item.title;
                   product.set("title", title);
                 } else {
                   // Save product to the Backend
@@ -519,7 +519,7 @@ function receivedPostback(event) {
 
                   // Save title to JSON object using user locale as key
                   var title = {};
-                  objectPath.set(title, parseUserLocale, item.title);
+                  title[parseUserLocale] = item.title;
                   product.set("title", title);
                 }
 

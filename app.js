@@ -933,13 +933,13 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       // Inform the user that the search for his keywords did not match any products
       responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
       'Using more general terms\n- Checking your spelling');
-      sendTextMessage(senderID, sprintf(responseText, keywords));
+      sendTextMessage(recipientId, sprintf(responseText, keywords));
     } else {
       console.log("Successfully retrieved " + results.length + " items.");
 
       // Inform the user that search results are displayed
       responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
-      sendTextMessage(senderID, sprintf(responseText, keywords));
+      sendTextMessage(recipientId, sprintf(responseText, keywords));
 
       // Show to the user the search results
       var elements = [];
@@ -1008,7 +1008,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
         // Inform the user that the search for his keywords did not match any products
         responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- Using more ' +
         'general terms\n- Checking your spelling');
-        sendTextMessage(senderID, sprintf(responseText, keywords));
+        sendTextMessage(recipientId, sprintf(responseText, keywords));
       }
     }
   });

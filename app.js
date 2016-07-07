@@ -363,6 +363,8 @@ function receivedMessage(event) {
                 sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendTextMessage(senderID, '');
+              } else if (messageText.startsWith("new user") {
+                callUserProfileAPI(senderID, event);
               } else {
                 var keywords = messageText;
                 sendListSearchResultsGenericMessage(senderID, user, keywords);

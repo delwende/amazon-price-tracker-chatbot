@@ -351,7 +351,7 @@ function receivedMessage(event) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-
+                sendListPriceWatchesGenericMessage(recipientId, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
                   gt.dgettext(parseUserLanguage, 'Hi %s!'),
@@ -1315,51 +1315,59 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
  * Send a List Price Watches Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListPriceWatchesGenericMessage(recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for second bubble",
-            }]
-          }]
-        }
-      }
-    }
-  };
+function sendListPriceWatchesGenericMessage(recipientId, user) {
+  var elements = [];
 
-  callSendAPI(messageData);
+  var parseUserObjectId = user.parseUserObjectId;
+
+  // Query price alert
+  var PriceAlert = Parse.Object.extend("PriceAlert");
+  var query = new Parse.Query(PriceAlert);
+  query.equalTo("user", {__type: "Pointer", className: "User", objectId: parseUserObjectId});
+  query.limig(10); // Limit number of results to 10
+  query.include("product");
+  query.find({
+    success: function(results) {
+      console.log("Successfully retrieved " + results.length + " scores.");
+
+      for (var i = 0; i<results.length; i++) {
+        var priceAlert = results[i];
+        var product = priceAlert.get("product");
+
+        elements.push({
+          title: product.get("title"),
+          subtitle: "test",
+          item_url: "",
+          image_url: "",
+          buttons: [{
+            type: "postback",
+            title: "Call Postback",
+            payload: "Payload for first bubble",
+          }],
+        });
+      }
+
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: elements
+            }
+          }
+        }
+      };
+
+      callSendAPI(messageData);
+    },
+    error: function(error) {
+      console.log("Error: " + error.code + " " + error.message);
+    }
+  });
 }
 
 /*

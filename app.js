@@ -486,7 +486,7 @@ function receivedPostback(event) {
               var item = json.entities.item;
               var awsLocale = json.entities.awsLocale;
 
-              // Inform the user about the item title he is setting a price alert
+              // Inform the user about the item he/she is setting a price alert
               responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
               sendTextMessage(senderID, sprintf(responseText, item.title));
 
@@ -519,6 +519,9 @@ function receivedPostback(event) {
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
+                  product.set("title", {
+                    parseUserLocale: item.title
+                  });
 
                   return product.save();
                 }
@@ -681,7 +684,7 @@ function receivedPostback(event) {
                     "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
                     "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
                   };
-                  
+
                   var priceTypeTitle = priceTypeTitles[priceType];
 
                   // Update key-value pair with key user:senderID

@@ -497,59 +497,52 @@ function receivedPostback(event) {
               query.find().then(function(results) {
                 console.log("Successfully retrieved " + results.length + " products.");
 
+                var product;
+
                 if (results.length === 1) {
-                  var product = results[0];
+                  product = results[0];
 
-                  // Save price alert to the Backend
-                  var PriceAlert = Parse.Object.extend("PriceAlert");
-                  var priceAlert = new PriceAlert();
-
-                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                  priceAlert.set("active", false);
-                  priceAlert.set("awsLocale", awsLocale);
-
-                  return priceAlert.save();
+                  // Update product title. Just overrides already existing product title or adds new product title, if not already available
+                  // for appropriate user locale
+                  var title = product.get("title");
+                  objectPath.set(title, parseUserLocale, item.title);
+                  product.set("title", title);
                 } else {
                   // Save product to the Backend
                   var Product = Parse.Object.extend("Product");
-                  var product = new Product();
+                  product = new Product();
 
                   product.set("asin", item.asin);
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
 
+                  // Save title to JSON object using user locale as key
                   var title = {};
-                  title[parseUserLocale] = item.title;
+                  objectPath.set(title, parseUserLocale, item.title);
                   product.set("title", title);
-
-                  return product.save();
                 }
+
+                return product.save();
 
               }).then(function(result) {
-                var className = result.className; // Get class name of newly created ParseObject
+                var product = result;
 
-                if (className === 'Product') {
-                  // Save price alert to the Backend
-                  var PriceAlert = Parse.Object.extend("PriceAlert");
-                  var priceAlert = new PriceAlert();
+                // Save price alert to the Backend
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var priceAlert = new PriceAlert();
 
-                  priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: result.id});
-                  priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                  priceAlert.set("active", false);
-                  priceAlert.set("awsLocale", awsLocale);
+                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+                priceAlert.set("active", false);
+                priceAlert.set("awsLocale", awsLocale);
 
-                  return priceAlert.save();
-                } else if (className === 'PriceAlert') {
-                  sendSetPriceTypeGenericMessage(senderID, user, item, result);
-                }
-
+                return priceAlert.save();
 
               }).then(function(result) {
-                if (result) {
-                  sendSetPriceTypeGenericMessage(senderID, user, item, result);
-                }
+                var priceAlert = result;
+
+                sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
               }, function(error) {
                 console.log("Error: " + error);
               });

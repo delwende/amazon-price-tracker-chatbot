@@ -916,6 +916,9 @@ function sendReceiptMessage(recipientId) {
  *
  */
 function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
+  var parseUserLanguage = user.parseUserLanguage;
+  var parseUserLocale = user.parseUserLocale;
+
   // Search items
   var query = {
     searchIndex: 'All',
@@ -941,9 +944,6 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       // Show to the user the search results
       var elements = [];
       var responseText;
-
-      var parseUserLanguage = user.parseUserLanguage;
-      var parseUserLocale = user.parseUserLocale;
 
       // Get current date and time
       var now = moment();

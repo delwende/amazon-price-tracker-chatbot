@@ -349,34 +349,9 @@ function receivedMessage(event) {
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
-                // Search items
-                var query = {
-                  searchIndex: 'All',
-                  responseGroup: 'ItemAttributes,OfferFull,Images',
-                  keywords: keywords,
-                  domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
-                };
-                amazonClient.itemSearch(query, function (error, results) {
-                  if (error) {
-                    console.log("Error: " + JSON.stringify(error));
-
-                    // Inform the user that the search for his keywords did not match any products
-                    responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
-                    'Using more general terms\n- Checking your spelling');
-                    sendTextMessage(senderID, sprintf(responseText, keywords));
-                  } else {
-                    console.log("Successfully retrieved " + results.length + " items.");
-
-                    // Inform the user that search results are displayed
-                    responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
-                    sendTextMessage(senderID, sprintf(responseText, keywords));
-
-                    // Show to the user the search results
-                    sendListSearchResultsGenericMessage(senderID, results, user, keywords);
-                  }
-                });
+                sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-                sendTextMessage(senderID, '');
+
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
                   gt.dgettext(parseUserLanguage, 'Hi %s!'),
@@ -940,78 +915,103 @@ function sendReceiptMessage(recipientId) {
  * Send a List Article Search Results Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListSearchResultsGenericMessage(recipientId, results, user, keywords) {
-  var elements = [];
-  var responseText;
+function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
+  // Search items
+  var query = {
+    searchIndex: 'All',
+    responseGroup: 'ItemAttributes,OfferFull,Images',
+    keywords: keywords,
+    domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
+  };
+  amazonClient.itemSearch(query, function (error, results) {
+    if (error) {
+      console.log("Error: " + JSON.stringify(error));
 
-  var parseUserLanguage = user.parseUserLanguage;
-  var parseUserLocale = user.parseUserLocale;
+      // Inform the user that the search for his keywords did not match any products
+      responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
+      'Using more general terms\n- Checking your spelling');
+      sendTextMessage(senderID, sprintf(responseText, keywords));
+    } else {
+      console.log("Successfully retrieved " + results.length + " items.");
 
-  // Get current date and time
-  var now = moment();
+      // Inform the user that search results are displayed
+      responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
+      sendTextMessage(senderID, sprintf(responseText, keywords));
 
-  for (var i = 0; i < results.length; i++) {
-    var result = results[i];
+      // Show to the user the search results
+      var elements = [];
+      var responseText;
 
-    var item = helpers.extractAmazonItem(result);
-    var price = item.price;
+      var parseUserLanguage = user.parseUserLanguage;
+      var parseUserLocale = user.parseUserLocale;
 
-    var anyAmount = price.amazonPrice || price.thirdPartyNewPrice || price.thirdPartyUsedPrice; // To check if any price is available
+      // Get current date and time
+      var now = moment();
 
-    var amazonPriceFormatted = price.amazonPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.amazonPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-    var thirdPartyNewPriceFormatted = price.thirdPartyNewPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyNewPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
-    var thirdPartyUsedPriceFormatted = price.thirdPartyUsedPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyUsedPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+      for (var i = 0; i < results.length; i++) {
+        var result = results[i];
 
-    // Check if required item properties are available, otherwise exclude item from the article search results list
-    if (item.asin !== undefined && item.detailPageUrl !== undefined && item.title !== undefined && anyAmount !== undefined) {
-      elements.push({
-        title: vsprintf('%s (%s)', [item.title, item.asin]),
-        subtitle: vsprintf(gt.dgettext(parseUserLanguage, 'Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s'), [amazonPriceFormatted, thirdPartyNewPriceFormatted, thirdPartyUsedPriceFormatted]),
-        item_url: "",
-        image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + item.imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
-        buttons: [{
-          type: "postback",
-          title: gt.dgettext(parseUserLanguage, 'Create price watch'),
-          payload: JSON.stringify({
-            "intent": "activatePriceAlert",
-            "entities": {
-              "item": item,
-              "awsLocale": parseUserLocale,
-              "generatedAt": now // Time the element was created
-            }
-          })
-        }, {
-          type: "web_url",
-          url: item.detailPageUrl,
-          title: gt.dgettext(parseUserLanguage, 'Buy')
-        }],
-      });
-    }
-  }
+        var item = helpers.extractAmazonItem(result);
+        var price = item.price;
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: elements
+        var anyAmount = price.amazonPrice || price.thirdPartyNewPrice || price.thirdPartyUsedPrice; // To check if any price is available
+
+        var amazonPriceFormatted = price.amazonPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.amazonPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+        var thirdPartyNewPriceFormatted = price.thirdPartyNewPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyNewPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+        var thirdPartyUsedPriceFormatted = price.thirdPartyUsedPrice !== undefined ? helpers.formatPriceByCurrencyCode(price.thirdPartyUsedPrice, item.currencyCode) : gt.dgettext(parseUserLanguage, 'Not in Stock');
+
+        // Check if required item properties are available, otherwise exclude item from the article search results list
+        if (item.asin !== undefined && item.detailPageUrl !== undefined && item.title !== undefined && anyAmount !== undefined) {
+          elements.push({
+            title: vsprintf('%s (%s)', [item.title, item.asin]),
+            subtitle: vsprintf(gt.dgettext(parseUserLanguage, 'Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s'), [amazonPriceFormatted, thirdPartyNewPriceFormatted, thirdPartyUsedPriceFormatted]),
+            item_url: "",
+            image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + item.imageUrl, // Fit image into 1200x600 dimensions using cloudimage.io
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Create price watch'),
+              payload: JSON.stringify({
+                "intent": "activatePriceAlert",
+                "entities": {
+                  "item": item,
+                  "awsLocale": parseUserLocale,
+                  "generatedAt": now // Time the element was created
+                }
+              })
+            }, {
+              type: "web_url",
+              url: item.detailPageUrl,
+              title: gt.dgettext(parseUserLanguage, 'Buy')
+            }],
+          });
         }
       }
-    }
-  };
 
-  if (elements.length > 0) {
-    callSendAPI(messageData);
-  } else {
-    // Inform the user that the search for his keywords did not match any products
-    responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- Using more ' +
-    'general terms\n- Checking your spelling');
-    sendTextMessage(senderID, sprintf(responseText, keywords));
-  }
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: elements
+            }
+          }
+        }
+      };
+
+      if (elements.length > 0) {
+        callSendAPI(messageData);
+      } else {
+        // Inform the user that the search for his keywords did not match any products
+        responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- Using more ' +
+        'general terms\n- Checking your spelling');
+        sendTextMessage(senderID, sprintf(responseText, keywords));
+      }
+    }
+  });
 }
 
 /*

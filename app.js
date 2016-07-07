@@ -351,7 +351,7 @@ function receivedMessage(event) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-                sendListPriceWatchesGenericMessage(recipientId, user);
+                sendListPriceWatchesGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
                   gt.dgettext(parseUserLanguage, 'Hi %s!'),

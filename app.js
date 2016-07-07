@@ -1336,23 +1336,29 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         var priceAlert = results[i];
         var product = priceAlert.get("product");
 
+        var desiredPriceFormatted = helpers.formatPriceByUserLocale(parseUserLocale, priceAlert.get("desiredPrice"));
+
         elements.push({
           title: product.get("title")[parseUserLocale], // Get product title according to user locale
-          subtitle: "",
+          subtitle: gt.dgettext(parseUserLocale, 'Current price: ' + gt.dgettext(parseUserLocale, ' | Desired price: ') + desiredPriceFormatted),
           item_url: "",
-          image_url: product.get("imageUrl"),
+          image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
           buttons: [{
             type: "postback",
-            title: "Details anzeigen",
-            payload: "Payload for first bubble",
-          }, {
-            type: "postback",
             title: "Wunschpreis ändern",
-            payload: "Payload for first bubble",
+            payload: JSON.stringify({
+              "intent": "changeDesiredPrice",
+              "entities": {
+              }
+            })
           }, {
             type: "postback",
             title: "Löschen",
-            payload: "Payload for first bubble",
+            payload: JSON.stringify({
+              "intent": "disactivatePriceAlert",
+              "entities": {
+              }
+            })
           }],
         });
       }

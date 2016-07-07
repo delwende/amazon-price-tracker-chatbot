@@ -507,6 +507,12 @@ function receivedPostback(event) {
                   var title = product.get("title");
                   title[parseUserLocale] = item.title;
                   product.set("title", title);
+
+                  // Update product group. Just overrides already existing product group or adds new product group, if not already available
+                  // for appropriate user locale
+                  var productGroup = product.get("productGroup");
+                  productGroup[parseUserLocale] = item.productGroup;
+                  product.set("productGroup", productGroup);
                 } else {
                   // Save product to the Backend
                   var Product = Parse.Object.extend("Product");
@@ -517,10 +523,15 @@ function receivedPostback(event) {
                   product.set("ean", item.ean);
                   product.set("model", item.model);
 
-                  // Save title to JSON object using user locale as key
+                  // Save product title to JSON object using user locale as key
                   var title = {};
                   title[parseUserLocale] = item.title;
                   product.set("title", title);
+
+                  // Save product group to JSON object using user locale as key
+                  var productGroup = {};
+                  productGroup[parseUserLocale] = item.productGroup;
+                  product.set("productGroup", productGroup);
                 }
 
                 return product.save();

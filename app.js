@@ -1324,6 +1324,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   var innerQuery = Parse.User;
   var query = new Parse.Query(PriceAlert);
   query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+  query.equalto("active", true);
   query.limit(10); // Limit number of results to 10
   query.include("product");
   query.find({
@@ -1335,7 +1336,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         var product = priceAlert.get("product");
 
         elements.push({
-          title: product.get("title"),
+          title: priceAlert.get("desiredPrice"),
           subtitle: "test",
           item_url: "",
           image_url: "",

@@ -1333,10 +1333,10 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
 
       for (var i = 0; i<results.length; i++) {
         var priceAlert = results[i];
-        var product = priceAlert.get("product");
+        //var product = priceAlert.get("product");
 
         elements.push({
-          title: priceAlert.get("desiredPrice"),
+          title: "test",
           subtitle: "test",
           item_url: "",
           image_url: "",

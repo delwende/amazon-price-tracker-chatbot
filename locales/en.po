@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-05 21:39+0200\n"
-"PO-Revision-Date: 2016-07-05 21:40+0200\n"
+"POT-Creation-Date: 2016-07-07 23:41+0200\n"
+"PO-Revision-Date: 2016-07-07 23:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
 
-#: app.js:332 app.js:418
+#: app.js:332
 #, javascript-format
 msgid ""
 "The price must be a number greater than or equal to zero.\n"
@@ -28,99 +28,71 @@ msgstr ""
 
 #: app.js:345
 msgid "help"
-msgstr "hilfe"
+msgstr "help"
 
 #: app.js:346
 msgid ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
 "following:\n"
-"- \"search [product name]\", e.g. \"search iphone6\"\n"
+"- [product name], e.g. \"iphone  6\"\n"
 "- \"list\" to show your price watches"
 msgstr ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
 "following:\n"
-"- \"search [product name]\", e.g. \"search iphone6\"\n"
+"- [product name], e.g. \"iphone  6\"\n"
 "- \"list\" to show your price watches"
 
 #: app.js:350 app.js:351
 msgid "search "
 msgstr "search "
 
-#: app.js:364 app.js:1035
-#, javascript-format
-msgid ""
-"Your search \"%s\" did not match any products. Try something like:\n"
-"- Using more general terms\n"
-"- Checking your spelling"
-msgstr ""
-"Your search \"%s\" did not match any products. Try something like:\n"
-"- Using more general terms\n"
-"- Checking your spelling"
-
-#: app.js:371
-#, javascript-format
-msgid "Search results for \"%s\""
-msgstr "Search results for \"%s\""
-
-#: app.js:378
+#: app.js:353
 msgid "list"
 msgstr "list"
 
-#: app.js:380
+#: app.js:354
+msgid ""
+"Here are the products I'm tracking for you. I'll send you an alert when the "
+"current price for any of the products you are watching falls below your "
+"desired price."
+msgstr ""
+"Here are the products I'm tracking for you. I'll send you an alert when the "
+"current price for any of the products you are watching falls below your "
+"desired price."
+
+#: app.js:358
 msgid "hi"
 msgstr "hi"
 
-#: app.js:380
+#: app.js:358
 msgid "hello"
 msgstr "hello"
 
-#: app.js:382
+#: app.js:360
 #, javascript-format
 msgid "Hi %s!"
 msgstr "Hi %s!"
 
-#: app.js:383
+#: app.js:361
 #, javascript-format
 msgid "Oh, hello %s!"
 msgstr "Oh, hello %s!"
 
-#: app.js:384
+#: app.js:362
 msgid "Oh, hi. I didn't see you there."
 msgstr "Oh, hi. I didn't see you there."
 
-#: app.js:389
+#: app.js:367
 msgid "settings"
 msgstr "settings"
 
-#: app.js:393
-msgid ""
-"I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
-"to search a product or type \"help\"."
-msgstr ""
-"I'm sorry. I'm not sure I understand. Try typing \"search [product name]\" "
-"to search a product or type \"help\"."
-
-#: app.js:395
-msgid ""
-"So, I'm good at alerting you when prices on Amazon drop. Other stuff, not so "
-"good. If you need help just enter \"help\"."
-msgstr ""
-"So, I'm good at alerting you when prices on Amazon drop. Other stuff, not so "
-"good. If you need help just enter \"help\"."
-
-#: app.js:397
-msgid ""
-"Oops, I didn't catch that. For things I can help you with, type \"help\"."
-msgstr ""
-"Oops, I didn't catch that. For things I can help you with, type \"help\"."
-
-#: app.js:435
+#: app.js:390
 msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr "I'm sorry. I'm not yet available in your country. Stay tuned!"
 
-#: app.js:530 app.js:675
+#: app.js:484 app.js:638
 msgid ""
 "Price and availability information for this item may have changed. In order "
 "to create a price watch for this item, type \"search [product name]\" again."
@@ -128,12 +100,12 @@ msgstr ""
 "Price and availability information for this item may have changed. In order "
 "to create a price watch for this item, type \"search [product name]\" again."
 
-#: app.js:538
+#: app.js:492
 #, javascript-format
 msgid "Create Amazon price watch for: %s"
 msgstr "Create Amazon price watch for: %s"
 
-#: app.js:615
+#: app.js:577
 msgid ""
 "Price and availability information for this item may have changed in the "
 "meantime. In order to create a price watch for this item, type again "
@@ -143,108 +115,115 @@ msgstr ""
 "meantime. In order to create a price watch for this item, type again "
 "\"search [product name]\"."
 
-#: app.js:643 app.js:722
+#: app.js:605 app.js:690
 msgid "Amazon price"
 msgstr "Amazon price"
 
-#: app.js:644 app.js:723
+#: app.js:606 app.js:691
 msgid "3rd Party New price"
 msgstr "3rd Party New price"
 
-#: app.js:645 app.js:724
+#: app.js:607 app.js:692
 msgid "3rd Party Used price"
 msgstr "3rd Party Used price"
 
-#: app.js:652
+#: app.js:614
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "The current %s for this item is %s"
 
-#: app.js:700
+#: app.js:668
 #, javascript-format
 msgid "Please enter a valid price, e.g. %s"
 msgstr "Please enter a valid price, e.g. %s"
 
-#: app.js:745
+#: app.js:713
 #, javascript-format
 msgid "You have tracked the %s for %s"
 msgstr "You have tracked the %s for %s"
 
-#: app.js:749
+#: app.js:946 app.js:1021
 #, javascript-format
 msgid ""
-"You will receive a price drop alert when the price drops below your desired "
-"price of %s"
+"Your search \"%s\" did not match any products. Try something like:\n"
+"- Using more general terms\n"
+"- Checking your spelling"
 msgstr ""
-"You will receive a price drop alert when the price drops below your desired "
-"price of %s"
+"Your search \"%s\" did not match any products. Try something like:\n"
+"- Using more general terms\n"
+"- Checking your spelling"
 
-#: app.js:985 app.js:986 app.js:987
+#: app.js:953
+#, javascript-format
+msgid "Search results for \"%s\""
+msgstr "Search results for \"%s\""
+
+#: app.js:971 app.js:972 app.js:973
 msgid "Not in Stock"
 msgstr "Not in Stock"
 
-#: app.js:993
+#: app.js:979
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:998
+#: app.js:984
 msgid "Create price watch"
 msgstr "Create price watch"
 
-#: app.js:1010
+#: app.js:996
 msgid "Buy"
 msgstr "Buy"
 
-#: app.js:1051
+#: app.js:1039
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1052
+#: app.js:1040
 msgid "3rd Party New"
 msgstr "3rd Party New"
 
-#: app.js:1053
+#: app.js:1041
 msgid "3rd Party Used"
 msgstr "3rd Party Used"
 
-#: app.js:1082
+#: app.js:1070
 msgid "Set price type"
 msgstr "Set price type"
 
-#: app.js:1083
+#: app.js:1071
 msgid "What price type do you want to track?"
 msgstr "What price type do you want to track?"
 
-#: app.js:1128 app.js:1176
+#: app.js:1116 app.js:1167
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:1129 app.js:1177
+#: app.js:1117 app.js:1168
 msgid "At what price would you like to receive an alert?"
 msgstr "At what price would you like to receive an alert?"
 
-#: app.js:1134
+#: app.js:1122
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1148
+#: app.js:1137
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1162
+#: app.js:1152
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1182
+#: app.js:1173
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1196
+#: app.js:1188
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1210
+#: app.js:1203
 msgid "Custom Input"
 msgstr "Custom Input"
 
@@ -256,13 +235,86 @@ msgstr ""
 "Did you mean the following price? If so, click on it, otherwise try again to "
 "entera valid price."
 
-#: app.js:1263
+#: app.js:1265
 msgid ""
 "Which one of the following prices did you mean? Choose the correct one or "
 "try again to enter a valid price."
 msgstr ""
 "Which one of the following prices did you mean? Choose the correct one or "
 "try again to enter a valid price."
+
+#: app.js:1352
+msgid "Change desired price"
+msgstr "Change desired price"
+
+#: app.js:1360
+msgid "Delete price watch"
+msgstr "Delete price watch"
+
+#~ msgid ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [product name], e.g. \"Iphone  6\"\n"
+#~ "- \"list\" to show your price watches"
+#~ msgstr ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [product name], e.g. \"Iphone  6\"\n"
+#~ "- \"list\" to show your price watches"
+
+#~ msgid ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [Product name], e.g. \"Iphone  6\"\n"
+#~ "- \"list\" to show your price watches"
+#~ msgstr ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [Product name], e.g. \"Iphone  6\"\n"
+#~ "- \"list\" to show your price watches"
+
+#~ msgid ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- \"search [product name]\", e.g. \"search iphone6\"\n"
+#~ "- \"list\" to show your price watches"
+#~ msgstr ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- \"search [product name]\", e.g. \"search iphone6\"\n"
+#~ "- \"list\" to show your price watches"
+
+#~ msgid ""
+#~ "I'm sorry. I'm not sure I understand. Try typing \"search [product "
+#~ "name]\" to search a product or type \"help\"."
+#~ msgstr ""
+#~ "I'm sorry. I'm not sure I understand. Try typing \"search [product "
+#~ "name]\" to search a product or type \"help\"."
+
+#~ msgid ""
+#~ "So, I'm good at alerting you when prices on Amazon drop. Other stuff, not "
+#~ "so good. If you need help just enter \"help\"."
+#~ msgstr ""
+#~ "So, I'm good at alerting you when prices on Amazon drop. Other stuff, not "
+#~ "so good. If you need help just enter \"help\"."
+
+#~ msgid ""
+#~ "Oops, I didn't catch that. For things I can help you with, type \"help\"."
+#~ msgstr ""
+#~ "Oops, I didn't catch that. For things I can help you with, type \"help\"."
+
+#~ msgid ""
+#~ "You will receive a price drop alert when the price drops below your "
+#~ "desired price of %s"
+#~ msgstr ""
+#~ "You will receive a price drop alert when the price drops below your "
+#~ "desired price of %s"
 
 #~ msgid ""
 #~ "You will receive an alert when the price drops below your desired price "

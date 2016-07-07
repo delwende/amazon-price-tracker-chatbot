@@ -344,13 +344,16 @@ function receivedMessage(event) {
             } else {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
-                'when prices drop, helping you decide when to buy. Tell me things like the following:\n- "search \[product name\]", e.g' +
-                '. "search iphone6"\n- "list" to show your price watches');
+                'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
+                ' 6"\n- "list" to show your price watches');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
+                responseText = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
+                  'the current price for any of the products you are watching falls below your desired price.');
+                sendTextMessage(senderID, responseText);
                 sendListPriceWatchesGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
@@ -1319,6 +1322,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
 
   var parseUserObjectId = user.parseUserObjectId;
   var parseUserLocale = user.parseUserLocale;
+  var parseUserLanguage = user.parseUserLanguage;
 
   // Query price alert
   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1336,16 +1340,16 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         var priceAlert = results[i];
         var product = priceAlert.get("product");
 
-        var desiredPriceFormatted = helpers.formatPriceByUserLocale(parseUserLocale, priceAlert.get("desiredPrice"));
+        var awsLocale = priceAlert.get("awsLocale");
 
         elements.push({
-          title: product.get("title")[parseUserLocale], // Get product title according to user locale
-          subtitle: gt.dgettext(parseUserLocale, 'Current price: ' + gt.dgettext(parseUserLocale, ' | Desired price: ') + desiredPriceFormatted),
+          title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
+          subtitle: "",
           item_url: "",
           image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
           buttons: [{
             type: "postback",
-            title: "Wunschpreis ändern",
+            title: gt.dgettext(parseUserLanguage, 'Change desired price'),
             payload: JSON.stringify({
               "intent": "changeDesiredPrice",
               "entities": {
@@ -1353,7 +1357,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             })
           }, {
             type: "postback",
-            title: "Löschen",
+            title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
             payload: JSON.stringify({
               "intent": "disactivatePriceAlert",
               "entities": {

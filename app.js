@@ -1323,12 +1323,12 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   var PriceAlert = Parse.Object.extend("PriceAlert");
   var innerQuery = Parse.User;
   var query = new Parse.Query(PriceAlert);
-  query.equalTo("user", {__type: "Pointer", className: "__User", objectId: parseUserObjectId});
+  query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
   query.limit(10); // Limit number of results to 10
   query.include("product");
   query.find({
     success: function(results) {
-      console.log("Successfully retrieved " + results.length + " scores.");
+      console.log("Successfully retrieved " + results.length + " price alerts.");
 
       for (var i = 0; i<results.length; i++) {
         var priceAlert = results[i];

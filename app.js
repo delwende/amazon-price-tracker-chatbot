@@ -1361,9 +1361,23 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   query.equalTo("active", true);
   query.limit(10); // Limit number of results to 10
   query.include("product");
-  query.find({
-    success: function(results) {
-      console.log("Successfully retrieved " + results.length + " price alerts.");
+  query.find().then(function(results) {
+    console.log("Successfully retrieved " + results.length + " price alerts.");
+
+    if (results.length !== 0) {
+
+      // Inform the user that his/her price watches are shown below
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
+          'the current price for any of the products you are watching falls below your desired price.')
+        }
+      };
+
+      callSendAPI(messageData);
 
       for (var i = 0; i<results.length; i++) {
         var priceAlert = results[i];
@@ -1390,7 +1404,6 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "disactivatePriceAlert",
               "entities": {
-                "priceAlertObjectId": priceAlert.id,
               }
             })
           }],
@@ -1412,22 +1425,25 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         }
       };
 
-      if (elements.length > 0) {
-        // Inform the user that his/her price watches are shown below
-        responseText = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
-          'the current price for any of the products you are watching falls below your desired price.');
-        sendTextMessage(recipientId, responseText);
-
-        callSendAPI(messageData);
-      } else {
-        // Inform the user that he/she has no price watches saved
-        responseText = gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Begin tracking products typing \[product name\], e.g. "iphone 6".');
-        sendTextMessage(recipientId, responseText);
-      }
-    },
-    error: function(error) {
-      console.log("Error: " + error.code + " " + error.message);
+      callSendAPI(messageData);
+    } else {
+      // Inform the user that he/she has no price watches saved
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Begin tracking products typing ' +
+            '\[product name\], e.g. "iphone 6".')
+        }
+      };
+      
+      callSendAPI(messageData);
     }
+
+    
+  }, function(error) {
+    // there was some error.
   });
 }
 

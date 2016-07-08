@@ -351,9 +351,6 @@ function receivedMessage(event) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-                responseText = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
-                  'the current price for any of the products you are watching falls below your desired price.');
-                sendTextMessage(senderID, responseText);
                 sendListPriceWatchesGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
@@ -1383,6 +1380,11 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
       };
 
       if (elements.length > 0) {
+        // Inform the user that his/her price watches are shown below
+        responseText = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
+          'the current price for any of the products you are watching falls below your desired price.');
+        sendTextMessage(recipientId, responseText);
+        
         callSendAPI(messageData);
       } else {
         // Inform the user that he/she has no price watches saved

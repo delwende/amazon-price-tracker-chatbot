@@ -738,14 +738,7 @@ function receivedPostback(event) {
                 priceAlert.set("active", false);
                 return priceAlert.save();
 
-              } else {
-                // Inform the user that the price watch doesn't exist yet
-                responseText = gt.dgettext(parseUserLanguage, 'Price watch has already been deleted.');
-                sendTextMessage(senderID, responseText);
-                return null;
               }
-
-
             }).then(function(result) {
               if (result) {
                 // Inform the user that the price watch has been deleted
@@ -754,6 +747,34 @@ function receivedPostback(event) {
               }
             }, function(error) {
               console.log("Error: " + error);
+            });
+            break;
+
+          case 'changeDesiredPrice':
+            var asin = json.entities.asin;
+            var priceType = json.entities.priceType;
+
+            amazonClient.itemLookup({
+              idType: 'ASIN',
+              itemId: asin
+            }).then(function(result) {
+                var item = helpers.extractAmazonItem(result);
+                var price = item.price[priceType];
+
+                var priceTypeTitles = {
+                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
+                };
+
+                var priceTypeTitle = priceTypeTitles[priceType];
+                var priceFormatted = helpers.formatPriceByCurrencyCode(price, item.currencyCode);
+
+              // Inform the user about the current price
+              responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
+              sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
+            }).catch(function(err) {
+              console.log(err);
             });
             break;
 
@@ -1396,6 +1417,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "changeDesiredPrice",
               "entities": {
+                "asin": product.get("asin"),
+                "priceType": priceAlert.get("priceType")
               }
             })
           }, {
@@ -1404,6 +1427,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "disactivatePriceAlert",
               "entities": {
+                "priceAlertObjectId": priceAlert.id
               }
             })
           }],

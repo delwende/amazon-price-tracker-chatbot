@@ -1358,6 +1358,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "disactivatePriceAlert",
               "entities": {
+                "priceAlertObjectId":
               }
             })
           }],
@@ -1384,12 +1385,12 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         responseText = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
           'the current price for any of the products you are watching falls below your desired price.');
         sendTextMessage(recipientId, responseText);
-        
+
         callSendAPI(messageData);
       } else {
         // Inform the user that he/she has no price watches saved
         responseText = gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Begin tracking products typing \[product name\], e.g. "iphone 6".');
-        sendTextMessage(recipientId, sprintf(responseText));
+        sendTextMessage(recipientId, responseText);
       }
     },
     error: function(error) {

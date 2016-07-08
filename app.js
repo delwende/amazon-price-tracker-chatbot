@@ -722,7 +722,39 @@ function receivedPostback(event) {
             break;
 
           case 'disactivatePriceAlert':
+            var priceAlertObjectId = json.entities.priceAlertObjectId;
 
+            // Check if price alert exists yet
+            var PriceAlert = Parse.Object.extend("PriceAlert");
+            var query = new Parse.Query(PriceAlert);
+            query.equalTo("objectId", priceAlertObjectId);
+            query.find().then(function(results) {
+              console.log("Successfully retrieved " + results.length + " products.");
+
+              if (results.length === 1) {
+                var priceAlert = results[0];
+
+                // Update price alert
+                priceAlert.set("active", false);
+                return priceAlert.save();
+
+              } else {
+                // Inform the user that the price watch doesn't exist yet
+                responseText = gt.dgettext(parseUserLanguage, 'Price watch has already been deleted.');
+                sendTextMessage(senderID, responseText);
+                return null;
+              }
+
+
+            }).then(function(result) {
+              if (result) {
+                // Inform the user that the price watch has been deleted
+                responseText = gt.dgettext(parseUserLanguage, 'Price watch deleted.');
+                sendTextMessage(senderID, responseText);
+              }
+            }, function(error) {
+              console.log("Error: " + error);
+            });
             break;
 
           default:

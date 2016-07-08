@@ -1382,7 +1382,13 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         }
       };
 
-      callSendAPI(messageData);
+      if (elements.length > 0) {
+        callSendAPI(messageData);
+      } else {
+        // Inform the user that he/she has no price watches saved
+        responseText = gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Begin tracking products typing \[product name\], e.g. "iphone 6".');
+        sendTextMessage(recipientId, sprintf(responseText));
+      }
     },
     error: function(error) {
       console.log("Error: " + error.code + " " + error.message);

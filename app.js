@@ -1390,7 +1390,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "disactivatePriceAlert",
               "entities": {
-                "priceAlertObjectId": priceAlert.id
+                "priceAlertObjectId": priceAlert.id,
               }
             })
           }],

@@ -538,11 +538,30 @@ function receivedPostback(event) {
               }).then(function(result) {
                 var product = result;
 
+                // Save price
+                var Price = Parse.Object.extend("Price");
+                var price = new Price();
+
+                var amazonPrice = item.price.amazonPrice !== undefined ? Number(item.price.amazonPrice) : undefined; // Convert price from string to number
+                var thirdPartyNewPrice = item.price.thirdPartyNewPrice !== undefined ? Number(item.price.thirdPartyNewPrice) : undefined; // Convert price from string to number
+                var thirdPartyUsedPrice = item.price.thirdPartyUsedPrice !== undefined ? Number(item.price.thirdPartyUsedPrice) : undefined; // Convert price from string to number
+
+                price.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                price.set("amazon", amazonPrice);
+                price.set("thirdPartyNew", thirdPartyNewPrice);
+                price.set("thirdPartyUsed", thirdPartyUsedPrice);
+                price.set("awsLocale", awsLocale);
+
+                return price.save();
+
+              }).then(function(result) {
+                var price = result;
+
                 // Save price alert to the Backend
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var priceAlert = new PriceAlert();
 
-                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: price.get("product").objectId});
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", false);
                 priceAlert.set("awsLocale", awsLocale);

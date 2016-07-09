@@ -547,9 +547,10 @@ function receivedPostback(event) {
                 var thirdPartyUsedPrice = item.price.thirdPartyUsedPrice !== undefined ? Number(item.price.thirdPartyUsedPrice) : undefined; // Convert price from string to number
 
                 price.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                price.set("amazon", amazonPrice);
-                price.set("thirdPartyNew", thirdPartyNewPrice);
-                price.set("thirdPartyUsed", thirdPartyUsedPrice);
+                price.set("productId", product.id);
+                price.set("amazonPrice", amazonPrice);
+                price.set("thirdPartyNewPrice", thirdPartyNewPrice);
+                price.set("thirdPartyUsedPrice", thirdPartyUsedPrice);
                 price.set("awsLocale", awsLocale);
 
                 return price.save();
@@ -565,6 +566,7 @@ function receivedPostback(event) {
                 priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
                 priceAlert.set("active", false);
                 priceAlert.set("awsLocale", awsLocale);
+                priceAlert.set("currentPrice", {__type: "Pointer", className: "Price", objectId: price.id});
 
                 return priceAlert.save();
 
@@ -610,7 +612,7 @@ function receivedPostback(event) {
                 if (results.length === 1) {
                   return results[0].save({
                     priceType: priceType,
-                    currentPrice: Number(item.price[priceType]) // Convert price from string to number
+                    priceWhenTracked: Number(item.price[priceType]) // Convert price from string to number
                   });
                 } else {
                 }
@@ -1393,6 +1395,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   var parseUserLocale = user.parseUserLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
+  var priceAlerts;
+
   // Query price alert
   var PriceAlert = Parse.Object.extend("PriceAlert");
   var innerQuery = Parse.User;
@@ -1401,6 +1405,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   query.equalTo("active", true);
   query.limit(10); // Limit number of results to 10
   query.include("product");
+  query.include("currentPrice");
   query.find().then(function(results) {
     console.log("Successfully retrieved " + results.length + " price alerts.");
 
@@ -1423,11 +1428,20 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
         var priceAlert = results[i];
         var product = priceAlert.get("product");
 
+        var currentPrices = priceAlert.get("currentPrice");
+        var currentPrice = currentPrices.get(priceAlert.get("priceType"));
+        var desiredPrice = priceAlert.get("desiredPrice");
+
         var awsLocale = priceAlert.get("awsLocale");
+
+        var currentPriceFormatted = helpers.formatPriceByUserLocale(currentPrice, awsLocale);
+        var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, awsLocale);
+
+        var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
 
         elements.push({
           title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
-          subtitle: "",
+          subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted]),
           item_url: "",
           image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
           buttons: [{

@@ -479,7 +479,7 @@ function receivedPostback(event) {
               // Inform the user that prices and availability information
               // may have changed in the meantime
               responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
-                'to create a price watch for this item, type "search \[product name\]" again.');
+                'to create a price watch for this item, type \[product name\] again.');
               sendTextMessage(senderID, responseText);
             } else {
               var item = json.entities.item;
@@ -592,8 +592,8 @@ function receivedPostback(event) {
             if (timeDifference > 5) {
               // Inform the user that prices and availability information
               // may have changed
-              responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed ' +
-                'in the meantime. In order to create a price watch for this item, type again "search \[product name\]".');
+              responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
+                'to create a price watch for this item, type \[product name\] again.');
               sendTextMessage(senderID, responseText);
             } else {
               var priceAlertObjectId = json.entities.priceAlertObjectId;
@@ -632,7 +632,7 @@ function receivedPostback(event) {
                 responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
                 sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
 
-                sendSetDesiredPriceGenericMessage(senderID, user, item, result);
+                sendSetDesiredPriceGenericMessage(senderID, user, item, result, true);
               }, function(error) {
                 console.log("Error: " + error.message);
               });
@@ -645,16 +645,18 @@ function receivedPostback(event) {
             var priceAlertObjectId = json.entities.priceAlertObjectId;
             var priceAlertAwsLocale = json.entities.priceAlertAwsLocale;
 
+            var validityCheckRequired = json.entities.validityCheckRequired; // Used to disable validity check regarding priceAlert.createdAt
+
             // Calculate time difference between price alert creation and
             // attempt to set the desired price
             var timeDifference = moment().diff(priceAlertCreateAt, 'minutes');
 
             // Check if calculated time difference is greater than 5 minutes
-            if (timeDifference > 5) {
+            if (timeDifference > 5 && validityCheckRequired) {
               // Inform the user that prices and availability information
               // may have changed in the meantime
               responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
-                'to create a price watch for this item, type "search \[product name\]" again.');
+                'to create a price watch for this item, type \[product name\] again.');
               sendTextMessage(senderID, responseText);
             } else {
               var customPriceInput = json.entities.customPriceInput;
@@ -727,9 +729,17 @@ function receivedPostback(event) {
                     } else {
                       console.log("Updated key-value pair created with key: user:" + senderID);
 
-                      // Inform the user that the price alert is now active
-                      responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
-                      sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                      // Check if user has set desired price for the first time or changed it
+                      if (validityCheckRequired) {
+                        // Inform the user that the price alert is now active
+                        responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
+                        sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                      } else {
+                        // Inform the user that the price alert has been updated
+                        responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
+                        sendTextMessage(senderID, responseText);
+                      }
+                      
                     }
                   });
 
@@ -773,30 +783,39 @@ function receivedPostback(event) {
 
           case 'changeDesiredPrice':
             var asin = json.entities.asin;
-            var priceType = json.entities.priceType;
+            var priceAlertObjectId = json.entities.priceAlertObjectId;
+            var priceAlertAwsLocale = json.entities.priceAlertAwsLocale;
 
             amazonClient.itemLookup({
+              searchIndex: 'All',
+              responseGroup: 'ItemAttributes,OfferFull,Images',
               idType: 'ASIN',
-              itemId: asin
-            }).then(function(result) {
+              itemId: asin,
+              domain: config.get('awsLocale_' + priceAlertAwsLocale) // Set Product Advertising API locale according to price alert locale
+            }).then(function(results) {
+                var result = results[0];
+
                 var item = helpers.extractAmazonItem(result);
-                var price = item.price[priceType];
 
-                var priceTypeTitles = {
-                  "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
-                  "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
-                  "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
-                };
+                // Query price alerts
+                var PriceAlert = Parse.Object.extend("PriceAlert");
+                var query = new Parse.Query(PriceAlert);
+                query.equalTo("objectId", priceAlertObjectId);
+                query.find().then(function(results) {
+                  console.log("Successfully retrieved " + results.length + " price alerts.");
 
-                var priceTypeTitle = priceTypeTitles[priceType];
-                var priceFormatted = helpers.formatPriceByCurrencyCode(price, item.currencyCode);
+                  if (results.length === 1) {
+                    var priceAlert = results[0];
 
-              // Inform the user about the current price
-              responseText = gt.dgettext(parseUserLanguage, 'The current %s for this item is %s');
-              sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, priceFormatted]));
-            }).catch(function(err) {
-              console.log(err);
+                    sendSetDesiredPriceGenericMessage(senderID, user, item, priceAlert, false);
+                  }
+                }, function(error) {
+                  console.log("Error: " + error);
+                });
+            }).catch(function(error) {
+              console.log("Error: " + error);
             });
+
             break;
 
           default:
@@ -1156,7 +1175,7 @@ function sendSetPriceTypeGenericMessage(recipientId, user, item, priceAlert) {
  * Send a Set Desired Price Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) {
+function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert, validityCheckRequired) {
   var parseUserLocale = user.parseUserLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
@@ -1200,7 +1219,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }, {
@@ -1215,7 +1235,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }, {
@@ -1230,7 +1251,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }],
@@ -1251,7 +1273,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }, {
@@ -1266,7 +1289,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }, {
@@ -1282,7 +1306,8 @@ function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert) 
                   "priceAlertObjectId": priceAlert.id,
                   "priceAlertCreateAt": priceAlert.createdAt,
                   "priceAlertAwsLocale": priceAlert.get("awsLocale"),
-                  "priceType": selectedPriceType
+                  "priceType": selectedPriceType,
+                  "validityCheckRequired": validityCheckRequired
                 }
               })
             }],
@@ -1451,7 +1476,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
               "intent": "changeDesiredPrice",
               "entities": {
                 "asin": product.get("asin"),
-                "priceType": priceAlert.get("priceType")
+                "priceAlertObjectId": priceAlert.id,
+                "priceAlertAwsLocale": priceAlert.get("awsLocale")
               }
             })
           }, {
@@ -1500,7 +1526,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
 
     
   }, function(error) {
-    // there was some error.
+    console.log("Error: " + error);
   });
 }
 

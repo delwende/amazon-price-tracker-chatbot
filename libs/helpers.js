@@ -91,7 +91,7 @@ function stringContainsNumber(string) {
 }
 
 /*
- * Extracts and returns Amazon item elements.
+ * Extracts and returns Amazon item elements from Item Search/Lookup result.
  *
  */
 exports.extractAmazonItem = function(result) {

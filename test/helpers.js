@@ -53,7 +53,7 @@ describe("Helper functions", function() {
   });
 
   describe("Amazon Item Search extractors", function() {
-    it("returns Amazon item from JSON", function() {
+    it("returns Amazon item from Item Search/Lookup result", function() {
     });
 
     it("returns Amazon price if available for item", function() {

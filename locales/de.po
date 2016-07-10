@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-09 23:51+0200\n"
-"PO-Revision-Date: 2016-07-09 23:52+0200\n"
+"POT-Creation-Date: 2016-07-10 13:51+0200\n"
+"PO-Revision-Date: 2016-07-10 13:52+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -83,62 +83,56 @@ msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
 msgstr ""
 "Es tut mir Leid. Ich bin derzeit nicht in deinem Land verfügbar. Bleibe dran!"
 
-#: app.js:481 app.js:656
+#: app.js:481 app.js:595 app.js:658
 msgid ""
 "Price and availability information for this item may have changed. In order "
-"to create a price watch for this item, type \"search [product name]\" again."
+"to create a price watch for this item, type [product name] again."
 msgstr ""
 "Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
 "Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
-"diesen Artikel zu aktivieren, tippe erneut “suche [produktname]”."
+"diesen Artikel zu aktivieren, tippe erneut [Produktname]."
 
 #: app.js:489
 #, javascript-format
 msgid "Create Amazon price watch for: %s"
 msgstr "Erstelle einen Amazon-Preisalarm für: %s"
 
-#: app.js:595
-msgid ""
-"Price and availability information for this item may have changed in the "
-"meantime. In order to create a price watch for this item, type again "
-"\"search [product name]\"."
-msgstr ""
-"Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
-"Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
-"diesen Artikel zu aktivieren, tippe erneut “suche [produktname]”."
-
-#: app.js:623 app.js:708 app.js:786
+#: app.js:623 app.js:710
 msgid "Amazon price"
 msgstr "Amazon Preis"
 
-#: app.js:624 app.js:709 app.js:787
+#: app.js:624 app.js:711
 msgid "3rd Party New price"
 msgstr "Drittanbieter Neupreis"
 
-#: app.js:625 app.js:710 app.js:788
+#: app.js:625 app.js:712
 msgid "3rd Party Used price"
 msgstr "Drittanbieter Gebrauchtpreis"
 
-#: app.js:632 app.js:795
+#: app.js:632
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "Der aktuelle %s für diesen Artikel beträgt %s"
 
-#: app.js:686
+#: app.js:688
 #, javascript-format
 msgid "Please enter a valid price, e.g. %s"
 msgstr "Gib bitte einen gültigen Preis ein, z.B. %s"
 
-#: app.js:731
+#: app.js:735
 #, javascript-format
 msgid "You have tracked the %s for %s"
 msgstr "Preisalarm für den %s von “%s” wurde erstellt."
 
-#: app.js:766
+#: app.js:739
+msgid "Price watch updated."
+msgstr "Preisalarm wurde geändert."
+
+#: app.js:776
 msgid "Price watch deleted."
 msgstr "Preisalarm gelöscht."
 
-#: app.js:1017 app.js:1092
+#: app.js:1036 app.js:1111
 #, javascript-format
 msgid ""
 "Your search \"%s\" did not match any products. Try something like:\n"
@@ -150,81 +144,81 @@ msgstr ""
 "- Allgemeinere Begriffe verwenden\n"
 "- Rechtschreibung überprüfen"
 
-#: app.js:1024
+#: app.js:1043
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Suchergebnisse für \"%s\""
 
-#: app.js:1042 app.js:1043 app.js:1044
+#: app.js:1061 app.js:1062 app.js:1063
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:1050
+#: app.js:1069
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:1055
+#: app.js:1074
 msgid "Create price watch"
 msgstr "Preisalarm erstellen"
 
-#: app.js:1067
+#: app.js:1086
 msgid "Buy"
 msgstr "Kaufen"
 
-#: app.js:1110
+#: app.js:1129
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1111
+#: app.js:1130
 msgid "3rd Party New"
 msgstr "Drittanb. Neu"
 
-#: app.js:1112
+#: app.js:1131
 msgid "3rd Party Used"
 msgstr "Drittanb. Gebrauch"
 
-#: app.js:1141
+#: app.js:1160
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:1142
+#: app.js:1161
 msgid "What price type do you want to track?"
 msgstr "Welchen Preistyp möchtest du verfolgen?"
 
-#: app.js:1187 app.js:1238
+#: app.js:1206 app.js:1260
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:1188 app.js:1239
+#: app.js:1207 app.js:1261
 msgid "At what price would you like to receive an alert?"
 msgstr "Bei welchem Preis möchtest du eine Benachrichtigung erhalten?"
 
-#: app.js:1193
+#: app.js:1212
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1208
+#: app.js:1228
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1223
+#: app.js:1244
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1244
+#: app.js:1266
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1259
+#: app.js:1282
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1274
+#: app.js:1298
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
 
-#: app.js:1314
+#: app.js:1339
 msgid ""
 "Did you mean the following price? If so, click on it, otherwise try again to "
 "entera valid price."
@@ -232,7 +226,7 @@ msgstr ""
 "Meintest du den folgenden Preis? Wenn ja, wähle diesen aus, andernfalls "
 "versuche erneut einen gültigen Preis einzugeben."
 
-#: app.js:1336
+#: app.js:1361
 msgid ""
 "Which one of the following prices did you mean? Choose the correct one or "
 "try again to enter a valid price."
@@ -240,7 +234,7 @@ msgstr ""
 "Welchen der folgenden Preise hast du gemeint? Wähle den richtigen oder "
 "versuche erneut einen gültigen Preis einzugeben."
 
-#: app.js:1420
+#: app.js:1445
 msgid ""
 "Here are the products I'm tracking for you. I'll send you an alert when the "
 "current price for any of the products you are watching falls below your "
@@ -250,26 +244,44 @@ msgstr ""
 "eine Benachrichtigung wenn der aktuelle Preis eines dieser Produkte unter "
 "deinen Wunschpreis fällt."
 
-#: app.js:1440
+#: app.js:1465
 #, javascript-format
 msgid "Current price: %s | Desired price: %s"
 msgstr "Aktueller Preis: %s | Wunschpreis: %s"
 
-#: app.js:1449
+#: app.js:1474
 msgid "Change desired price"
 msgstr "Wunschpreis ändern"
 
-#: app.js:1459
+#: app.js:1485
 msgid "Delete price watch"
 msgstr "Preisalarm löschen"
 
-#: app.js:1493
+#: app.js:1519
 msgid ""
 "You haven't created any price watches yet. Begin tracking products typing "
 "[product name], e.g. \"iphone 6\"."
 msgstr ""
 "Du hast noch keinen Preisalarm erstellt. Tippe [Produktname], z.B. “iPhone "
 "6”, um ein Produkt zu suchen und einen Preisalarm zu erstellen."
+
+#~ msgid ""
+#~ "Price and availability information for this item may have changed. In "
+#~ "order to create a price watch for this item, type \"search [product "
+#~ "name]\" again."
+#~ msgstr ""
+#~ "Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
+#~ "Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
+#~ "diesen Artikel zu aktivieren, tippe erneut “suche [produktname]”."
+
+#~ msgid ""
+#~ "Price and availability information for this item may have changed in the "
+#~ "meantime. In order to create a price watch for this item, type again "
+#~ "\"search [product name]\"."
+#~ msgstr ""
+#~ "Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
+#~ "Artikels könnten sich inzwischen geändert haben. Um einen Preisalarm für "
+#~ "diesen Artikel zu aktivieren, tippe erneut “[Produktname]”."
 
 #~ msgid "Price watch has already been deleted."
 #~ msgstr "Preisalarm wurde bereits gelöscht."

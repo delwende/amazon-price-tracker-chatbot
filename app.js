@@ -304,15 +304,15 @@ function receivedMessage(event) {
     } else {
       if (reply) { // reply is empty list when key does not exist
         var user = reply;
-        var parseUserLocale = user.parseUserLocale;
+        var parseUserAwsLocale = user.parseUserAwsLocale;
         var parseUserLanguage = user.parseUserLanguage;
 
         var responseText;
 
         // Check if user locale is supported
-        if (parseUserLocale === 'fr_CA' || parseUserLocale === 'zh_CN' || parseUserLocale === 'zh_HK' || parseUserLocale === 'fr_FR' ||
-            parseUserLocale === 'de_DE' || parseUserLocale === 'it_IT' || parseUserLocale === 'ja_JP' || parseUserLocale === 'es_ES'||
-            parseUserLocale === 'en_GB' || parseUserLocale === 'en_US') {
+        if (parseUserAwsLocale === 'fr_CA' || parseUserAwsLocale === 'zh_CN' || parseUserAwsLocale === 'zh_HK' || parseUserAwsLocale === 'fr_FR' ||
+            parseUserAwsLocale === 'de_DE' || parseUserAwsLocale === 'it_IT' || parseUserAwsLocale === 'ja_JP' || parseUserAwsLocale === 'es_ES'||
+            parseUserAwsLocale === 'en_GB' || parseUserAwsLocale === 'en_US') {
 
           if (messageText) {
 
@@ -461,7 +461,7 @@ function receivedPostback(event) {
         var intent = json.intent;
 
         var parseUserObjectId = user.parseUserObjectId;
-        var parseUserLocale = user.parseUserLocale;
+        var parseUserAwsLocale = user.parseUserAwsLocale;
         var parseUserLanguage = user.parseUserLanguage;
 
         var responseText;
@@ -506,13 +506,13 @@ function receivedPostback(event) {
                   // Update product title. Just overrides already existing product title or adds new product title, if not already available
                   // for appropriate user locale
                   var title = product.get("title");
-                  title[parseUserLocale] = item.title;
+                  title[parseUserAwsLocale] = item.title;
                   product.set("title", title);
 
                   // Update product group. Just overrides already existing product group or adds new product group, if not already available
                   // for appropriate user locale
                   var productGroup = product.get("productGroup");
-                  productGroup[parseUserLocale] = item.productGroup;
+                  productGroup[parseUserAwsLocale] = item.productGroup;
                   product.set("productGroup", productGroup);
                 } else {
                   // Save product to the Backend
@@ -526,12 +526,12 @@ function receivedPostback(event) {
 
                   // Save product title to JSON object using user locale as key
                   var title = {};
-                  title[parseUserLocale] = item.title;
+                  title[parseUserAwsLocale] = item.title;
                   product.set("title", title);
 
                   // Save product group to JSON object using user locale as key
                   var productGroup = {};
-                  productGroup[parseUserLocale] = item.productGroup;
+                  productGroup[parseUserAwsLocale] = item.productGroup;
                   product.set("productGroup", productGroup);
                 }
 
@@ -1028,14 +1028,14 @@ function sendReceiptMessage(recipientId) {
  */
 function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
   var parseUserLanguage = user.parseUserLanguage;
-  var parseUserLocale = user.parseUserLocale;
+  var parseUserAwsLocale = user.parseUserAwsLocale;
 
   // Search items
   var query = {
     searchIndex: 'All',
     responseGroup: 'ItemAttributes,OfferFull,Images',
     keywords: keywords,
-    domain: config.get('awsLocale_' + parseUserLocale) // Set Product Advertising API locale according to user locale
+    domain: config.get('awsLocale_' + parseUserAwsLocale) // Set Product Advertising API locale according to user locale
   };
   amazonClient.itemSearch(query, function (error, results) {
     if (error) {
@@ -1085,7 +1085,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                 "intent": "activatePriceAlert",
                 "entities": {
                   "item": item,
-                  "awsLocale": parseUserLocale,
+                  "awsLocale": parseUserAwsLocale,
                   "generatedAt": now // Time the element was created
                 }
               })
@@ -1185,7 +1185,7 @@ function sendSetPriceTypeGenericMessage(recipientId, user, item, priceAlert) {
  *
  */
 function sendSetDesiredPriceGenericMessage(recipientId, user, item, priceAlert, validityCheckRequired) {
-  var parseUserLocale = user.parseUserLocale;
+  var parseUserAwsLocale = user.parseUserAwsLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
   var selectedPriceType = priceAlert.get("priceType");
@@ -1426,7 +1426,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   var elements = [];
 
   var parseUserObjectId = user.parseUserObjectId;
-  var parseUserLocale = user.parseUserLocale;
+  var parseUserAwsLocale = user.parseUserAwsLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
   var priceAlerts;
@@ -1634,6 +1634,7 @@ function callUserProfileAPI(userId, event) {
       user.set("timezone", timezone);
       user.set("gender", gender);
       user.set("language", language);
+      user.set("awsLocale", locale);
 
       user.signUp(null, {
         success: function(user) {
@@ -1645,10 +1646,11 @@ function callUserProfileAPI(userId, event) {
             'parseUserFirstName': user.get("firstName"),
             'parseUserLastName': user.get("lastName"),
             'parseUserProfilePic': user.get("profilePic"),
-            'parseUserLocale': user.get("locale"),
+            'parseUserLocale': user.get("locale"), // user's home locale
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
+            'parseUserAwsLocale': user.get("awsLocale"),
             'transaction': '',
             'customPriceInputExamplePrice': '',
             'incompletePriceAlertItemTitle': '',

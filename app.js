@@ -363,6 +363,8 @@ function receivedMessage(event) {
                 sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendTextMessage(senderID, '');
+              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
+                sendMenuGenericMessage(senderID, user);
               } else {
                 var keywords = messageText;
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
@@ -1528,6 +1530,63 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   }, function(error) {
     console.log("Error: " + error);
   });
+}
+
+/*
+ * Send a Menu Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendMenuGenericMessage(recipientId, user) {
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(parseUserLanguage, 'Menu'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Browse Products'),
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Popular Products'),
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: gt.dgettext(parseUserLanguage, 'Menu'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Top Price Drops'),
+              payload: "Payload for first bubble",
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Change Settings'),
+              payload: "Payload for first bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 /*

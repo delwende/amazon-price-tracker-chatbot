@@ -472,7 +472,7 @@ function receivedPostback(event) {
 
         // Check if validity is still given. If timeDiff is
         // undefined, validity check is not required
-        if (timeDiff !== undefined && timeDiff > 10) {
+        if (timeDiff !== undefined && timeDiff > 5) {
 
           // Inform the user that price and availability information may have changed
           responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
@@ -790,9 +790,74 @@ function receivedPostback(event) {
 
             case 'listPriceWatches':
               sendListPriceWatchesGenericMessage(senderID, user);
+
               break;
 
             case 'showSettings':
+              sendSettingsGenericMessage(senderID, user);
+
+              break;
+
+            case 'changeSettings':
+              var settingToChange = json.entities.settingToChange;
+
+              switch (settingToChange) {
+                case 'awsLocale':
+                  var awsLocale = json.entities.awsLocale;
+
+                  if (awsLocale !== undefined) {
+                    // Update key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'parseUserAwsLocale': awsLocale
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
+                      } else {
+                        console.log("Updated key-value pair created with key: user:" + senderID);
+
+                        // Inform the user about the successful language change
+                        responseText = gt.dgettext(parseUserLanguage, 'Changed shop locale to: %s');
+                        sendTextMessage(senderID, sprintf(responseText, awsLocale));
+                      }
+                    });
+                  } else {
+                    // Inform the user about the currently set language
+                    responseText = gt.dgettext(parseUserLanguage, 'Currently set shop locale: %s');
+                    sendTextMessage(senderID, sprintf(responseText, parseUserAwsLocale));
+
+                    sendChangeShopLocaleGenericMessage(senderID, user);
+                  }
+
+                  break;
+
+                case 'language':
+                  var language = json.entities.language;
+
+                  if (language !== undefined) {
+                    // Update key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'parseUserLanguage': language
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
+                      } else {
+                        console.log("Updated key-value pair created with key: user:" + senderID);
+
+                        // Inform the user about the successful language change
+                        responseText = gt.dgettext(parseUserLanguage, 'Changed language to: %s');
+                        sendTextMessage(senderID, sprintf(responseText, language));
+                      }
+                    });
+                  } else {
+                    // Inform the user about the currently set language
+                    responseText = gt.dgettext(parseUserLanguage, 'Currently set language: %s');
+                    sendTextMessage(senderID, sprintf(responseText, parseUserLanguage));
+
+                    sendChangeLanguageGenericMessage(senderID, user);
+                  }
+
+                  break;
+              }
 
               break;
 
@@ -1558,6 +1623,167 @@ function sendMenuGenericMessage(recipientId, user) {
 }
 
 /*
+ * Send a Settings Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendSettingsGenericMessage(recipientId, user) {
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(parseUserLanguage, 'Settings'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "awsLocale"
+                }
+              })
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Change Language'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "language"
+                }
+              })
+            }],
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Change Language Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendChangeLanguageGenericMessage(recipientId, user) {
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(parseUserLanguage, 'Change Language'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'German'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "language",
+                  "language": "de"
+                }
+              })
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'English'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "language",
+                  "language": "en"
+                }
+              })
+            }],
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Change Shop Locale Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendChangeShopLocaleGenericMessage(recipientId, user) {
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            item_url: "",
+            image_url: "",
+            buttons: [{
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Amazon Germany'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "awsLocale",
+                  "awsLocale": "de_DE"
+                }
+              })
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Amazon UK'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "awsLocale",
+                  "awsLocale": "en_GB"
+                }
+              })
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Amazon US'),
+              payload: JSON.stringify({
+                "intent": "changeSettings",
+                "entities": {
+                  "settingToChange": "awsLocale",
+                  "awsLocale": "en_US"
+                }
+              })
+            }],
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
  * Call User Profile API. If successful, we'll get Facebook user profile
  * information and sign up a new user on the Backend
  *
@@ -1605,7 +1831,6 @@ function callUserProfileAPI(userId, event) {
       user.set("timezone", timezone);
       user.set("gender", gender);
       user.set("language", language);
-      user.set("awsLocale", locale);
 
       user.signUp(null, {
         success: function(user) {
@@ -1621,7 +1846,7 @@ function callUserProfileAPI(userId, event) {
             'parseUserGender': user.get("gender"),
             'parseUserTimezone': user.get("timezone"),
             'parseUserLanguage': user.get("language"),
-            'parseUserAwsLocale': user.get("awsLocale"),
+            'parseUserAwsLocale': user.get("locale"),
             'transaction': '',
             'customPriceInputExamplePrice': '',
             'incompletePriceAlertItemTitle': '',

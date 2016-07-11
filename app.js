@@ -741,7 +741,7 @@ function receivedPostback(event) {
                         responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
                         sendTextMessage(senderID, responseText);
                       }
-                      
+
                     }
                   });
 
@@ -818,6 +818,13 @@ function receivedPostback(event) {
               console.log("Error: " + error);
             });
 
+            break;
+
+          case 'listPriceWatches':
+            sendListPriceWatchesGenericMessage(senderID, user);
+            break;
+
+          case 'showSettings':
             break;
 
           default:
@@ -1556,30 +1563,20 @@ function sendMenuGenericMessage(recipientId, user) {
             buttons: [{
               type: "postback",
               title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Browse Products'),
-              payload: "Payload for first bubble",
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Popular Products'),
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: gt.dgettext(parseUserLanguage, 'Menu'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Top Price Drops'),
-              payload: "Payload for first bubble",
+              payload: JSON.stringify({
+                "intent": "listPriceWatches",
+                "entities": {
+                }
+              })
             }, {
               type: "postback",
               title: gt.dgettext(parseUserLanguage, 'Change Settings'),
-              payload: "Payload for first bubble",
-            }]
+              payload: JSON.stringify({
+                "intent": "showSettings",
+                "entities": {
+                }
+              })
+            }],
           }]
         }
       }

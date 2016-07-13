@@ -498,70 +498,42 @@ function receivedPostback(event) {
               query.find().then(function(results) {
                 console.log("Successfully retrieved " + results.length + " products.");
 
-                // Lookup item
-                amazonClient.itemLookup({
-                 idType: 'ASIN',
-                 itemId: item.asin
-                }).then(function(results) {
-                  // console.log(JSON.stringify(results));
-                  var result = results[0];
+                var product;
+                
+                if (results.length === 1) {
+                  product = results[0];
+                
+                  var title = product.get("title");
+                  title[parseUserAwsLocale] = item.title;
+                  product.set("title", title);
 
-                  var item = helpers.extractAmazonItem(result, true);
-
+                  var productGroup = product.get("productGroup");
+                  productGroup[parseUserAwsLocale] = item.productGroup;
+                  product.set("productGroup", productGroup);
+                  
+                } else {
                   // Save product to the Backend
                   var Product = Parse.Object.extend("Product");
                   product = new Product();
-
+                
                   product.set("asin", item.asin);
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
                   product.set("totalNumberTrackedCtr", 0);
-
-                  return product.save();
-                }).catch(function(err) {
-                 console.log(err);
-                });
-
-                // var product;
-                //
-                // if (results.length === 1) {
-                //   product = results[0];
-                //
-                //   // Update product title. Just overrides already existing product title or adds new product title, if not already available
-                //   // for appropriate user locale
-                //   var title = product.get("title");
-                //   title[parseUserAwsLocale] = item.title;
-                //   product.set("title", title);
-                //
-                //   // Update product group. Just overrides already existing product group or adds new product group, if not already available
-                //   // for appropriate user locale
-                //   var productGroup = product.get("productGroup");
-                //   productGroup[parseUserAwsLocale] = item.productGroup;
-                //   product.set("productGroup", productGroup);
-                // } else {
-                //   // Save product to the Backend
-                //   var Product = Parse.Object.extend("Product");
-                //   product = new Product();
-                // 
-                //   product.set("asin", item.asin);
-                //   product.set("imageUrl", item.imageUrl);
-                //   product.set("ean", item.ean);
-                //   product.set("model", item.model);
-                //   product.set("totalNumberTrackedCtr", 0);
-                //
-                //   // Save product title to JSON object using user locale as key
-                //   var title = {};
-                //   title[parseUserAwsLocale] = item.title;
-                //   product.set("title", title);
-                //
-                //   // Save product group to JSON object using user locale as key
-                //   var productGroup = {};
-                //   productGroup[parseUserAwsLocale] = item.productGroup;
-                //   product.set("productGroup", productGroup);
-                // }
-                //
-                // return product.save();
+                
+                  // Save product title to JSON object using user locale as key
+                  var title = {};
+                  title[parseUserAwsLocale] = item.title;
+                  product.set("title", title);
+                
+                  // Save product group to JSON object using user locale as key
+                  var productGroup = {};
+                  productGroup[parseUserAwsLocale] = item.productGroup;
+                  product.set("productGroup", productGroup);
+                }
+                
+                return product.save();
 
               }).then(function(result) {
                 var product = result;
@@ -782,6 +754,7 @@ function receivedPostback(event) {
               var priceAlertObjectId = json.entities.priceAlertObjectId;
               var priceAlertAwsLocale = json.entities.priceAlertAwsLocale;
 
+              // Lookup item
               amazonClient.itemLookup({
                 searchIndex: 'All',
                 responseGroup: 'ItemAttributes,OfferFull,Images',

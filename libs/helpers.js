@@ -132,42 +132,27 @@ exports.extractAmazonItem = function(result, fullItem) {
 
 	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
 
-	var item;
+	var item = {};
+
+	item["asin"] = asin;
+	item["detailPageUrl"] = detailPageUrl;
+	item["imageUrl"] = imageUrl;
+	item["title"] = title;
+	item["ean"] = ean;
+	item["price"] = {};
+	item["price"]["amazonPrice"] = amazonPrice;
+	item["price"]["thirdPartyNewPrice"] = thirdPartyNewPrice;
+	item["price"]["thirdPartyUsedPrice"] = thirdPartyUsedPrice;
+	item["currencyCode"] = currencyCode;
+
 	if (fullItem) {
-		item = {
-			"asin": asin,
-			"detailPageUrl": detailPageUrl,
-			"imageUrl": imageUrl,
-			"title": title,
-			"ean": ean,
-			"model": model,
-			"productGroup": productGroup,
-			"price": {
-				"amazonPrice": amazonPrice,
-				"thirdPartyNewPrice": thirdPartyNewPrice,
-				"thirdPartyUsedPrice": thirdPartyUsedPrice
-			},
-			"currencyCode": currencyCode,
-			"category": category,
-			"manufacturer": manufacturer,
-			"upc": upc,
-			"sku": sku,
-			"salesRank": salesRank
-		};
-	} else {
-		item = {
-			"asin": asin,
-			"detailPageUrl": detailPageUrl,
-			"imageUrl": imageUrl,
-			"title": title,
-			"ean": ean,
-			"price": {
-				"amazonPrice": amazonPrice,
-				"thirdPartyNewPrice": thirdPartyNewPrice,
-				"thirdPartyUsedPrice": thirdPartyUsedPrice
-			},
-			"currencyCode": currencyCode,
-		};
+		item["model"] = model;
+		item["productGroup"] = productGroup;
+		item["category"] = category;
+		item["manufacturer"] = manufacturer;
+		item["upc"] = upc;
+		item["sku"] = sku;
+		item["salesRank"] = salesRank;
 	}
 
 	return item;

@@ -259,7 +259,6 @@ function receivedAuthentication(event) {
   sendTextMessage(senderID, "Authentication successful");
 }
 
-
 /*
  * Message Event
  *
@@ -1478,7 +1477,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
   query.equalTo("active", true);
   query.limit(10); // Limit number of results to 10
-  query.skip(priceAlertsToSkip);
+  query.skip(priceAlertsToSkip); // Number of first results to skip
   query.include("product");
   query.include("currentPrice");
   query.find().then(function(results) {
@@ -1534,7 +1533,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
             }
         }];
 
-        // Check if "Show more price alerts" button has to be present
+        // Check if "Show more price watches" button has to be present
         if (i % 9 === 0) {
           buttons.push({
             type: "postback",

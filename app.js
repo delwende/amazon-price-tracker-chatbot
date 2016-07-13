@@ -1148,8 +1148,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                 "intent": "showProductDetails",
                 "entities": {
                   "item": item,
-                  "awsLocale": parseUserAwsLocale,
-                  "validFrom": undefined
+                  "awsLocale": parseUserAwsLocale
                 }
               })
             }],

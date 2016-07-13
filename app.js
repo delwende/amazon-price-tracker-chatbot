@@ -1507,18 +1507,20 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
     if (results.length !== 0) {
 
-      // Inform the user that his/her price watches are shown below
-      var messageData = {
-        recipient: {
-          id: recipientId
-        },
-        message: {
-          text: gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
-          'the current price for any of the products you are watching falls below your desired price.')
-        }
-      };
+      // Inform the user that his/her price watches are shown below (only when first page of results is shown)
+      if (pageNumber === 1) {
+        var messageData = {
+          recipient: {
+            id: recipientId
+          },
+          message: {
+            text: gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
+            'the current price for any of the products you are watching falls below your desired price.')
+          }
+        };
 
-      callSendAPI(messageData);
+        callSendAPI(messageData);
+      }
 
       for (var i = 0; i<results.length; i++) {
 

@@ -717,7 +717,7 @@ function receivedPostback(event) {
                           var Product = Parse.Object.extend("Product");
                           var query = new Parse.Query(Product);
                           query.equalTo("objectId", priceAlert.get("product").id);
-                          console.log("TEST>>>>> " + priceAlert.get("product".id));
+                          console.log("TEST>>>>> " + priceAlert.get("product").id);
                           return query.find();
                         } else {
                           // Inform the user that the price alert has been updated

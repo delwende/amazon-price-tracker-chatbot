@@ -6,27 +6,27 @@ var config = require('config');
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
 
 /*
- * Returns a random element from an array.
- *
- */
+* Returns a random element from an array.
+*
+*/
 exports.randomElementFromArray = function(array) {
 	var randomInt = randomIntFromIntervall(1, array.length);
 	return array[randomInt - 1]; // -1, because array indexes start with 0
 };
 
 /*
- * Returns a random number between min and max.
- *
- */
+* Returns a random number between min and max.
+*
+*/
 function randomIntFromIntervall(min, max) {
 	return Math.floor((Math.random() * max) + min);
 }
 
 /*
- * Returns formatted price by currency code. Accepts prices in terms of the lowest currency denomination,
- * for example, pennies.
- *
- */
+* Returns formatted price by currency code. Accepts prices in terms of the lowest currency denomination,
+* for example, pennies.
+*
+*/
 exports.formatPriceByCurrencyCode = function(price, currencyCode) {
 	var currencySymbol = config.get('currencySymbol_' + currencyCode);
 	var decimalPointSeparator = config.get('decimalPointSeparator_' + currencyCode);
@@ -37,10 +37,10 @@ exports.formatPriceByCurrencyCode = function(price, currencyCode) {
 };
 
 /*
- * Returns formatted price by user locale. Accepts prices in terms of the lowest currency denomination,
- * for example, pennies.
- *
- */
+* Returns formatted price by user locale. Accepts prices in terms of the lowest currency denomination,
+* for example, pennies.
+*
+*/
 exports.formatPriceByUserLocale = function(price, userLocale) {
 	var currencySymbol = config.get('currencySymbol_' + userLocale);
 	var decimalPointSeparator = config.get('decimalPointSeparator_' + userLocale);
@@ -51,8 +51,8 @@ exports.formatPriceByUserLocale = function(price, userLocale) {
 };
 
 /*
- * Generates and returns price suggestions from custom price input.
- */
+* Generates and returns price suggestions from custom price input.
+*/
 exports.generatePriceSuggestionsFromCustomPriceInput = function(customPriceInput) {
 	if (stringContainsNumber(customPriceInput)) {
 		var priceSuggestions = [
@@ -79,22 +79,22 @@ exports.generatePriceSuggestionsFromCustomPriceInput = function(customPriceInput
 };
 
 /*
- * Checks if a string contains a number.
- *
- */
+* Checks if a string contains a number.
+*
+*/
 function stringContainsNumber(string) {
-  	var matches = string.match(/\d+/g);
+	var matches = string.match(/\d+/g);
 	if (matches != null) {
-	    return true;
+		return true;
 	}
 	return false;
 }
 
 /*
- * Extracts and returns Amazon item elements from Item Search/Lookup result. If the extended
- * parameter is set to true, an extended item result (with more item elements) will be returned.
- */
-exports.extractAmazonItem = function(result, extended) {
+* Extracts and returns Amazon item elements from Item Search/Lookup result.
+*
+*/
+exports.extractAmazonItem = function(result) {
 	var asin = objectPath.get(result, "ASIN.0");
 	var detailPageUrl = objectPath.get(result, "DetailPageURL.0");
 	var imageUrl = objectPath.coalesce(result, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
@@ -132,9 +132,8 @@ exports.extractAmazonItem = function(result, extended) {
 
 	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
 
-	// Check if extended item result is desired or not
 	var item;
-	if (extended) {
+	if (false) {
 		item = {
 			"asin": asin,
 			"detailPageUrl": detailPageUrl,
@@ -144,16 +143,16 @@ exports.extractAmazonItem = function(result, extended) {
 			"model": model,
 			"productGroup": productGroup,
 			"price": {
-			  "amazonPrice": amazonPrice,
-			  "thirdPartyNewPrice": thirdPartyNewPrice,
-			  "thirdPartyUsedPrice": thirdPartyUsedPrice
+				"amazonPrice": amazonPrice,
+				"thirdPartyNewPrice": thirdPartyNewPrice,
+				"thirdPartyUsedPrice": thirdPartyUsedPrice
 			},
 			"currencyCode": currencyCode,
 			"category": category,
 			"manufacturer": manufacturer,
 			"upc": upc,
 			"sku": sku,
-			"salesRank": SalesRank
+			"salesRank": salesRank
 		};
 	} else {
 		item = {
@@ -162,9 +161,9 @@ exports.extractAmazonItem = function(result, extended) {
 			"imageUrl": imageUrl,
 			"title": title,
 			"price": {
-			  "amazonPrice": amazonPrice,
-			  "thirdPartyNewPrice": thirdPartyNewPrice,
-			  "thirdPartyUsedPrice": thirdPartyUsedPrice
+				"amazonPrice": amazonPrice,
+				"thirdPartyNewPrice": thirdPartyNewPrice,
+				"thirdPartyUsedPrice": thirdPartyUsedPrice
 			},
 			"currencyCode": currencyCode,
 		};
@@ -174,24 +173,24 @@ exports.extractAmazonItem = function(result, extended) {
 };
 
 /*
- * Extracts and returns Amazon price, if available for item.
- *
- */
+* Extracts and returns Amazon price, if available for item.
+*
+*/
 exports.extractAmazonPriceIfAvailable = function(offer) {
 
 	if (offer === undefined) return undefined;
 
 	var offerAvailable = offer.merchant !== undefined; // Checks if any offer is available
 
-    return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
+	return offerAvailable && offer.merchant.startsWith("Amazon") ? offer.amount : undefined;
 };
 
 /*
- * Calculates and returns desired price examples. Returns an array containing price examples
- * in the following format [(price - 1), (price * 0.97), (price * 0.95), (price * 0.93),
- * (price * 0.9)].
- *
- */
+* Calculates and returns desired price examples. Returns an array containing price examples
+* in the following format [(price - 1), (price * 0.97), (price * 0.95), (price * 0.93),
+* (price * 0.9)].
+*
+*/
 exports.calculateDesiredPriceExamples = function(price) {
 
 	var examplePrices = [

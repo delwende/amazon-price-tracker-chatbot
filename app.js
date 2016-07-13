@@ -514,9 +514,6 @@ function receivedPostback(event) {
                   var productGroup = product.get("productGroup");
                   productGroup[parseUserAwsLocale] = item.productGroup;
                   product.set("productGroup", productGroup);
-
-                  // Update total number tracked counter
-                  product.increment("totalNumberTrackedCtr");
                 } else {
                   // Save product to the Backend
                   var Product = Parse.Object.extend("Product");
@@ -526,7 +523,7 @@ function receivedPostback(event) {
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
-                  product.set("totalNumberTrackedCtr", 1);
+                  product.set("totalNumberTrackedCtr", 0);
 
                   // Save product title to JSON object using user locale as key
                   var title = {};
@@ -715,17 +712,21 @@ function receivedPostback(event) {
                           // Inform the user that the price alert is now active
                           responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
                           sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+
+                          // // Query products
+                          // var Product = Parse.Object.extend("Product");
+                          // var query = new Parse.Query(Product);
+                          // query.equalTo("objectId", priceAlert.get("product").id);
+                          // return query.find();
+
+                          var product = priceAlert.get("product");
+                          product.imcrement("totalNumberTrackedCtr");
+                          return product.save();
                         } else {
                           // Inform the user that the price alert has been updated
                           responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
                           sendTextMessage(senderID, responseText);
                         }
-
-                        // Query products
-                        var Product = Parse.Object.extend("Product");
-                        var query = new Parse.Query(Product);
-                        query.equalTo("objectId", priceAlert.get("product").id);
-                        return query.find();
 
                       }
                     });
@@ -734,16 +735,16 @@ function receivedPostback(event) {
                 }).then(function(results) {
                   console.log("Successfully retrieved " + results.length + " products.");
 
-                  if (results.length === 1) {
-                    // Update product (total number tracked counter)
-                    var product = results[0];
-
-                    product.imcrement("totalNumberTrackedCtr");
-                    return product.save();
-                  }
+                  // if (results.length === 1) {
+                  //   // Update product (total number tracked counter)
+                  //   var product = results[0];
+                  //
+                  //   product.imcrement("totalNumberTrackedCtr");
+                  //   return product.save();
+                  // }
 
                 }).then(function(result) {
-                  console.log('Updated product with objectId: ' + result.id);
+                  // console.log('Updated product with objectId: ' + result.id);
 
                 }, function(error) {
                   console.log("Error: " + error.message);

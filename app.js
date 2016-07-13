@@ -523,11 +523,6 @@ function receivedPostback(event) {
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
-                  product.set("category", item.category);
-                  product.set("manufacturer", item.manufacturer);
-                  product.set("upc", item.upc);
-                  product.set("sku", item.sku);
-                  product.set("salesRank", item.salesRank);
 
                   // Save product title to JSON object using user locale as key
                   var title = {};
@@ -770,7 +765,7 @@ function receivedPostback(event) {
               }).then(function(results) {
                   var result = results[0];
 
-                  var item = helpers.extractAmazonItem(result, false);
+                  var item = helpers.extractAmazonItem(result);
 
                   // Query price alerts
                   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -873,7 +868,7 @@ function receivedPostback(event) {
                 '- Model: %s\n- Locale: %s\n- EAN: %s\n- UPC: %s\n- SKU: %s\n- Sales rank: %s\n- Last updated scan: %s\n- Total people tracking: %s\n' +
                 '- Last tracked: %s');
               sendTextMessage(senderID, vsprintf(responseText, ["test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test",
-                "test", "test",]));
+                "test", "test"]));
 
               break;
 
@@ -1114,7 +1109,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
 
-        var item = helpers.extractAmazonItem(result, false);
+        var item = helpers.extractAmazonItem(result);
         var price = item.price;
 
         var anyAmount = price.amazonPrice || price.thirdPartyNewPrice || price.thirdPartyUsedPrice; // To check if any price is available

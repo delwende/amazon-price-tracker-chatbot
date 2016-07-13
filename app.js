@@ -1476,7 +1476,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
       callSendAPI(messageData);
 
-      for (var i = 0; i<results.length; i++) {
+      for (var i = 0; i<10; i++) {
         var priceAlert = results[i];
         var product = priceAlert.get("product");
 
@@ -1514,7 +1514,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
         }];
 
         // Check if "Show more price alerts" button has to be present
-        if (results.length > 10 && (i === 1 || i % 11 === 0)) {
+        if (results.length > 10 && i % 9 === 0) {
           buttons.push({
             type: "postback",
             title: gt.dgettext(parseUserLanguage, 'Show more price watches'),

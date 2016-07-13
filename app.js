@@ -1492,25 +1492,25 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
         var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
 
         buttons = [{
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Change desired price'),
-            payload: JSON.stringify({
-              "intent": "changeDesiredPrice",
-              "entities": {
-                "asin": product.get("asin"),
-                "priceAlertObjectId": priceAlert.id,
-                "priceAlertAwsLocale": priceAlert.get("awsLocale")
-              }
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Change desired price'),
+          payload: JSON.stringify({
+            "intent": "changeDesiredPrice",
+            "entities": {
+              "asin": product.get("asin"),
+              "priceAlertObjectId": priceAlert.id,
+              "priceAlertAwsLocale": priceAlert.get("awsLocale")
             }
-          }, {
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
-            payload: JSON.stringify({
-              "intent": "disactivatePriceAlert",
-              "entities": {
-                "priceAlertObjectId": priceAlert.id
+          })
+        }, {
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
+          payload: JSON.stringify({
+            "intent": "disactivatePriceAlert",
+            "entities": {
+              "priceAlertObjectId": priceAlert.id
             }
-          }
+          })
         }];
 
         // Check if "Show more price alerts" button has to be present
@@ -1524,7 +1524,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
                 "priceAlertObjectId": priceAlert.id,
                 "pageNumber": pageNumber + 1
               }
-            });
+            })
+          });
         }
 
         elements.push({

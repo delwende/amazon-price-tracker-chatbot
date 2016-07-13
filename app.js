@@ -1476,65 +1476,70 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
       callSendAPI(messageData);
 
-      for (var i = 0; i<10; i++) {
-        var priceAlert = results[i];
-        var product = priceAlert.get("product");
+      for (var i = 0; i<results.length; i++) {
 
-        var currentPrices = priceAlert.get("currentPrice");
-        var currentPrice = currentPrices.get(priceAlert.get("priceType"));
-        var desiredPrice = priceAlert.get("desiredPrice");
+        // Prevent showing more than 10 price alerts
+        if (i <= 9) {
+          var priceAlert = results[i];
+          var product = priceAlert.get("product");
 
-        var awsLocale = priceAlert.get("awsLocale");
+          var currentPrices = priceAlert.get("currentPrice");
+          var currentPrice = currentPrices.get(priceAlert.get("priceType"));
+          var desiredPrice = priceAlert.get("desiredPrice");
 
-        var currentPriceFormatted = helpers.formatPriceByUserLocale(currentPrice, awsLocale);
-        var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, awsLocale);
+          var awsLocale = priceAlert.get("awsLocale");
 
-        var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
+          var currentPriceFormatted = helpers.formatPriceByUserLocale(currentPrice, awsLocale);
+          var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, awsLocale);
 
-        buttons = [{
-          type: "postback",
-          title: gt.dgettext(parseUserLanguage, 'Change desired price'),
-          payload: JSON.stringify({
-            "intent": "changeDesiredPrice",
-            "entities": {
-              "asin": product.get("asin"),
-              "priceAlertObjectId": priceAlert.id,
-              "priceAlertAwsLocale": priceAlert.get("awsLocale")
-            }
-          })
-        }, {
-          type: "postback",
-          title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
-          payload: JSON.stringify({
-            "intent": "disactivatePriceAlert",
-            "entities": {
-              "priceAlertObjectId": priceAlert.id
-            }
-          })
-        }];
+          var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
 
-        // Check if "Show more price alerts" button has to be present
-        if (results.length > 10 && i % 9 === 0) {
-          buttons.push({
+          buttons = [{
             type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Show more price watches'),
+            title: gt.dgettext(parseUserLanguage, 'Change desired price'),
             payload: JSON.stringify({
-              "intent": "listPriceWatches",
+              "intent": "changeDesiredPrice",
               "entities": {
+                "asin": product.get("asin"),
                 "priceAlertObjectId": priceAlert.id,
-                "pageNumber": pageNumber + 1
+                "priceAlertAwsLocale": priceAlert.get("awsLocale")
               }
             })
+          }, {
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
+            payload: JSON.stringify({
+              "intent": "disactivatePriceAlert",
+              "entities": {
+                "priceAlertObjectId": priceAlert.id
+              }
+            })
+          }];
+
+          // Check if "Show more price alerts" button has to be present
+          if (results.length > 10 && (i !== 0 && i % 9 === 0)) {
+            buttons.push({
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Show more price watches'),
+              payload: JSON.stringify({
+                "intent": "listPriceWatches",
+                "entities": {
+                  "priceAlertObjectId": priceAlert.id,
+                  "pageNumber": pageNumber + 1
+                }
+              })
+            });
+          }
+
+          elements.push({
+            title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
+            subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted]),
+            item_url: "",
+            image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
+            buttons: buttons,
           });
         }
 
-        elements.push({
-          title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
-          subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted]),
-          item_url: "",
-          image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
-          buttons: buttons,
-        });
       }
 
       var messageData = {

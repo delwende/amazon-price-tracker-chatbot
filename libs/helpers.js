@@ -102,6 +102,11 @@ exports.extractAmazonItem = function(result) {
 	var ean = objectPath.get(result, "ItemAttributes.0.EAN.0");
 	var model = objectPath.get(result, "ItemAttributes.0.Model.0");
 	var productGroup = objectPath.get(result, "ItemAttributes.0.ProductGroup.0");
+	var category = objectPath.get(result, "ItemAttributes.0.Binding.0");
+	var manufacturer = objectPath.get(result, "ItemAttributes.0.Manufacturer.0");
+	var upc = objectPath.get(result, "ItemAttributes.0.UPC.0");
+	var sku = objectPath.get(result, "ItemAttributes.0.SKU.0");
+	var salesRank = objectPath.get(result, "SalesRank.0");
 
 	var lowestNewPrice = {
 		"amount": objectPath.get(result, "OfferSummary.0.LowestNewPrice.0.Amount.0"),
@@ -140,7 +145,12 @@ exports.extractAmazonItem = function(result) {
 		  "thirdPartyNewPrice": thirdPartyNewPrice,
 		  "thirdPartyUsedPrice": thirdPartyUsedPrice
 		},
-		"currencyCode": currencyCode
+		"currencyCode": currencyCode,
+		"category": category,
+		"manufacturer": manufacturer,
+		"upc": upc,
+		"sku": sku,
+		"salesRank": SalesRank
 	};
 
 	return item;

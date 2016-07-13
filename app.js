@@ -713,15 +713,12 @@ function receivedPostback(event) {
                           responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
                           sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
 
-                          // // Query products
-                          // var Product = Parse.Object.extend("Product");
-                          // var query = new Parse.Query(Product);
-                          // query.equalTo("objectId", priceAlert.get("product").id);
-                          // return query.find();
-
-                          var product = priceAlert.get("product");
-                          product.imcrement("totalNumberTrackedCtr");
-                          return product.save();
+                          // Query products
+                          var Product = Parse.Object.extend("Product");
+                          var query = new Parse.Query(Product);
+                          query.equalTo("objectId", priceAlert.get("product").id);
+                          console.log("TEST>>>>> " + priceAlert.get("product".id));
+                          return query.find();
                         } else {
                           // Inform the user that the price alert has been updated
                           responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');

@@ -1522,6 +1522,21 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
         callSendAPI(messageData);
       }
 
+      // Inform the user about the number of price watches he/she is seeing
+      var text = gt.dgettext(parseUserLanguage, 'Price watches %s to %s:');
+      var from = pageNumber === 1 ? 1 : (pageNumber * 10) + 1;
+      var to = results.length > 10 ? from + 10 : from + results.length - 1;
+      var messageData = {
+        recipient: {
+          id: recipientId
+        },
+        message: {
+          text: vsprintf(text, [from, to]);
+        }
+      };
+
+      callSendAPI(messageData);
+
       for (var i = 0; i<results.length; i++) {
 
         // Prevent showing more than 10 price alerts

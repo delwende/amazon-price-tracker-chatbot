@@ -1454,7 +1454,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   var query = new Parse.Query(PriceAlert);
   query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
   query.equalTo("active", true);
-  query.limit(10); // Limit number of results to 10
+  query.limit(11); // Limit number of results to 11
   query.skip(priceAlertsToSkip);
   query.include("product");
   query.include("currentPrice");
@@ -1514,7 +1514,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
         }];
 
         // Check if "Show more price alerts" button has to be present
-        if (i % 9 === 0) {
+        if (results.length > 10 && (i === 1 || i % 11 === 0)) {
           buttons.push({
             type: "postback",
             title: gt.dgettext(parseUserLanguage, 'Show more price watches'),

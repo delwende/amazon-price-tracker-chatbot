@@ -788,7 +788,7 @@ function receivedPostback(event) {
               break;
 
             case 'listPriceWatches':
-              var pageNumber = json.entities.pageNumber;
+              var pageNumber = Number(json.entities.pageNumber);
 
               sendListPriceWatchesGenericMessage(senderID, user, pageNumber);
               break;
@@ -868,28 +868,6 @@ function receivedPostback(event) {
       }
     }
   });
-}
-
-/*
- * Send a message with an using the Send API.
- *
- */
-function sendImageMessage(recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "image",
-        payload: {
-          url: "http://i.imgur.com/zYIlgBl.png"
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
 }
 
 /*
@@ -1468,7 +1446,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
   var priceAlerts;
 
-  var priceAlertsToSkip = pageNumber === 1 ? 0 : (pageNumber * 10) - 10; // -10, because at the first page, 0 price alerts have to be skipped
+  var priceAlertsToSkip = pageNumber === 1 ? 0 : ((pageNumber * 10) - 10); // -10, because at the first page, 0 price alerts have to be skipped
 
   // Query price alert
   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1477,7 +1455,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
   query.equalTo("active", true);
   query.limit(10); // Limit number of results to 10
-  query.skip(priceAlertsToSkip); // Number of first results to skip
+  query.skip(priceAlertsToSkip);
   query.include("product");
   query.include("currentPrice");
   query.find().then(function(results) {
@@ -1533,7 +1511,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
             }
         }];
 
-        // Check if "Show more price watches" button has to be present
+        // Check if "Show more price alerts" button has to be present
         if (i % 9 === 0) {
           buttons.push({
             type: "postback",
@@ -1541,6 +1519,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
             payload: JSON.stringify({
               "intent": "listPriceWatches",
               "entities": {
+                "priceAlertObjectId": priceAlert.id,
                 "pageNumber": pageNumber + 1
               }
             });

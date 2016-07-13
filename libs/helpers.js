@@ -91,10 +91,10 @@ function stringContainsNumber(string) {
 }
 
 /*
- * Extracts and returns Amazon item elements from Item Search/Lookup result.
- *
+ * Extracts and returns Amazon item elements from Item Search/Lookup result. If the extended
+ * parameter is set to true, an extended item result (with more item elements) will be returned.
  */
-exports.extractAmazonItem = function(result) {
+exports.extractAmazonItem = function(result, extended) {
 	var asin = objectPath.get(result, "ASIN.0");
 	var detailPageUrl = objectPath.get(result, "DetailPageURL.0");
 	var imageUrl = objectPath.coalesce(result, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
@@ -132,26 +132,43 @@ exports.extractAmazonItem = function(result) {
 
 	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
 
-	var item = {
-		"asin": asin,
-		"detailPageUrl": detailPageUrl,
-		"imageUrl": imageUrl,
-		"title": title,
-		"ean": ean,
-		"model": model,
-		"productGroup": productGroup,
-		"price": {
-		  "amazonPrice": amazonPrice,
-		  "thirdPartyNewPrice": thirdPartyNewPrice,
-		  "thirdPartyUsedPrice": thirdPartyUsedPrice
-		},
-		"currencyCode": currencyCode,
-		"category": category,
-		"manufacturer": manufacturer,
-		"upc": upc,
-		"sku": sku,
-		"salesRank": SalesRank
-	};
+	// Check if extended item result is desired or not
+	var item;
+	if (extended) {
+		item = {
+			"asin": asin,
+			"detailPageUrl": detailPageUrl,
+			"imageUrl": imageUrl,
+			"title": title,
+			"ean": ean,
+			"model": model,
+			"productGroup": productGroup,
+			"price": {
+			  "amazonPrice": amazonPrice,
+			  "thirdPartyNewPrice": thirdPartyNewPrice,
+			  "thirdPartyUsedPrice": thirdPartyUsedPrice
+			},
+			"currencyCode": currencyCode,
+			"category": category,
+			"manufacturer": manufacturer,
+			"upc": upc,
+			"sku": sku,
+			"salesRank": SalesRank
+		};
+	} else {
+		item = {
+			"asin": asin,
+			"detailPageUrl": detailPageUrl,
+			"imageUrl": imageUrl,
+			"title": title,
+			"price": {
+			  "amazonPrice": amazonPrice,
+			  "thirdPartyNewPrice": thirdPartyNewPrice,
+			  "thirdPartyUsedPrice": thirdPartyUsedPrice
+			},
+			"currencyCode": currencyCode,
+		};
+	}
 
 	return item;
 };

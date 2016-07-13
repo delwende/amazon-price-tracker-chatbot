@@ -94,7 +94,7 @@ function stringContainsNumber(string) {
 * Extracts and returns Amazon item elements from Item Search/Lookup result.
 *
 */
-exports.extractAmazonItem = function(result) {
+exports.extractAmazonItem = function(result, fullItem) {
 	var asin = objectPath.get(result, "ASIN.0");
 	var detailPageUrl = objectPath.get(result, "DetailPageURL.0");
 	var imageUrl = objectPath.coalesce(result, ["LargeImage.0.URL.0", "MediumImage.0.URL.0", "SmallImage.0.URL.0"], ""); // Get the first non-undefined value
@@ -133,7 +133,7 @@ exports.extractAmazonItem = function(result) {
 	var currencyCode = lowestNewPrice.currencyCode || lowestUsedPrice.currencyCode || offer.currencyCode;
 
 	var item;
-	if (false) {
+	if (fullItem) {
 		item = {
 			"asin": asin,
 			"detailPageUrl": detailPageUrl,
@@ -160,6 +160,7 @@ exports.extractAmazonItem = function(result) {
 			"detailPageUrl": detailPageUrl,
 			"imageUrl": imageUrl,
 			"title": title,
+			"ean": ean,
 			"price": {
 				"amazonPrice": amazonPrice,
 				"thirdPartyNewPrice": thirdPartyNewPrice,

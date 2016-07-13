@@ -503,21 +503,25 @@ function receivedPostback(event) {
                  idType: 'ASIN',
                  itemId: item.asin
                 }).then(function(results) {
-                 // console.log(JSON.stringify(results));
+                  // console.log(JSON.stringify(results));
+                  var result = results[0];
 
-                 var item = helpers.extractAmazonItem(results[0]);
+                  var item = helpers.extractAmazonItem(result, true);
 
-                 // Save product to the Backend
-                 var Product = Parse.Object.extend("Product");
-                 product = new Product();
+                  // Save product to the Backend
+                  var Product = Parse.Object.extend("Product");
+                  product = new Product();
 
-                 product.set("asin", item.asin);
-                 product.set("imageUrl", item.imageUrl);
-                 product.set("ean", item.ean);
-                 product.set("model", item.model);
-                 product.set("totalNumberTrackedCtr", 0);
+                  product.set("asin", item.asin);
+                  product.set("imageUrl", item.imageUrl);
+                  product.set("ean", item.ean);
+                  product.set("model", item.model);
+                  product.set("totalNumberTrackedCtr", 0);
 
-                 return product.save();
+                  return product.save();
+                }).catch(function(err) {
+                 console.log(err);
+                });
 
                 // var product;
                 //
@@ -539,7 +543,7 @@ function receivedPostback(event) {
                 //   // Save product to the Backend
                 //   var Product = Parse.Object.extend("Product");
                 //   product = new Product();
-                //
+                // 
                 //   product.set("asin", item.asin);
                 //   product.set("imageUrl", item.imageUrl);
                 //   product.set("ean", item.ean);
@@ -787,7 +791,7 @@ function receivedPostback(event) {
               }).then(function(results) {
                   var result = results[0];
 
-                  var item = helpers.extractAmazonItem(result);
+                  var item = helpers.extractAmazonItem(result, false);
 
                   // Query price alerts
                   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1131,7 +1135,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
 
-        var item = helpers.extractAmazonItem(result);
+        var item = helpers.extractAmazonItem(result, false);
         var price = item.price;
 
         var anyAmount = price.amazonPrice || price.thirdPartyNewPrice || price.thirdPartyUsedPrice; // To check if any price is available

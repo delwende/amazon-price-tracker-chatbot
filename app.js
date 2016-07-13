@@ -259,6 +259,7 @@ function receivedAuthentication(event) {
   sendTextMessage(senderID, "Authentication successful");
 }
 
+
 /*
  * Message Event
  *
@@ -861,6 +862,16 @@ function receivedPostback(event) {
 
               break;
 
+            case 'showProductDetails':
+              // Show product details to the user
+              responseText = gt.dgettext(parseUserLanguage, 'Product details for "%s":\n- Product group: %s\n- Category: %s\n- Manufacturer: %s\n' +
+                '- Model: %s\n- Locale: %s\n- EAN: %s\n- UPC: %s\n- SKU: %s\n- Sales rank: %s\n- Last updated scan: %s\n- Total people tracking: %s\n' +
+                '- Last tracked: %s');
+              sendTextMessage(senderID, vsprintf(responseText, ["test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test",
+                "test", "test",]));
+
+              break;
+
             default:
           }
         }
@@ -868,6 +879,28 @@ function receivedPostback(event) {
       }
     }
   });
+}
+
+/*
+ * Send a message with an using the Send API.
+ *
+ */
+function sendImageMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "image",
+        payload: {
+          url: "http://i.imgur.com/zYIlgBl.png"
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 /*
@@ -1107,6 +1140,17 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
               type: "web_url",
               url: item.detailPageUrl,
               title: gt.dgettext(parseUserLanguage, 'Buy')
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Show product details'),
+              payload: JSON.stringify({
+                "intent": "showProductDetails",
+                "entities": {
+                  "item": item,
+                  "awsLocale": parseUserAwsLocale,
+                  "validFrom": undefined
+                }
+              })
             }],
           });
         }

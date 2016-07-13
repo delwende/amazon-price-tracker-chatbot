@@ -670,7 +670,9 @@ function receivedPostback(event) {
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var query = new Parse.Query(PriceAlert);
                 query.equalTo("objectId", priceAlertObjectId);
+                query.include("product");
                 query.find().then(function(results) {
+                  console.log("Successfully retrieved " + results.length + " price alerts.");
 
                   if (results.length === 1) {
                     return results[0].save({
@@ -682,42 +684,66 @@ function receivedPostback(event) {
                 }).then(function(result) {
                   console.log('Updated price alert with objectId: ' + result.id);
 
-                  var priceTypeTitles = {
-                    "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
-                    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
-                    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
-                  };
+                  if (result) {
+                    var priceAlert = result;
 
-                  var priceTypeTitle = priceTypeTitles[priceType];
+                    var priceTypeTitles = {
+                      "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+                      "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+                      "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
+                    };
 
-                  // Update key-value pair with key user:senderID
-                  redisClient.hmset('user:' + senderID, {
-                    'transaction': '',
-                    'customPriceInputExamplePrice': '',
-                    'incompletePriceAlertItemTitle': '',
-                    'incompletePriceAlertObjectId': '',
-                    'incompletePriceAlertCreateAt': '',
-                    'incompletePriceAlertPriceType': '',
-                    'incompletePriceAlertAwsLocale': ''
-                  }, function(error, reply) {
-                    if (error) {
-                      console.log("Error: " + error);
-                    } else {
-                      console.log("Updated key-value pair created with key: user:" + senderID);
+                    var priceTypeTitle = priceTypeTitles[priceType];
 
-                      // Check if user has set desired price for the first time or changed it
-                      if (timeDiff !== undefined) {
-                        // Inform the user that the price alert is now active
-                        responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
-                        sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                    // Update key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'transaction': '',
+                      'customPriceInputExamplePrice': '',
+                      'incompletePriceAlertItemTitle': '',
+                      'incompletePriceAlertObjectId': '',
+                      'incompletePriceAlertCreateAt': '',
+                      'incompletePriceAlertPriceType': '',
+                      'incompletePriceAlertAwsLocale': ''
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
                       } else {
-                        // Inform the user that the price alert has been updated
-                        responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
-                        sendTextMessage(senderID, responseText);
-                      }
+                        console.log("Updated key-value pair created with key: user:" + senderID);
 
-                    }
-                  });
+                        // Check if user has set desired price for the first time or changed it
+                        if (timeDiff !== undefined) {
+                          // Inform the user that the price alert is now active
+                          responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
+                          sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                        } else {
+                          // Inform the user that the price alert has been updated
+                          responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
+                          sendTextMessage(senderID, responseText);
+                        }
+
+                        // Query products
+                        var Product = Parse.Object.extend("Product");
+                        var query = new Parse.Query(Product);
+                        query.equalTo("objectId", priceAlert.get("product").id);
+                        return query.find();
+
+                      }
+                    });
+                  }
+
+                }).then(function(results) {
+                  console.log("Successfully retrieved " + results.length + " products.");
+
+                  if (results.length === 1) {
+                    // Update product (total number tracked counter)
+                    var product = results[0];
+
+                    product.imcrement("totalNumberTrackedCtr");
+                    return product.save();
+                  }
+
+                }).then(function(result) {
+                  console.log('Updated product with objectId: ' + result.id);
 
                 }, function(error) {
                   console.log("Error: " + error.message);

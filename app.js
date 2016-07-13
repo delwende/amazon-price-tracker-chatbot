@@ -351,7 +351,7 @@ function receivedMessage(event) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
-                sendListPriceWatchesGenericMessage(senderID, user);
+                sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 var greetings = [
                   gt.dgettext(parseUserLanguage, 'Hi %s!'),
@@ -789,8 +789,9 @@ function receivedPostback(event) {
               break;
 
             case 'listPriceWatches':
-              sendListPriceWatchesGenericMessage(senderID, user);
+              var pageNumber = json.entities.pageNumber;
 
+              sendListPriceWatchesGenericMessage(senderID, user, pageNumber);
               break;
 
             case 'showSettings':
@@ -1458,14 +1459,17 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
  * Send a List Price Watches Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendListPriceWatchesGenericMessage(recipientId, user) {
+function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   var elements = [];
+  var buttons;
 
   var parseUserObjectId = user.parseUserObjectId;
   var parseUserAwsLocale = user.parseUserAwsLocale;
   var parseUserLanguage = user.parseUserLanguage;
 
   var priceAlerts;
+
+  var priceAlertsToSkip = pageNumber === 1 ? 0 : (pageNumber * 10) - 10; // -10, because at the first page, 0 price alerts have to be skipped
 
   // Query price alert
   var PriceAlert = Parse.Object.extend("PriceAlert");
@@ -1474,6 +1478,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
   query.equalTo("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
   query.equalTo("active", true);
   query.limit(10); // Limit number of results to 10
+  query.skip(priceAlertsToSkip);
   query.include("product");
   query.include("currentPrice");
   query.find().then(function(results) {
@@ -1509,32 +1514,45 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
 
         var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
 
+        buttons = [{
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Change desired price'),
+          payload: JSON.stringify({
+            "intent": "changeDesiredPrice",
+            "entities": {
+              "asin": product.get("asin"),
+              "priceAlertObjectId": priceAlert.id,
+              "priceAlertAwsLocale": priceAlert.get("awsLocale")
+            }
+          }, {
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
+          payload: JSON.stringify({
+            "intent": "disactivatePriceAlert",
+            "entities": {
+              "priceAlertObjectId": priceAlert.id
+            }
+        }];
+
+        // Check if "Show more price alerts" button has to be present
+        if (i % 9 === 0) {
+          buttons.push({
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Show more price watches'),
+            payload: JSON.stringify({
+              "intent": "listPriceWatches",
+              "entities": {
+                "pageNumber": pageNumber + 1
+              }
+            });
+        }
+
         elements.push({
           title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
           subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted]),
           item_url: "",
           image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
-          buttons: [{
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Change desired price'),
-            payload: JSON.stringify({
-              "intent": "changeDesiredPrice",
-              "entities": {
-                "asin": product.get("asin"),
-                "priceAlertObjectId": priceAlert.id,
-                "priceAlertAwsLocale": priceAlert.get("awsLocale")
-              }
-            })
-          }, {
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Delete price watch'),
-            payload: JSON.stringify({
-              "intent": "disactivatePriceAlert",
-              "entities": {
-                "priceAlertObjectId": priceAlert.id
-              }
-            })
-          }],
+          buttons: buttons,
         });
       }
 
@@ -1565,11 +1583,11 @@ function sendListPriceWatchesGenericMessage(recipientId, user) {
             '\[product name\], e.g. "iphone 6".')
         }
       };
-      
+
       callSendAPI(messageData);
     }
 
-    
+
   }, function(error) {
     console.log("Error: " + error);
   });

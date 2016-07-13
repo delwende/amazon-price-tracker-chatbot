@@ -1509,33 +1509,37 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
       // Inform the user that his/her price watches are shown below (only when first page of results is shown)
       if (pageNumber === 1) {
+        var text = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
+        'the current price for any of the products you are watching falls below your desired price.\n\n Price watches %s ' +
+        'to %s:');
+        var from = 1;
+        var to = results.length > 10 ? 10 : results.length;
         var messageData = {
           recipient: {
             id: recipientId
           },
           message: {
-            text: gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
-            'the current price for any of the products you are watching falls below your desired price.')
+            text: vsprintf(text, [from, to])
           }
         };
 
         callSendAPI(messageData);
       }
 
-      // Inform the user about the number of price watches shown below
-      var text = gt.dgettext(parseUserLanguage, 'Price watches %s to %s:');
-      var from = pageNumber === 1 ? 1 : (pageNumber * 10) + 1;
-      var to = results.length > 10 ? from + 10 : from + results.length - 1;
-      var messageData = {
-        recipient: {
-          id: recipientId
-        },
-        message: {
-          text: vsprintf(text, [from, to])
-        }
-      };
-
-      callSendAPI(messageData);
+      // // Inform the user about the number of price watches shown below
+      // var text = gt.dgettext(parseUserLanguage, 'Price watches %s to %s:');
+      // var from = pageNumber === 1 ? 1 : (pageNumber * 10) + 1;
+      // var to = results.length > 10 ? from + 10 : from + results.length - 1;
+      // var messageData = {
+      //   recipient: {
+      //     id: recipientId
+      //   },
+      //   message: {
+      //     text: vsprintf(text, [from, to])
+      //   }
+      // };
+      //
+      // callSendAPI(messageData);
 
       for (var i = 0; i<results.length; i++) {
 

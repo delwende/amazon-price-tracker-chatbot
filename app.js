@@ -789,7 +789,7 @@ function receivedPostback(event) {
               break;
 
             case 'listPriceWatches':
-              var pageNumber = Number(json.entities.pageNumber);
+              var pageNumber = parseInt(json.entities.pageNumber);
 
               sendListPriceWatchesGenericMessage(senderID, user, pageNumber);
               break;

@@ -514,6 +514,9 @@ function receivedPostback(event) {
                   var productGroup = product.get("productGroup");
                   productGroup[parseUserAwsLocale] = item.productGroup;
                   product.set("productGroup", productGroup);
+
+                  // Update total number tracked counter
+                  product.increment("totalNumberTrackedCtr");
                 } else {
                   // Save product to the Backend
                   var Product = Parse.Object.extend("Product");
@@ -523,6 +526,7 @@ function receivedPostback(event) {
                   product.set("imageUrl", item.imageUrl);
                   product.set("ean", item.ean);
                   product.set("model", item.model);
+                  product.set("totalNumberTrackedCtr", 1);
 
                   // Save product title to JSON object using user locale as key
                   var title = {};

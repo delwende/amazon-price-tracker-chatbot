@@ -1522,7 +1522,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
         callSendAPI(messageData);
       }
 
-      // Inform the user about the number of price watches he/she is seeing
+      // Inform the user about the number of price watches shown below
       var text = gt.dgettext(parseUserLanguage, 'Price watches %s to %s:');
       var from = pageNumber === 1 ? 1 : (pageNumber * 10) + 1;
       var to = results.length > 10 ? from + 10 : from + results.length - 1;
@@ -1531,7 +1531,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           id: recipientId
         },
         message: {
-          text: vsprintf(text, [from, to]);
+          text: vsprintf(text, [from, to])
         }
       };
 

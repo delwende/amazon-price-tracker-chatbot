@@ -1509,7 +1509,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
               "intent": "disactivatePriceAlert",
               "entities": {
                 "priceAlertObjectId": priceAlert.id
-              }
+            }
           }
         }];
 

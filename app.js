@@ -484,99 +484,124 @@ function receivedPostback(event) {
           switch (intent) {
 
             case 'activatePriceAlert':
+
               var item = json.entities.item;
               var awsLocale = json.entities.awsLocale;
 
-              // Inform the user about the item he/she is setting a price alert
-              responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
-              sendTextMessage(senderID, sprintf(responseText, item.title));
+              // Lookup item
+              amazonClient.itemLookup({
+                searchIndex: 'All',
+                responseGroup: 'ItemAttributes,OfferFull,Images',
+                idType: 'ASIN',
+                itemId: asin,
+                domain: config.get('awsLocale_' + awsLocale_) // Set Product Advertising API locale according to user AWS locale (when user searched product)
+              }).then(function(results) {
+                  var result = results[0];
 
-              // Check if the product already exists on the Backend
-              var Product = Parse.Object.extend("Product");
-              var query = new Parse.Query(Product);
-              query.equalTo("asin", item.asin);
-              query.find().then(function(results) {
-                console.log("Successfully retrieved " + results.length + " products.");
+                  var item = helpers.extractAmazonItem(result, true);
 
-                var product;
-                
-                if (results.length === 1) {
-                  product = results[0];
-                
-                  var title = product.get("title");
-                  title[parseUserAwsLocale] = item.title;
-                  product.set("title", title);
+                  // Inform the user about the item he/she is setting a price alert
+                  responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
+                  sendTextMessage(senderID, sprintf(responseText, item.title));
 
-                  var productGroup = product.get("productGroup");
-                  productGroup[parseUserAwsLocale] = item.productGroup;
-                  product.set("productGroup", productGroup);
                   
-                } else {
-                  // Save product to the Backend
-                  var Product = Parse.Object.extend("Product");
-                  product = new Product();
-                
-                  product.set("asin", item.asin);
-                  product.set("imageUrl", item.imageUrl);
-                  product.set("ean", item.ean);
-                  product.set("model", item.model);
-                  product.set("totalNumberTrackedCtr", 0);
-                
-                  // Save product title to JSON object using user locale as key
-                  var title = {};
-                  title[parseUserAwsLocale] = item.title;
-                  product.set("title", title);
-                
-                  // Save product group to JSON object using user locale as key
-                  var productGroup = {};
-                  productGroup[parseUserAwsLocale] = item.productGroup;
-                  product.set("productGroup", productGroup);
-                }
-                
-                return product.save();
-
-              }).then(function(result) {
-                var product = result;
-
-                // Save price
-                var Price = Parse.Object.extend("Price");
-                var price = new Price();
-
-                var amazonPrice = item.price.amazonPrice !== undefined ? Number(item.price.amazonPrice) : undefined; // Convert price from string to number
-                var thirdPartyNewPrice = item.price.thirdPartyNewPrice !== undefined ? Number(item.price.thirdPartyNewPrice) : undefined; // Convert price from string to number
-                var thirdPartyUsedPrice = item.price.thirdPartyUsedPrice !== undefined ? Number(item.price.thirdPartyUsedPrice) : undefined; // Convert price from string to number
-
-                price.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-                price.set("productId", product.id);
-                price.set("amazonPrice", amazonPrice);
-                price.set("thirdPartyNewPrice", thirdPartyNewPrice);
-                price.set("thirdPartyUsedPrice", thirdPartyUsedPrice);
-                price.set("awsLocale", awsLocale);
-
-                return price.save();
-
-              }).then(function(result) {
-                var price = result;
-
-                // Save price alert to the Backend
-                var PriceAlert = Parse.Object.extend("PriceAlert");
-                var priceAlert = new PriceAlert();
-
-                priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: price.get("product").objectId});
-                priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-                priceAlert.set("active", false);
-                priceAlert.set("awsLocale", awsLocale);
-                priceAlert.set("currentPrice", {__type: "Pointer", className: "Price", objectId: price.id});
-
-                return priceAlert.save();
-
-              }).then(function(result) {
-                var priceAlert = result;
-
-                sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
-              }, function(error) {
+              }).catch(function(error) {
                 console.log("Error: " + error);
               });
+
+              // var item = json.entities.item;
+              // var awsLocale = json.entities.awsLocale;
+              //
+              // // Inform the user about the item he/she is setting a price alert
+              // responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
+              // sendTextMessage(senderID, sprintf(responseText, item.title));
+              //
+              // // Check if the product already exists on the Backend
+              // var Product = Parse.Object.extend("Product");
+              // var query = new Parse.Query(Product);
+              // query.equalTo("asin", item.asin);
+              // query.find().then(function(results) {
+              //   console.log("Successfully retrieved " + results.length + " products.");
+              //
+              //   var product;
+              //
+              //   if (results.length === 1) {
+              //     product = results[0];
+              //
+              //     var title = product.get("title");
+              //     title[parseUserAwsLocale] = item.title;
+              //     product.set("title", title);
+              //
+              //     var productGroup = product.get("productGroup");
+              //     productGroup[parseUserAwsLocale] = item.productGroup;
+              //     product.set("productGroup", productGroup);
+              //
+              //   } else {
+              //     // Save product to the Backend
+              //     var Product = Parse.Object.extend("Product");
+              //     product = new Product();
+              //
+              //     product.set("asin", item.asin);
+              //     product.set("imageUrl", item.imageUrl);
+              //     product.set("ean", item.ean);
+              //     product.set("model", item.model);
+              //     product.set("totalNumberTrackedCtr", 0);
+              //
+              //     // Save product title to JSON object using user locale as key
+              //     var title = {};
+              //     title[parseUserAwsLocale] = item.title;
+              //     product.set("title", title);
+              //
+              //     // Save product group to JSON object using user locale as key
+              //     var productGroup = {};
+              //     productGroup[parseUserAwsLocale] = item.productGroup;
+              //     product.set("productGroup", productGroup);
+              //   }
+              //
+              //   return product.save();
+              //
+              // }).then(function(result) {
+              //   var product = result;
+              //
+              //   // Save price
+              //   var Price = Parse.Object.extend("Price");
+              //   var price = new Price();
+              //
+              //   var amazonPrice = item.price.amazonPrice !== undefined ? Number(item.price.amazonPrice) : undefined; // Convert price from string to number
+              //   var thirdPartyNewPrice = item.price.thirdPartyNewPrice !== undefined ? Number(item.price.thirdPartyNewPrice) : undefined; // Convert price from string to number
+              //   var thirdPartyUsedPrice = item.price.thirdPartyUsedPrice !== undefined ? Number(item.price.thirdPartyUsedPrice) : undefined; // Convert price from string to number
+              //
+              //   price.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
+              //   price.set("productId", product.id);
+              //   price.set("amazonPrice", amazonPrice);
+              //   price.set("thirdPartyNewPrice", thirdPartyNewPrice);
+              //   price.set("thirdPartyUsedPrice", thirdPartyUsedPrice);
+              //   price.set("awsLocale", awsLocale);
+              //
+              //   return price.save();
+              //
+              // }).then(function(result) {
+              //   var price = result;
+              //
+              //   // Save price alert to the Backend
+              //   var PriceAlert = Parse.Object.extend("PriceAlert");
+              //   var priceAlert = new PriceAlert();
+              //
+              //   priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: price.get("product").objectId});
+              //   priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+              //   priceAlert.set("active", false);
+              //   priceAlert.set("awsLocale", awsLocale);
+              //   priceAlert.set("currentPrice", {__type: "Pointer", className: "Price", objectId: price.id});
+              //
+              //   return priceAlert.save();
+              //
+              // }).then(function(result) {
+              //   var priceAlert = result;
+              //
+              //   sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
+              // }, function(error) {
+              //   console.log("Error: " + error);
+              // });
 
               break;
 
@@ -1131,7 +1156,8 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                 "intent": "activatePriceAlert",
                 "entities": {
                   "item": item,
-                  "awsLocale": parseUserAwsLocale,
+                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
+                  // product search and price alert activation
                   "validFrom": now // Time the element was created
                 }
               })

@@ -491,7 +491,7 @@ function receivedPostback(event) {
               // Lookup item
               amazonClient.itemLookup({
                 searchIndex: 'All',
-                responseGroup: 'ItemAttributes,OfferFull,Images',
+                responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
                 idType: 'ASIN',
                 itemId: item.asin,
                 domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
@@ -537,6 +537,10 @@ function receivedPostback(event) {
                       product.set("ean", item.ean);
                       product.set("model", item.model);
                       product.set("totalNumberTrackedCtr", 0);
+                      product.set("manufacturer", item.manufacturer);
+                      product.set("upc", item.upc);
+                      product.set("sku", item.sku);
+                      product.set("slaesRank", item.salesRank);
 
                       // Save product title to JSON object using user locale as key
                       var title = {};

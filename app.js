@@ -600,7 +600,7 @@ function receivedPostback(event) {
                     //
                     // sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
                   }, function(error) {
-                    console.log("Error: " + error);
+                    console.log("Error: " + error.message);
                   });
 
               // var item = json.entities.item;

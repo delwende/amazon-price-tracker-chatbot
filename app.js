@@ -517,16 +517,20 @@ function receivedPostback(event) {
                       product = results[0];
 
                       var title = product.get("title");
-                      title[awsLocale] = item.title;
-                      product.set("title", title);
-
                       var productGroup = product.get("productGroup");
-                      productGroup[awsLocale] = item.productGroup;
-                      product.set("productGroup", productGroup);
-
                       var category = product.get("category");
+                      var salesRank = product.get("salesRank");
+
+                      title[awsLocale] = item.title;
+                      productGroup[awsLocale] = item.productGroup;
                       category[awsLocale] = item.category;
+                      salesRank[awsLocale] = item.salesRank;
+
+                      product.set("title", title);
+                      product.set("productGroup", productGroup);
                       product.set("category", category);
+                      product.set("salesRank", salesRank);
+
                     } else {
                       // Save product to the Backend
                       var Product = Parse.Object.extend("Product");
@@ -540,22 +544,21 @@ function receivedPostback(event) {
                       product.set("manufacturer", item.manufacturer);
                       product.set("upc", item.upc);
                       product.set("sku", item.sku);
-                      product.set("salesRank", item.salesRank);
 
-                      // Save product title to JSON object using user locale as key
                       var title = {};
-                      title[awsLocale] = item.title;
-                      product.set("title", title);
-
-                      // Save product group to JSON object using user locale as key
                       var productGroup = {};
-                      productGroup[awsLocale] = item.productGroup;
-                      product.set("productGroup", productGroup);
-
-                      // Save category to JSON object using user locale as key
                       var category = {};
+                      var salesRank = {};
+
+                      title[awsLocale] = item.title;
+                      productGroup[awsLocale] = item.productGroup;
                       category[awsLocale] = item.category;
+                      salesRank[awsLocale] = item.salesRank;
+
+                      product.set("title", title);
+                      product.set("productGroup", productGroup);
                       product.set("category", category);
+                      product.set("salesRank", salesRank);
                     }
 
                     return product.save();

@@ -493,8 +493,8 @@ function receivedPostback(event) {
                 searchIndex: 'All',
                 responseGroup: 'ItemAttributes,OfferFull,Images',
                 idType: 'ASIN',
-                itemId: asin,
-                domain: config.get('awsLocale_' + awsLocale_) // Set Product Advertising API locale according to user AWS locale (when user searched product)
+                itemId: item.asin,
+                domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
               }).then(function(results) {
                   var result = results[0];
 
@@ -504,7 +504,7 @@ function receivedPostback(event) {
                   responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
                   sendTextMessage(senderID, sprintf(responseText, item.title));
 
-                  
+
               }).catch(function(error) {
                 console.log("Error: " + error);
               });

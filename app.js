@@ -540,7 +540,7 @@ function receivedPostback(event) {
                       product.set("manufacturer", item.manufacturer);
                       product.set("upc", item.upc);
                       product.set("sku", item.sku);
-                      product.set("slaesRank", item.salesRank);
+                      product.set("salesRank", item.salesRank);
 
                       // Save product title to JSON object using user locale as key
                       var title = {};

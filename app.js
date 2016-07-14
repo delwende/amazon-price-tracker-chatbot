@@ -498,12 +498,63 @@ function receivedPostback(event) {
               }).then(function(results) {
                   var result = results[0];
 
-                  var item = helpers.extractAmazonItem(result, true);
+                  item = helpers.extractAmazonItem(result, true);
 
                   // Inform the user about the item he/she is setting a price alert
                   responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
                   sendTextMessage(senderID, sprintf(responseText, item.title));
 
+                  // Check if the product already exists on the Backend
+                  var Product = Parse.Object.extend("Product");
+                  var query = new Parse.Query(Product);
+                  query.equalTo("asin", item.asin);
+                  query.find().then(function(results) {
+                    console.log("Successfully retrieved " + results.length + " products.");
+
+                    var product;
+
+                    if (results.length === 1) {
+                      product = results[0];
+
+                      var title = product.get("title");
+                      title[awsLocale] = item.title;
+                      product.set("title", title);
+
+                      var productGroup = product.get("productGroup");
+                      productGroup[awsLocale] = item.productGroup;
+                      product.set("productGroup", productGroup);
+
+                      var category = product.get("category");
+                      category[awsLocale] = item.category;
+                      product.set("category", category);
+                    } else {
+                      // Save product to the Backend
+                      var Product = Parse.Object.extend("Product");
+                      product = new Product();
+
+                      product.set("asin", item.asin);
+                      product.set("imageUrl", item.imageUrl);
+                      product.set("ean", item.ean);
+                      product.set("model", item.model);
+                      product.set("totalNumberTrackedCtr", 0);
+
+                      // Save product title to JSON object using user locale as key
+                      var title = {};
+                      title[awsLocale] = item.title;
+                      product.set("title", title);
+
+                      // Save product group to JSON object using user locale as key
+                      var productGroup = {};
+                      productGroup[awsLocale] = item.productGroup;
+                      product.set("productGroup", productGroup);
+
+                      // Save category to JSON object using user locale as key
+                      var category = {};
+                      category[awsLocale] = item.category;
+                      product.set("category", category);
+                    }
+
+                    return product.save();
 
               }).catch(function(error) {
                 console.log("Error: " + error);
@@ -599,9 +650,9 @@ function receivedPostback(event) {
               //   var priceAlert = result;
               //
               //   sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
-              // }, function(error) {
-              //   console.log("Error: " + error);
-              // });
+              }, function(error) {
+                console.log("Error: " + error);
+              });
 
               break;
 

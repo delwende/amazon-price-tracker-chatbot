@@ -259,7 +259,6 @@ function receivedAuthentication(event) {
   sendTextMessage(senderID, "Authentication successful");
 }
 
-
 /*
  * Message Event
  *
@@ -607,96 +606,6 @@ function receivedPostback(event) {
                     console.log("Error: " + error.message);
                   });
 
-              // var item = json.entities.item;
-              // var awsLocale = json.entities.awsLocale;
-              //
-              // // Inform the user about the item he/she is setting a price alert
-              // responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
-              // sendTextMessage(senderID, sprintf(responseText, item.title));
-              //
-              // // Check if the product already exists on the Backend
-              // var Product = Parse.Object.extend("Product");
-              // var query = new Parse.Query(Product);
-              // query.equalTo("asin", item.asin);
-              // query.find().then(function(results) {
-              //   console.log("Successfully retrieved " + results.length + " products.");
-              //
-              //   var product;
-              //
-              //   if (results.length === 1) {
-              //     product = results[0];
-              //
-              //     var title = product.get("title");
-              //     title[parseUserAwsLocale] = item.title;
-              //     product.set("title", title);
-              //
-              //     var productGroup = product.get("productGroup");
-              //     productGroup[parseUserAwsLocale] = item.productGroup;
-              //     product.set("productGroup", productGroup);
-              //
-              //   } else {
-              //     // Save product to the Backend
-              //     var Product = Parse.Object.extend("Product");
-              //     product = new Product();
-              //
-              //     product.set("asin", item.asin);
-              //     product.set("imageUrl", item.imageUrl);
-              //     product.set("ean", item.ean);
-              //     product.set("model", item.model);
-              //     product.set("totalNumberTrackedCtr", 0);
-              //
-              //     // Save product title to JSON object using user locale as key
-              //     var title = {};
-              //     title[parseUserAwsLocale] = item.title;
-              //     product.set("title", title);
-              //
-              //     // Save product group to JSON object using user locale as key
-              //     var productGroup = {};
-              //     productGroup[parseUserAwsLocale] = item.productGroup;
-              //     product.set("productGroup", productGroup);
-              //   }
-              //
-              //   return product.save();
-              //
-              // }).then(function(result) {
-              //   var product = result;
-              //
-              //   // Save price
-              //   var Price = Parse.Object.extend("Price");
-              //   var price = new Price();
-              //
-              //   var amazonPrice = item.price.amazonPrice !== undefined ? Number(item.price.amazonPrice) : undefined; // Convert price from string to number
-              //   var thirdPartyNewPrice = item.price.thirdPartyNewPrice !== undefined ? Number(item.price.thirdPartyNewPrice) : undefined; // Convert price from string to number
-              //   var thirdPartyUsedPrice = item.price.thirdPartyUsedPrice !== undefined ? Number(item.price.thirdPartyUsedPrice) : undefined; // Convert price from string to number
-              //
-              //   price.set("product", {__type: "Pointer", className: "Product", objectId: product.id});
-              //   price.set("productId", product.id);
-              //   price.set("amazonPrice", amazonPrice);
-              //   price.set("thirdPartyNewPrice", thirdPartyNewPrice);
-              //   price.set("thirdPartyUsedPrice", thirdPartyUsedPrice);
-              //   price.set("awsLocale", awsLocale);
-              //
-              //   return price.save();
-              //
-              // }).then(function(result) {
-              //   var price = result;
-              //
-              //   // Save price alert to the Backend
-              //   var PriceAlert = Parse.Object.extend("PriceAlert");
-              //   var priceAlert = new PriceAlert();
-              //
-              //   priceAlert.set("product", {__type: "Pointer", className: "Product", objectId: price.get("product").objectId});
-              //   priceAlert.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
-              //   priceAlert.set("active", false);
-              //   priceAlert.set("awsLocale", awsLocale);
-              //   priceAlert.set("currentPrice", {__type: "Pointer", className: "Price", objectId: price.id});
-              //
-              //   return priceAlert.save();
-              //
-              // }).then(function(result) {
-              //   var priceAlert = result;
-              //
-              //   sendSetPriceTypeGenericMessage(senderID, user, item, priceAlert);
               }, function(error) {
                 console.log("Error: " + error);
               });
@@ -719,11 +628,11 @@ function receivedPostback(event) {
 
                 if (results.length === 1) {
                   return results[0].save({
-                    priceType: priceType,
-                    priceWhenTracked: Number(item.price[priceType]) // Convert price from string to number
+                    priceType: priceType
                   });
                 } else {
                 }
+
               }).then(function(result) {
                 console.log('Updated price alert with objectId: ' + result.id);
 
@@ -787,6 +696,7 @@ function receivedPostback(event) {
                 var PriceAlert = Parse.Object.extend("PriceAlert");
                 var query = new Parse.Query(PriceAlert);
                 query.equalTo("objectId", priceAlertObjectId);
+                query.include("product");
                 query.find().then(function(results) {
 
                   if (results.length === 1) {
@@ -796,45 +706,56 @@ function receivedPostback(event) {
                     });
                   } else {
                   }
+
                 }).then(function(result) {
                   console.log('Updated price alert with objectId: ' + result.id);
 
-                  var priceTypeTitles = {
-                    "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
-                    "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
-                    "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
-                  };
+                  if (result) {
+                    var priceTypeTitles = {
+                      "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+                      "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+                      "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
+                    };
 
-                  var priceTypeTitle = priceTypeTitles[priceType];
+                    var priceTypeTitle = priceTypeTitles[priceType];
 
-                  // Update key-value pair with key user:senderID
-                  redisClient.hmset('user:' + senderID, {
-                    'transaction': '',
-                    'customPriceInputExamplePrice': '',
-                    'incompletePriceAlertItemTitle': '',
-                    'incompletePriceAlertObjectId': '',
-                    'incompletePriceAlertCreateAt': '',
-                    'incompletePriceAlertPriceType': '',
-                    'incompletePriceAlertAwsLocale': ''
-                  }, function(error, reply) {
-                    if (error) {
-                      console.log("Error: " + error);
-                    } else {
-                      console.log("Updated key-value pair created with key: user:" + senderID);
-
-                      // Check if user has set desired price for the first time or changed it
-                      if (timeDiff !== undefined) {
-                        // Inform the user that the price alert is now active
-                        responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
-                        sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                    // Update key-value pair with key user:senderID
+                    redisClient.hmset('user:' + senderID, {
+                      'transaction': '',
+                      'customPriceInputExamplePrice': '',
+                      'incompletePriceAlertItemTitle': '',
+                      'incompletePriceAlertObjectId': '',
+                      'incompletePriceAlertCreateAt': '',
+                      'incompletePriceAlertPriceType': '',
+                      'incompletePriceAlertAwsLocale': ''
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
                       } else {
-                        // Inform the user that the price alert has been updated
-                        responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
-                        sendTextMessage(senderID, responseText);
-                      }
+                        console.log("Updated key-value pair created with key: user:" + senderID);
 
-                    }
-                  });
+                        // Check if user has set desired price the first time or changed it
+                        if (timeDiff !== undefined) {
+                          // Inform the user that the price alert is created
+                          responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
+                          sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+
+                          // Update product
+                          var product = result.get("product");
+                          product.increment("totalNumberTrackedCtr");
+                          return product.save();                          
+                        } else {
+                          // Inform the user that the price alert has been updated
+                          responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
+                          sendTextMessage(senderID, responseText);
+                        }
+
+                      }
+                    });
+                  }
+
+                }).then(function(result) {
+                  console.log('Updated product with objectId: ' + result.id);
 
                 }, function(error) {
                   console.log("Error: " + error.message);
@@ -985,12 +906,37 @@ function receivedPostback(event) {
               break;
 
             case 'showProductDetails':
-              // Show product details to the user
-              responseText = gt.dgettext(parseUserLanguage, 'Product details for "%s":\n- Product group: %s\n- Category: %s\n- Manufacturer: %s\n' +
-                '- Model: %s\n- Locale: %s\n- EAN: %s\n- UPC: %s\n- SKU: %s\n- Sales rank: %s\n- Last updated scan: %s\n- Total people tracking: %s\n' +
-                '- Last tracked: %s');
-              sendTextMessage(senderID, vsprintf(responseText, ["test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test",
-                "test", "test"]));
+
+              var item = json.entities.item;
+              var awsLocale = json.entities.awsLocale;
+
+              // Lookup item
+              amazonClient.itemLookup({
+                searchIndex: 'All',
+                responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
+                idType: 'ASIN',
+                itemId: item.asin,
+                domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
+              }).then(function(results) {
+                  var result = results[0];
+
+                  fullItem = helpers.extractAmazonItem(result, true);
+
+                  var title = fullItem.title;
+                  var asin = fullItem.asin;
+                  var productGroup = fullItem.productGroup;
+                  var category = fullItem.category;
+                  var manufacturer = fullItem.manufacturer;
+                  var model = fullItem.model;
+                  var locale = awsLocale;
+                  var ean = fullItem.ean;
+                  var upc = fullItem.upc;
+                  var sku = fullItem.sku;
+                  var salesRank = fullItem.salesRank;
+
+              }, function(error) {
+                console.log("Error: " + error);
+              });
 
               break;
 
@@ -1265,7 +1211,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
               title: gt.dgettext(parseUserLanguage, 'Buy')
             }, {
               type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Show product details'),
+              title: gt.dgettext(parseUserLanguage, 'Product details'),
               payload: JSON.stringify({
                 "intent": "showProductDetails",
                 "entities": {
@@ -1706,7 +1652,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           if (results.length > 10 && (i !== 0 && i % 9 === 0)) {
             buttons.push({
               type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Show more price watches'),
+              title: gt.dgettext(parseUserLanguage, 'More price watches'),
               payload: JSON.stringify({
                 "intent": "listPriceWatches",
                 "entities": {

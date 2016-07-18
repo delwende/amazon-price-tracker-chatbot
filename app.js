@@ -362,7 +362,7 @@ function receivedMessage(event) {
                 var greeting = helpers.randomElementFromArray(greetings);
                 sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
-                sendTextMessage(senderID, '');
+                sendSettingsGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
                 sendMenuGenericMessage(senderID, user);
               } else {
@@ -1738,6 +1738,7 @@ function sendMenuGenericMessage(recipientId, user) {
               payload: JSON.stringify({
                 "intent": "listPriceWatches",
                 "entities": {
+                  "pageNumber": 1
                 }
               })
             }, {

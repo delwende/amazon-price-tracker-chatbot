@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-07-18 13:20+0200\n"
-"PO-Revision-Date: 2016-07-18 13:21+0200\n"
+"PO-Revision-Date: 2016-07-18 19:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -334,7 +334,7 @@ msgstr "Amazon Deutschland"
 
 #: app.js:1894
 msgid "Amazon UK"
-msgstr "Amazon Vereinigtes Königreich"
+msgstr "Amazon UK"
 
 #: app.js:1904
 msgid "Amazon US"

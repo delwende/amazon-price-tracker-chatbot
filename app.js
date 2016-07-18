@@ -345,7 +345,7 @@ function receivedMessage(event) {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
                 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
-                ' 6"\n- "menu" to show all further available options');
+                ' 6"\n- "list" to show your price watches');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');

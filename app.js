@@ -309,13 +309,14 @@ function receivedMessage(event) {
         var responseText;
 
         // Check if user locale is supported
-        if (parseUserAwsLocale === 'fr_CA' || parseUserAwsLocale === 'zh_CN' || parseUserAwsLocale === 'zh_HK' || parseUserAwsLocale === 'fr_FR' ||
-            parseUserAwsLocale === 'de_DE' || parseUserAwsLocale === 'it_IT' || parseUserAwsLocale === 'ja_JP' || parseUserAwsLocale === 'es_ES'||
-            parseUserAwsLocale === 'en_GB' || parseUserAwsLocale === 'en_US') {
+        // if (parseUserAwsLocale === 'fr_CA' || parseUserAwsLocale === 'zh_CN' || parseUserAwsLocale === 'zh_HK' || parseUserAwsLocale === 'fr_FR' ||
+        //     parseUserAwsLocale === 'de_DE' || parseUserAwsLocale === 'it_IT' || parseUserAwsLocale === 'ja_JP' || parseUserAwsLocale === 'es_ES'||
+        //     parseUserAwsLocale === 'en_GB' || parseUserAwsLocale === 'en_US') {
+        if (parseUserAwsLocale === 'de_DE' || parseUserAwsLocale === 'en_GB' || parseUserAwsLocale === 'en_US') {
 
           if (messageText) {
 
-            // Check if user has started any transactions
+            // Check if user has any transactions started
             var transaction = user.transaction;
 
             if (transaction !== '') {
@@ -344,7 +345,7 @@ function receivedMessage(event) {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
                 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
-                ' 6"\n- "list" to show your price watches');
+                ' 6"\n- "menu" to show all further available options');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
@@ -499,11 +500,11 @@ function receivedPostback(event) {
 
                   fullItem = helpers.extractAmazonItem(result, true);
 
-                  // Inform the user about the item he/she is setting a price alert
-                  responseText = gt.dgettext(parseUserLanguage, 'Create Amazon price watch for: %s');
+                  // Inform the user about the item he/she is creating a price alert for
+                  responseText = gt.dgettext(parseUserLanguage, 'Create price watch for: %s');
                   sendTextMessage(senderID, sprintf(responseText, fullItem.title));
 
-                  // Check if the product already exists on the Backend
+                  // Query products
                   var Product = Parse.Object.extend("Product");
                   var query = new Parse.Query(Product);
                   query.equalTo("asin", fullItem.asin);
@@ -531,7 +532,7 @@ function receivedPostback(event) {
                       product.set("salesRank", salesRank);
 
                     } else {
-                      // Save product to the Backend
+                      // Save product
                       var Product = Parse.Object.extend("Product");
                       product = new Product();
 
@@ -585,7 +586,7 @@ function receivedPostback(event) {
                   }).then(function(result) {
                     var price = result;
 
-                    // Save price alert to the Backend
+                    // Save price alert
                     var PriceAlert = Parse.Object.extend("PriceAlert");
                     var priceAlert = new PriceAlert();
 
@@ -734,7 +735,8 @@ function receivedPostback(event) {
                       } else {
                         console.log("Updated key-value pair created with key: user:" + senderID);
 
-                        // Check if user has set desired price the first time or changed it
+                        // Check if user has set desired price for the first time or has updated
+                        // the price alert
                         if (timeDiff !== undefined) {
                           // Inform the user that the price alert is created
                           responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
@@ -767,7 +769,7 @@ function receivedPostback(event) {
             case 'disactivatePriceAlert':
               var priceAlertObjectId = json.entities.priceAlertObjectId;
 
-              // Check if price alert exists yet
+              // Query price alert
               var PriceAlert = Parse.Object.extend("PriceAlert");
               var query = new Parse.Query(PriceAlert);
               query.equalTo("objectId", priceAlertObjectId);
@@ -848,6 +850,7 @@ function receivedPostback(event) {
               switch (settingToChange) {
                 case 'awsLocale':
                   var awsLocale = json.entities.awsLocale;
+                  var shopLocaleTitle;
 
                   if (awsLocale !== undefined) {
                     // Update key-value pair with key user:senderID
@@ -859,15 +862,19 @@ function receivedPostback(event) {
                       } else {
                         console.log("Updated key-value pair created with key: user:" + senderID);
 
-                        // Inform the user about the successful language change
+                        // Inform the user that he/she has successfully changed the locale
+                        shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage,
+                          awsLocale);
                         responseText = gt.dgettext(parseUserLanguage, 'Changed shop locale to: %s');
-                        sendTextMessage(senderID, sprintf(responseText, awsLocale));
+                        sendTextMessage(senderID, sprintf(responseText, shopLocaleTitle));
                       }
                     });
                   } else {
                     // Inform the user about the currently set language
+                    shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage, 
+                      parseUserAwsLocale);
                     responseText = gt.dgettext(parseUserLanguage, 'Currently set shop locale: %s');
-                    sendTextMessage(senderID, sprintf(responseText, parseUserAwsLocale));
+                    sendTextMessage(senderID, sprintf(responseText, shopLocaleTitle));
 
                     sendChangeShopLocaleGenericMessage(senderID, user);
                   }
@@ -875,27 +882,32 @@ function receivedPostback(event) {
                   break;
 
                 case 'language':
-                  var language = json.entities.language;
+                  var languageShortCode = json.entities.languageShortCode;
+                  var languageTitle;
 
-                  if (language !== undefined) {
+                  if (languageShortCode !== undefined) {
                     // Update key-value pair with key user:senderID
                     redisClient.hmset('user:' + senderID, {
-                      'parseUserLanguage': language
+                      'parseUserLanguage': languageShortCode
                     }, function(error, reply) {
                       if (error) {
                         console.log("Error: " + error);
                       } else {
                         console.log("Updated key-value pair created with key: user:" + senderID);
 
-                        // Inform the user about the successful language change
+                        // Inform the user that he/she has sucessfully changed the language
+                        languageTitle = helpers.languageTitleByLanguageShortCode(parseUserLanguage,
+                          languageShortCode);
                         responseText = gt.dgettext(parseUserLanguage, 'Changed language to: %s');
-                        sendTextMessage(senderID, sprintf(responseText, language));
+                        sendTextMessage(senderID, sprintf(responseText, languageTitle));
                       }
                     });
                   } else {
                     // Inform the user about the currently set language
+                    languageTitle = helpers.languageTitleByLanguageShortCode(parseUserLanguage,
+                          parseUserLanguage);
                     responseText = gt.dgettext(parseUserLanguage, 'Currently set language: %s');
-                    sendTextMessage(senderID, sprintf(responseText, parseUserLanguage));
+                    sendTextMessage(senderID, sprintf(responseText, languageTitle));
 
                     sendChangeLanguageGenericMessage(senderID, user);
                   }
@@ -907,36 +919,36 @@ function receivedPostback(event) {
 
             case 'showProductDetails':
 
-              var item = json.entities.item;
-              var awsLocale = json.entities.awsLocale;
+              // var item = json.entities.item;
+              // var awsLocale = json.entities.awsLocale;
 
-              // Lookup item
-              amazonClient.itemLookup({
-                searchIndex: 'All',
-                responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
-                idType: 'ASIN',
-                itemId: item.asin,
-                domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
-              }).then(function(results) {
-                  var result = results[0];
+              // // Lookup item
+              // amazonClient.itemLookup({
+              //   searchIndex: 'All',
+              //   responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
+              //   idType: 'ASIN',
+              //   itemId: item.asin,
+              //   domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
+              // }).then(function(results) {
+              //     var result = results[0];
 
-                  fullItem = helpers.extractAmazonItem(result, true);
+              //     fullItem = helpers.extractAmazonItem(result, true);
 
-                  var title = fullItem.title;
-                  var asin = fullItem.asin;
-                  var productGroup = fullItem.productGroup;
-                  var category = fullItem.category;
-                  var manufacturer = fullItem.manufacturer;
-                  var model = fullItem.model;
-                  var locale = awsLocale;
-                  var ean = fullItem.ean;
-                  var upc = fullItem.upc;
-                  var sku = fullItem.sku;
-                  var salesRank = fullItem.salesRank;
+              //     var title = fullItem.title;
+              //     var asin = fullItem.asin;
+              //     var productGroup = fullItem.productGroup;
+              //     var category = fullItem.category;
+              //     var manufacturer = fullItem.manufacturer;
+              //     var model = fullItem.model;
+              //     var locale = awsLocale;
+              //     var ean = fullItem.ean;
+              //     var upc = fullItem.upc;
+              //     var sku = fullItem.sku;
+              //     var salesRank = fullItem.salesRank;
 
-              }, function(error) {
-                console.log("Error: " + error);
-              });
+              // }, function(error) {
+              //   console.log("Error: " + error);
+              // });
 
               break;
 
@@ -1156,23 +1168,20 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
     if (error) {
       console.log("Error: " + JSON.stringify(error));
 
-      // Inform the user that the search for his keywords did not match any products
+      // Inform the user that the search for this keywords did not match any products
       responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products. Try something like:\n- ' +
       'Using more general terms\n- Checking your spelling');
       sendTextMessage(recipientId, sprintf(responseText, keywords));
     } else {
       console.log("Successfully retrieved " + results.length + " items.");
 
-      // Inform the user that search results are displayed
+      // Inform the user that search results are displayed below
       responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
       sendTextMessage(recipientId, sprintf(responseText, keywords));
 
       // Show to the user the search results
       var elements = [];
       var responseText;
-
-      // Get current date and time
-      var now = moment();
 
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
@@ -1202,23 +1211,13 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                   "item": item,
                   "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
                   // product search and price alert activation
-                  "validFrom": now // Time the element was created
+                  "validFrom": moment() // Time the element was created
                 }
               })
             }, {
               type: "web_url",
               url: item.detailPageUrl,
-              title: gt.dgettext(parseUserLanguage, 'Buy')
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Product details'),
-              payload: JSON.stringify({
-                "intent": "showProductDetails",
-                "entities": {
-                  "item": item,
-                  "awsLocale": parseUserAwsLocale
-                }
-              })
+              title: gt.dgettext(parseUserLanguage, 'Product details')
             }],
           });
         }
@@ -1471,8 +1470,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Did you mean the following price? If so, click on it, otherwise try again to enter' +
-      'a valid price.'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price.'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1485,7 +1483,8 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
-            "priceType": priceType
+            "priceType": priceType,
+            "validFrom": moment() // Time the element was created
           }
         })
       }]
@@ -1493,8 +1492,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Which one of the following prices did you mean? Choose the correct one or ' +
-      'try again to enter a valid price.'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price.'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1507,7 +1505,8 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
-            "priceType": priceType
+            "priceType": priceType,
+            "validFrom": moment() // Time the element was created
           }
         })
       }, {
@@ -1522,7 +1521,8 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
-            "priceType": priceType
+            "priceType": priceType,
+            "validFrom": moment() // Time the element was created
           }
         })
       }]
@@ -1835,7 +1835,7 @@ function sendChangeLanguageGenericMessage(recipientId, user) {
                 "intent": "changeSettings",
                 "entities": {
                   "settingToChange": "language",
-                  "language": "de"
+                  "languageShortCode": "de"
                 }
               })
             }, {
@@ -1845,7 +1845,7 @@ function sendChangeLanguageGenericMessage(recipientId, user) {
                 "intent": "changeSettings",
                 "entities": {
                   "settingToChange": "language",
-                  "language": "en"
+                  "languageShortCode": "en"
                 }
               })
             }],

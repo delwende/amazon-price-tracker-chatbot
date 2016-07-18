@@ -25,21 +25,8 @@ describe("Helper functions", function() {
     	expect(formattedPrices).to.deep.equal(["€ 0,99", "€ 1,00", "€ 19,99", "€ 1.000,99", "€ 10.000,99"]);
     });
 
-    it("formats price by currency code (JPY)", function() {
-    	// var currencyCode = "JPY";
-
-    	// var prices = [99];
-    	// var formattedPrices = [];
-
-    	// for (var i = 0; i < prices.length; i++) {
-    	// 	formattedPrices[i] = helpers.formatPriceByCurrencyCode(prices[i], currencyCode);
-    	// }
-
-    	// expect(formattedPrices).to.deep.equal(["￥ 99"]);
-    });
-
-    it("formats price by user locale (EUR)", function() {
-      var userLocale = "de_DE";
+    it("formats price by currency code (GBP)", function() {
+      var userLocale = "en_GB";
 
       var prices = [99, 100, 1999, 100099, 1000099];
       var formattedPrices = [];
@@ -48,7 +35,20 @@ describe("Helper functions", function() {
         formattedPrices[i] = helpers.formatPriceByUserLocale(prices[i], userLocale);
       }
 
-      expect(formattedPrices).to.deep.equal(["€ 0,99", "€ 1,00", "€ 19,99", "€ 1.000,99", "€ 10.000,99"]);
+      expect(formattedPrices).to.deep.equal(["£ 0.99", "£ 1.00", "£ 19.99", "£ 1,000.99", "£ 10,000.99"]);
+    });
+
+    it("formats price by user locale (USD)", function() {
+      var userLocale = "en_US";
+
+      var prices = [99, 100, 1999, 100099, 1000099];
+      var formattedPrices = [];
+
+      for (var i = 0; i < prices.length; i++) {
+        formattedPrices[i] = helpers.formatPriceByUserLocale(prices[i], userLocale);
+      }
+
+      expect(formattedPrices).to.deep.equal(["$ 0.99", "$ 1.00", "$ 19.99", "$ 1,000.99", "$ 10,000.99"]);
     });
   });
 

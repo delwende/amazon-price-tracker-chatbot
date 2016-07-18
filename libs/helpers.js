@@ -1,9 +1,23 @@
 var objectPath = require('object-path'); // Access deep properties using a path
 var accounting = require('accounting'); // A simple and advanced number, money and currency formatting library
 var config = require('config');
+var fs = require('fs');
+var Gettext = require('node-gettext');
 
 // Configure accounting.js
 accounting.settings.currency.format = "%s %v"; // controls output: %s = symbol, %v = value/number
+
+// Create a new Gettext object
+var gt = new Gettext();
+
+// Add languages
+var langDe = fs.readFileSync("./locales/de.mo");
+var langEn = fs.readFileSync("./locales/en.mo");
+gt.addTextdomain("de", langDe);
+gt.addTextdomain("en", langEn);
+
+// Set default language
+gt.textdomain("en");
 
 /*
 * Returns a random element from an array.
@@ -188,4 +202,31 @@ exports.calculateDesiredPriceExamples = function(price) {
 	];
 
 	return examplePrices;
+};
+
+/*
+* Returns language title by language short code.
+*
+*/
+exports.languageTitleByLanguageShortCode = function(parseUserLanguage, languageShortCode) {
+	var supportedLanguages = {
+		"de": gt.dgettext(parseUserLanguage, 'German'),
+		"en": gt.dgettext(parseUserLanguage, 'English')
+	};
+
+	return languageShortCode !== undefined ? supportedLanguages[languageShortCode] : undefined;
+};
+
+/*
+* Returns shop locale title by shop locale short code.
+*
+*/
+exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopLocaleShortCode) {
+	var supportedShopLocaleTitles = {
+		"de_DE": gt.dgettext(parseUserLanguage, 'Amazon Germany'),
+		"en_GB": gt.dgettext(parseUserLanguage, 'Amazon UK'),
+		"en_US": gt.dgettext(parseUserLanguage, 'Amazon US')
+	};
+
+	return shopLocaleShortCode !== undefined ? supportedShopLocaleTitles[shopLocaleShortCode] : undefined;
 };

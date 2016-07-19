@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-18 13:20+0200\n"
-"PO-Revision-Date: 2016-07-18 13:21+0200\n"
+"POT-Creation-Date: 2016-07-18 21:30+0200\n"
+"PO-Revision-Date: 2016-07-18 23:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -36,13 +36,13 @@ msgid ""
 "prices drop, helping you decide when to buy. Tell me things like the "
 "following:\n"
 "- [product name], e.g. \"iphone  6\"\n"
-"- \"menu\" to show all further available options"
+"- \"list\" to show your price watches"
 msgstr ""
 "Hi there. So I monitor millions of products on Amazon and can alert you when "
 "prices drop, helping you decide when to buy. Tell me things like the "
 "following:\n"
 "- [product name], e.g. \"iphone  6\"\n"
-"- \"menu\" to show all further available options"
+"- \"list\" to show your price watches"
 
 #: app.js:350 app.js:351
 msgid "search "
@@ -292,7 +292,7 @@ msgstr ""
 msgid "Menu"
 msgstr "Menu"
 
-#: app.js:1732 app.js:1779 app.js:1828 app.js:1879
+#: app.js:1732 app.js:1780 app.js:1829 app.js:1880
 msgid "Please choose one of the following options"
 msgstr "Please choose one of the following options"
 
@@ -300,39 +300,39 @@ msgstr "Please choose one of the following options"
 msgid "Your Price Watches"
 msgstr "Your Price Watches"
 
-#: app.js:1745
+#: app.js:1746
 msgid "Change Settings"
 msgstr "Change Settings"
 
-#: app.js:1778
+#: app.js:1779
 msgid "Settings"
 msgstr "Settings"
 
-#: app.js:1784 app.js:1878
+#: app.js:1785 app.js:1879
 msgid "Change Shop Locale"
 msgstr "Change Shop Locale"
 
-#: app.js:1793 app.js:1827
+#: app.js:1794 app.js:1828
 msgid "Change Language"
 msgstr "Change Language"
 
-#: app.js:1833
+#: app.js:1834
 msgid "German"
 msgstr "German"
 
-#: app.js:1843
+#: app.js:1844
 msgid "English"
 msgstr "English"
 
-#: app.js:1884
+#: app.js:1885
 msgid "Amazon Germany"
 msgstr "Amazon Germany"
 
-#: app.js:1894
+#: app.js:1895
 msgid "Amazon UK"
 msgstr "Amazon UK"
 
-#: app.js:1904
+#: app.js:1905
 msgid "Amazon US"
 msgstr "Amazon US"
 
@@ -341,6 +341,19 @@ msgstr "Amazon US"
 #~ "when prices drop, helping you decide when to buy. Tell me things like the "
 #~ "following:\n"
 #~ "- [product name], e.g. \"iphone  6\"\n"
+#~ "- \"menu\" to show all further available options"
+#~ msgstr ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [product name], e.g. \"iphone  6\"\n"
+#~ "- \"menu\" to show all further available options"
+
+#~ msgid ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [product name], e.g. \"iphone  6\"\n"
 #~ "- \"menu\" to show further available options"
 #~ msgstr ""
 #~ "Hi there. So I monitor millions of products on Amazon and can alert you "
@@ -376,19 +389,6 @@ msgstr "Amazon US"
 #~ "- [product name], e.g. \"iphone  6\"\n"
 #~ "- \"list\" to show your price watches\n"
 #~ "- \"menu\" to show all available options"
-
-#~ msgid ""
-#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
-#~ "when prices drop, helping you decide when to buy. Tell me things like the "
-#~ "following:\n"
-#~ "- [product name], e.g. \"iphone  6\"\n"
-#~ "- \"list\" to show your price watches"
-#~ msgstr ""
-#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
-#~ "when prices drop, helping you decide when to buy. Tell me things like the "
-#~ "following:\n"
-#~ "- [product name], e.g. \"iphone  6\"\n"
-#~ "- \"list\" to show your price watches"
 
 #~ msgid ""
 #~ "Did you mean the following price? If so, click on it, otherwise try again "

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-18 13:20+0200\n"
-"PO-Revision-Date: 2016-07-18 19:42+0200\n"
+"POT-Creation-Date: 2016-07-18 21:30+0200\n"
+"PO-Revision-Date: 2016-07-18 23:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -36,13 +36,13 @@ msgid ""
 "prices drop, helping you decide when to buy. Tell me things like the "
 "following:\n"
 "- [product name], e.g. \"iphone  6\"\n"
-"- \"menu\" to show all further available options"
+"- \"list\" to show your price watches"
 msgstr ""
 "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine "
 "Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen "
 "Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n"
-"- [Produktname], z.B. “iPhone 6\"\n"
-"- “Menü” um alle weiteren verfügbaren Optionen anzuzeigen"
+"- [Produktname], z.B. “iphone 6\"\n"
+"- “Liste” um deine Preisverfolgungen anzuzeigen"
 
 #: app.js:350 app.js:351
 msgid "search "
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Menu"
 msgstr "Menü"
 
-#: app.js:1732 app.js:1779 app.js:1828 app.js:1879
+#: app.js:1732 app.js:1780 app.js:1829 app.js:1880
 msgid "Please choose one of the following options"
 msgstr "Bitte wähle eine der folgenden Optionen"
 
@@ -304,41 +304,54 @@ msgstr "Bitte wähle eine der folgenden Optionen"
 msgid "Your Price Watches"
 msgstr "Preisalarme anzeigen"
 
-#: app.js:1745
+#: app.js:1746
 msgid "Change Settings"
 msgstr "Einstellungen ändern"
 
-#: app.js:1778
+#: app.js:1779
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: app.js:1784 app.js:1878
+#: app.js:1785 app.js:1879
 msgid "Change Shop Locale"
 msgstr "Amazon-Shop wechseln"
 
-#: app.js:1793 app.js:1827
+#: app.js:1794 app.js:1828
 msgid "Change Language"
 msgstr "Sprache ändern"
 
-#: app.js:1833
+#: app.js:1834
 msgid "German"
 msgstr "Deutsch"
 
-#: app.js:1843
+#: app.js:1844
 msgid "English"
 msgstr "Englisch"
 
-#: app.js:1884
+#: app.js:1885
 msgid "Amazon Germany"
 msgstr "Amazon Deutschland"
 
-#: app.js:1894
+#: app.js:1895
 msgid "Amazon UK"
 msgstr "Amazon UK"
 
-#: app.js:1904
+#: app.js:1905
 msgid "Amazon US"
 msgstr "Amazon USA"
+
+#~ msgid ""
+#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
+#~ "when prices drop, helping you decide when to buy. Tell me things like the "
+#~ "following:\n"
+#~ "- [product name], e.g. \"iphone  6\"\n"
+#~ "- \"menu\" to show all further available options"
+#~ msgstr ""
+#~ "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine "
+#~ "Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen "
+#~ "Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n"
+#~ "- [Produktname], z.B. “iPhone 6\"\n"
+#~ "- “Menü” um alle weiteren verfügbaren Optionen anzuzeigen"
 
 #~ msgid ""
 #~ "Hi there. So I monitor millions of products on Amazon and can alert you "
@@ -380,19 +393,6 @@ msgstr "Amazon USA"
 #~ "- [Produktname], z.B. “iphone 6\"\n"
 #~ "- “Liste” um deine Preisverfolgungen anzuzeigen\n"
 #~ "- “Menü” um alle verfügbaren Optionen anzuzeigen"
-
-#~ msgid ""
-#~ "Hi there. So I monitor millions of products on Amazon and can alert you "
-#~ "when prices drop, helping you decide when to buy. Tell me things like the "
-#~ "following:\n"
-#~ "- [product name], e.g. \"iphone  6\"\n"
-#~ "- \"list\" to show your price watches"
-#~ msgstr ""
-#~ "Hallo. Ich beobachte Millionen von Produkte auf Amazon und kann dir eine "
-#~ "Benachrichtigung senden, wenn die Preise sinken, sodass du den optimalen "
-#~ "Kaufzeitpunkt erfährst. Tippe Dinge wie die folgenden:\n"
-#~ "- [Produktname], z.B. “iphone 6\"\n"
-#~ "- “Liste” um deine Preisverfolgungen anzuzeigen"
 
 #~ msgid ""
 #~ "Did you mean the following price? If so, click on it, otherwise try again "

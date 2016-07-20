@@ -56,14 +56,14 @@ html(lang='en')
         // Collect the nav links, forms, and other content for toggling
         #bs-example-navbar-collapse-1.collapse.navbar-collapse
           ul.nav.navbar-nav.navbar-right
-            li.hidden
-              a(href='#page-top')
-            li.page-scroll
-              a(href='#portfolio') Portfolio
-            li.page-scroll
-              a(href='#about') About
-            li.page-scroll
-              a(href='#contact') Contact
+            //- li.hidden
+            //-   a(href='#page-top')
+            //- li.page-scroll
+            //-   a(href='#portfolio') Portfolio
+            //- li.page-scroll
+            //-   a(href='#about') About
+            //- li.page-scroll
+            //-   a(href='#contact') Contact
         // /.navbar-collapse
       // /.container-fluid
     // Header
@@ -76,6 +76,9 @@ html(lang='en')
               span.name= title
               hr.star-light
               span.skills= subtitle
+              p
+                | The "Message Us" plugin takes the user directly to Messenger and into a thread with your Page.
+              .fb-messengermessageus(messenger_app_id='APP_ID', page_id='PAGE_ID', color='blue', size='standard')
     //- // Portfolio Grid Section
     //- section#portfolio
     //-   .container

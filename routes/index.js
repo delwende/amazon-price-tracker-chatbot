@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
     titleAndDescription: i18n.__('JackTheBot - Free Amazon Price Tracking Bot.'),
     title: i18n.__('JackTheBot'),
     subtitle: i18n.__('The World\'s First Amazon Price Tracking Bot'),
-    messageMe: i18n.__('We can now chat on Facebook Messenger! Wanna talk about the products whose prices you are interested on Amazon?')
+    messageMe: i18n.__('We can now chat on Facebook Messenger!\nWanna talk about the products whose prices you are interested on Amazon?')
   });
 });
 

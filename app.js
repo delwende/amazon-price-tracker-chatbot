@@ -34,7 +34,7 @@ const
   cookieParser = require('cookie-parser'),
   routes = require('./routes/index'),
   users = require('./routes/users'),
-  i18n = require("i18n"); // lightweight translation module with dynamic json storage
+  i18n = require('i18n'); // lightweight translation module with dynamic json storage
 
 var app = express();
 

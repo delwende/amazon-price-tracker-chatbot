@@ -1018,9 +1018,9 @@ function receivedPostback(event) {
                     gt.dgettext(parseUserLanguage, 'Product group: %s\nCategory: %s\nManufacturer: %s\nModel: %s')
                   ];
 
-                  sendTextMessage(senderID, vsprintf(text[2], [salesRank, salesRank, salesRank, salesRank]));
+                  sendTextMessage(senderID, vsprintf(text[0], [salesRank, salesRank, salesRank, salesRank]));
                   sendTextMessage(senderID, vsprintf(text[1], [locale, ean, upc, sku]));
-                  sendTextMessage(senderID, vsprintf(text[0], [productGroup, category, manufacturer, model]));
+                  sendTextMessage(senderID, vsprintf(text[2], [productGroup, category, manufacturer, model]));
 
               }, function(error) {
                 console.log("Error: " + error);

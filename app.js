@@ -1987,6 +1987,38 @@ function sendChangeShopLocaleGenericMessage(recipientId, user) {
 }
 
 /*
+ * Send a Menu1 button message using the Send API.
+ *
+ */
+function sendMenu1ButtonMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: "This is test text",
+          buttons:[{
+            type: "web_url",
+            url: "https://www.oculus.com/en-us/rift/",
+            title: "Open Web URL"
+          }, {
+            type: "postback",
+            title: "Call Postback",
+            payload: "Developer defined postback"
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
  * Call User Profile API. If successful, we'll get Facebook user profile
  * information and sign up a new user on the Backend
  *

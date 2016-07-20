@@ -425,8 +425,9 @@ function receivedMessage(event) {
                 //
                 // var greeting = helpers.randomElementFromArray(greetings);
                 // sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
-                sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
+                sendMenu1ButtonMessage(senderID, user);
                 sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Pick an option below to get going'));
+                sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendSettingsGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
@@ -1990,7 +1991,9 @@ function sendChangeShopLocaleGenericMessage(recipientId, user) {
  * Send a Menu1 button message using the Send API.
  *
  */
-function sendMenu1ButtonMessage(recipientId) {
+function sendMenu1ButtonMessage(recipientId, user) {
+  var parseUserLanguage = user.parseUserLanguage;
+
   var messageData = {
     recipient: {
       id: recipientId
@@ -2000,15 +2003,24 @@ function sendMenu1ButtonMessage(recipientId) {
         type: "template",
         payload: {
           template_type: "button",
-          text: "This is test text",
+          text: "",
           buttons:[{
-            type: "web_url",
-            url: "https://www.oculus.com/en-us/rift/",
-            title: "Open Web URL"
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Search product'),
+            payload: JSON.stringify({
+              "intent": "searchProduct",
+              "entities": {
+              }
+            })
           }, {
             type: "postback",
-            title: "Call Postback",
-            payload: "Developer defined postback"
+            title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
+            payload: JSON.stringify({
+              "intent": "listPriceWatches",
+              "entities": {
+                "pageNumber": 1
+              }
+            })
           }]
         }
       }

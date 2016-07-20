@@ -1012,15 +1012,12 @@ function receivedPostback(event) {
                   var sku = fullItem.sku;
                   var salesRank = fullItem.salesRank;
 
-                  var text = [
-                    gt.dgettext(parseUserLanguage, 'Sales rank: %s\nLast update scan: %s\nTotal people tracking: %s\nLast tracked: %s'),
-                    gt.dgettext(parseUserLanguage, 'Locale: %s\nEAN: %s\nUPC: %s\nSKU: %s'),
-                    gt.dgettext(parseUserLanguage, 'Product group: %s\nCategory: %s\nManufacturer: %s\nModel: %s')
-                  ];
+                  var text = gt.dgettext(parseUserLanguage, 'Title: %s · Product group: %s · Category: %s · Manufacturer: %s · Model: %s · Locale: %s · ' +
+                      'EAN: %s · UPC: %s · SKU: %s · Sales rank: %s · Last update scan: %s · Total people tracking: %s · Last tracked: %s');
+                  var responseText = vsprintf(text, [title, productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
+                    salesRank, salesRank]);
 
-                  sendTextMessage(senderID, vsprintf(text[0], [salesRank, salesRank, salesRank, salesRank]));
-                  sendTextMessage(senderID, vsprintf(text[1], [locale, ean, upc, sku]));
-                  sendTextMessage(senderID, vsprintf(text[2], [productGroup, category, manufacturer, model]));
+                  sendTextMessage(senderID, responseText.substring(0, 320));
 
               }, function(error) {
                 console.log("Error: " + error);

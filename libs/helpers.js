@@ -232,24 +232,23 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 };
 
 /*
-* Returns a string array with truncated string (by length and separator)
+* ...
 *
 */
-exports.truncateStringByLengthAndSeparator = function(string, length, separator) {
-	var result = [];
-	var substrings = string.split(separator);
-	var tempString = "";
-	var index = 0;
-	for (var i = 0; i<substrings.length; i++) {
-		tempString += substrings[i] + separator;
+exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
+	var stringLength = stringToSplit.length;
+	var chunksRequired = Math.ceil(stringLength / chunkSize);
+	var stringArray = [];
 
-		if (tempString.length <= 320) {
-			result[index] = tempString;
-		} else {
-			tempString = "";
-			index++;
-		}
+	var lengthRemaining = stringLength;
+
+	for (var i = 0; i<chunksRequired; i++) {
+		var lengthToUse = Math.min(lengthRemaining, chunkSize);
+		var startIndex = chunkSize * i;
+		stringArray[i] = stringToSplit.substring(startIndex, lengthToUse);
+
+		lengthRemaining = lengthRemaining - lengthToUse;
 	}
 
-	return result;
+	return stringArray;
 };

@@ -1019,8 +1019,8 @@ function receivedPostback(event) {
               break;
 
             case 'searchProduct':
-
-
+              sendTextMessage(senderID, 'What’re you searching for? Use one or two  words to tell me what product you are searching for. ' +
+                'For example, you could type “iPhone 6” or “Kindle Paperwhite”.');
 
               break;
 

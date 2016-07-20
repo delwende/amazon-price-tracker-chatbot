@@ -314,7 +314,10 @@ function receivedAuthentication(event) {
 
   // When an authentication is received, we'll send a message back to the sender
   // to let them know it was successful.
-  sendTextMessage(senderID, "Authentication successful");
+  responseText = gt.dgettext(parseUserLanguage, 'Hi there, let’s get started. I’ll alert you when prices drop on Amazon. ' +
+  'If you get lost, just type help. Or, use a few words to tell me what product you are searching for. For example, you  ' +
+  'could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”.');
+  sendTextMessage(senderID, responseText);
 }
 
 /*
@@ -404,8 +407,8 @@ function receivedMessage(event) {
                 // responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
                 // 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
                 // ' 6"\n- "list" to show your price watches');
-                responseText = gt.dgettext(parseUserLanguage, 'Lost? Use one or two words to tell me what product do you search. For ' +
-                'example, you could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”. Or, if you want to see your price watches, ' +
+                responseText = gt.dgettext(parseUserLanguage, 'Lost? Use one or two words to tell me what product you are searching for. ' +
+                ' For example, you could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”. Or, if you want to see your price watches, ' +
                 ' just type list.');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
@@ -414,14 +417,16 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
                 sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
-                var greetings = [
-                  gt.dgettext(parseUserLanguage, 'Hi %s!'),
-                  gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
-                  gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
-                ];
-
-                var greeting = helpers.randomElementFromArray(greetings);
-                sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
+                // var greetings = [
+                //   gt.dgettext(parseUserLanguage, 'Hi %s!'),
+                //   gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
+                //   gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
+                // ];
+                //
+                // var greeting = helpers.randomElementFromArray(greetings);
+                // sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
+                sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
+                sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Pick an option below to get going'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendSettingsGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {

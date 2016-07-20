@@ -236,7 +236,6 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 *
 */
 exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
-	// var re = new RegExp('.{1,' + chunkSize + '}', 'g');
-	// return stringToSplit.match(re);
-	return stringToSplit.scan(/.{1,320}\W/);
+	var re = new RegExp('.{1,' + chunkSize + '}', 'g');
+	return stringToSplit.match(re);
 };

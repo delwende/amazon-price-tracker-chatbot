@@ -1034,8 +1034,9 @@ function receivedPostback(event) {
               break;
 
             case 'searchProduct':
-              sendTextMessage(senderID, 'What’re you searching for? Use one or two  words to tell me what product you are searching for. ' +
+              responseText = gt.dgettext(parseUserLanguage, 'What’re you searching for? Use one or two  words to tell me what product you are searching for. ' +
                 'For example, you could type “iPhone 6” or “Kindle Paperwhite”.');
+              sendTextMessage(senderID, responseText);
 
               break;
 
@@ -2038,7 +2039,7 @@ function sendMenu1ButtonMessage(recipientId, user) {
         type: "template",
         payload: {
           template_type: "button",
-          text: "Pick an option below to get going",
+          text: gt.dgettext(parseUserLanguage, 'Pick an option below to get going'),
           buttons:[{
             type: "postback",
             title: gt.dgettext(parseUserLanguage, 'Search product'),

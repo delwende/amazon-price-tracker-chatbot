@@ -1017,11 +1017,9 @@ function receivedPostback(event) {
                   var responseText = vsprintf(text, [title, productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
                     salesRank, salesRank]);
 
-                  var responseTexts = helpers.truncateStringByLengthAndSeparator(responseText, 320, ' · ');
+                  var responseTexts = helpers.splitStringIntoChunks(responseText, 320);
 
-                  for (var i = responseTexts.length; i>0; i--) {
-                    sendTextMessage(senderID, responseTexts[i]);
-                  }
+                  sendTextMessage(senderID, responseTexts[0]);
 
               }, function(error) {
                 console.log("Error: " + error);

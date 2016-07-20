@@ -8,8 +8,7 @@ router.get('/', function(req, res, next) {
     pageTitle: i18n.__('JackTheBot - Free Amazon Price Tracking Bot.'),
     headerTitle: i18n.__('JackTheBot'),
     headerSubtitle: i18n.__('The World\'s First Amazon Price Tracking Bot'),
-    headerMessageMe: i18n.__('We can now chat on Facebook Messenger! Wanna talk about the products whose prices you are interested on Amazon?'),
-    contactTitle: i18n.__('Want me in your country? Tell me where you are and I’ll get there as fast as my paws can carry me?')
+    headerMessageMe: i18n.__('We can now chat on Facebook Messenger! Wanna talk about the products whose prices you are interested on Amazon?')
   });
 });
 

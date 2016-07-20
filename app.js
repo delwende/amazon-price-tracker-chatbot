@@ -1024,6 +1024,10 @@ function receivedPostback(event) {
 
               break;
 
+            case 'listPopularProducts':
+
+              break;
+
             default:
           }
         }
@@ -2015,6 +2019,15 @@ function sendMenu1ButtonMessage(recipientId, user) {
             payload: JSON.stringify({
               "intent": "searchProduct",
               "entities": {
+              }
+            })
+          }, {
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Popular products'),
+            payload: JSON.stringify({
+              "intent": "listPopularProducts",
+              "entities": {
+                "pageNumber": 1
               }
             })
           }, {

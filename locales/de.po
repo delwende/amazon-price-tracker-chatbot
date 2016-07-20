@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-07-20 21:50+0200\n"
-"PO-Revision-Date: 2016-07-20 21:52+0200\n"
+"PO-Revision-Date: 2016-07-20 21:53+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -365,7 +365,7 @@ msgstr "Amazon USA"
 
 #: app.js:2042
 msgid "Pick an option below to get going"
-msgstr "Wähle eine der folgenden Optionen"
+msgstr "Wähle eine der folgenden Optionen, um loszulegen"
 
 #: app.js:2045
 msgid "Search product"

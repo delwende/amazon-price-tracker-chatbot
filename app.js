@@ -33,18 +33,14 @@ const
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
   routes = require('./routes/index'),
-  users = require('./routes/users');
-
-
-// var app = express();
-
-// app.set('port', process.env.PORT || 5000);
-// app.use(bodyParser.json({ verify: verifyRequestSignature }));
-// app.use(express.static('public'));
+  users = require('./routes/users'),
+  i18n = require("i18n"); // lightweight translation module with dynamic json storage
 
 var app = express();
 
 app.set('port', process.env.PORT || 5000);
+// default: using 'accept-language' header to guess language settings
+app.use(i18n.init);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -165,6 +161,12 @@ gt.addTextdomain("en", langEn);
 
 // Set default language
 gt.textdomain("en");
+
+// Configure i18n
+i18n.configure({
+    locales:['en', 'de'],
+    directory: __dirname + '/locales'
+});
 
 /*
  * Use your own validation token. Check that the token used in the Webhook
@@ -801,7 +803,7 @@ function receivedPostback(event) {
                           // Update product
                           var product = result.get("product");
                           product.increment("totalNumberTrackedCtr");
-                          return product.save();                          
+                          return product.save();
                         } else {
                           // Inform the user that the price alert has been updated
                           responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
@@ -927,7 +929,7 @@ function receivedPostback(event) {
                     });
                   } else {
                     // Inform the user about the currently set language
-                    shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage, 
+                    shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage,
                       parseUserAwsLocale);
                     responseText = gt.dgettext(parseUserLanguage, 'Currently set shop locale: %s');
                     sendTextMessage(senderID, sprintf(responseText, shopLocaleTitle));

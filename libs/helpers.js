@@ -232,7 +232,7 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 };
 
 /*
-* ...
+* Splits string into array of chunks and returns it
 *
 */
 exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {

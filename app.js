@@ -1012,7 +1012,7 @@ function receivedPostback(event) {
                   var sku = fullItem.sku;
                   var salesRank = fullItem.salesRank;
 
-                  var texts = [
+                  var text = [
                     gt.dgettext(parseUserLanguage, 'Sales rank: %s\nLast update scan: %s\nTotal people tracking: %s\nLast tracked: %s'),
                     gt.dgettext(parseUserLanguage, 'Locale: %s\nEAN: %s\nUPC: %s\nSKU: %s'),
                     gt.dgettext(parseUserLanguage, 'Product group: %s\nCategory: %s\nManufacturer: %s\nModel: %s')

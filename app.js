@@ -1019,7 +1019,7 @@ function receivedPostback(event) {
 
                   var responseTexts = helpers.splitStringIntoChunks(responseText, 320);
 
-                  for (var i = responseTexts.length; i>0; i--) {
+                  for (var i = responseTexts.length-1; i>=0; i--) {
                     sendTextMessage(senderID, responseTexts[i]);
                   }
 

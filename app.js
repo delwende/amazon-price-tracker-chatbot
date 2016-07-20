@@ -985,36 +985,46 @@ function receivedPostback(event) {
 
             case 'showProductDetails':
 
-              // var item = json.entities.item;
-              // var awsLocale = json.entities.awsLocale;
+              var item = json.entities.item;
+              var awsLocale = json.entities.awsLocale;
 
-              // // Lookup item
-              // amazonClient.itemLookup({
-              //   searchIndex: 'All',
-              //   responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
-              //   idType: 'ASIN',
-              //   itemId: item.asin,
-              //   domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
-              // }).then(function(results) {
-              //     var result = results[0];
+              // Lookup item
+              amazonClient.itemLookup({
+                searchIndex: 'All',
+                responseGroup: 'ItemAttributes,OfferFull,Images,SalesRank',
+                idType: 'ASIN',
+                itemId: item.asin,
+                domain: config.get('awsLocale_' + awsLocale) // Set Product Advertising API locale according to user AWS locale (when user searched product)
+              }).then(function(results) {
+                  var result = results[0];
 
-              //     fullItem = helpers.extractAmazonItem(result, true);
+                  fullItem = helpers.extractAmazonItem(result, true);
 
-              //     var title = fullItem.title;
-              //     var asin = fullItem.asin;
-              //     var productGroup = fullItem.productGroup;
-              //     var category = fullItem.category;
-              //     var manufacturer = fullItem.manufacturer;
-              //     var model = fullItem.model;
-              //     var locale = awsLocale;
-              //     var ean = fullItem.ean;
-              //     var upc = fullItem.upc;
-              //     var sku = fullItem.sku;
-              //     var salesRank = fullItem.salesRank;
+                  var title = fullItem.title;
+                  var asin = fullItem.asin;
+                  var productGroup = fullItem.productGroup;
+                  var category = fullItem.category;
+                  var manufacturer = fullItem.manufacturer;
+                  var model = fullItem.model;
+                  var locale = awsLocale;
+                  var ean = fullItem.ean;
+                  var upc = fullItem.upc;
+                  var sku = fullItem.sku;
+                  var salesRank = fullItem.salesRank;
 
-              // }, function(error) {
-              //   console.log("Error: " + error);
-              // });
+                  var texts = [
+                    gt.dgettext(parseUserLanguage, 'Sales rank: %s\nLast update scan: %s\nTotal people tracking: %s\nLast tracked: %s'),
+                    gt.dgettext(parseUserLanguage, 'Locale: %s\nEAN: %s\nUPC: %s\nSKU: %s'),
+                    gt.dgettext(parseUserLanguage, 'Product group: %s\nCategory: %s\nManufacturer: %s\nModel: %s')
+                  ];
+
+                  sendTextMessage(senderID, vsprintf(text[2], [salesRank, salesRank, salesRank, salesRank]));
+                  sendTextMessage(senderID, vsprintf(text[1], [locale, ean, upc, sku]));
+                  sendTextMessage(senderID, vsprintf(text[0], [productGroup, category, manufacturer, model]));
+
+              }, function(error) {
+                console.log("Error: " + error);
+              });
 
               break;
 
@@ -1291,9 +1301,20 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                 }
               })
             }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Product details'),
+              payload: JSON.stringify({
+                "intent": "showProductDetails",
+                "entities": {
+                  "item": item,
+                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
+                  // product search and price alert activation
+                }
+              })
+            }, {
               type: "web_url",
               url: item.detailPageUrl,
-              title: gt.dgettext(parseUserLanguage, 'Product details')
+              title: gt.dgettext(parseUserLanguage, 'Go to Website')
             }],
           });
         }

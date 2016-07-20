@@ -426,7 +426,6 @@ function receivedMessage(event) {
                 // var greeting = helpers.randomElementFromArray(greetings);
                 // sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
                 sendMenu1ButtonMessage(senderID, user);
-                sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Pick an option below to get going'));
                 sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendSettingsGenericMessage(senderID, user);
@@ -1016,6 +1015,12 @@ function receivedPostback(event) {
               // }, function(error) {
               //   console.log("Error: " + error);
               // });
+
+              break;
+
+            case 'searchProduct':
+
+
 
               break;
 
@@ -2003,7 +2008,7 @@ function sendMenu1ButtonMessage(recipientId, user) {
         type: "template",
         payload: {
           template_type: "button",
-          text: "",
+          text: "Pick an option below to get going",
           buttons:[{
             type: "postback",
             title: gt.dgettext(parseUserLanguage, 'Search product'),

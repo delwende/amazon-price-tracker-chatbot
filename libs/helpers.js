@@ -236,19 +236,6 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 *
 */
 exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
-	var stringLength = stringToSplit.length;
-	var chunksRequired = Math.ceil(stringLength / chunkSize);
-	var stringArray = [];
-
-	var lengthRemaining = stringLength;
-
-	for (var i = 0; i<chunksRequired; i++) {
-		var lengthToUse = Math.min(lengthRemaining, chunkSize);
-		var startIndex = chunkSize * i;
-		stringArray[i] = stringToSplit.substring(startIndex, lengthToUse);
-
-		lengthRemaining = lengthRemaining - lengthToUse;
-	}
-
-	return stringArray;
+	var re = new RegExp('.{1,' + chunkSize + '}', 'g');
+	return stringToSplit.match(re);
 };

@@ -89,7 +89,7 @@ describe("Helper functions", function() {
     	var examplePrices = helpers.calculateDesiredPriceExamples(price);
 
      expect(examplePrices).to.deep.equal([1098, 1066, 1044, 1022, 989]);
-   });
+    });
 
     it("returns price suggestions from custom price input", function() {
       var prices = ["1234", "12.34", "12,34"];
@@ -106,6 +106,25 @@ describe("Helper functions", function() {
       ];
 
       expect(priceSuggestions).to.deep.equal(truePriceSuggestions);
+    });
+  });
+
+  describe("String manipulations", function() {
+    it("splits string into array of chunks and returns it", function() {
+      var stringToSplit = "Produkttitel: Tissot Herren-Armbanduhr Tradition T0636101603700 · Produktgruppe: Watch · " +
+        "Kategorie: Uhr · Hersteller: Tissot · Modell: T063.610.16.037.00 · Amazon-Shop: de_DE · EAN: 7611608252505 · " +
+        "UPC: undefined · SKU: undefined · Verkaufsranking: 7599 · Letzter Preis-Check: 7599 · Anzahl aktivierte " +
+        "Preisalarme: 7599 · Zuletzt erstellter Preisalarm: 7599";
+      var stringArray = helpers.splitStringIntoChunks(stringToSplit, 320);
+
+      var trueStringArray = [
+        "Produkttitel: Tissot Herren-Armbanduhr Tradition T0636101603700 · Produktgruppe: Watch · Kategorie: Uhr · " +
+        "Hersteller: Tissot · Modell: T063.610.16.037.00 · Amazon-Shop: de_DE · EAN: 7611608252505 · UPC: undefined" +
+        " · SKU: undefined · Verkaufsranking: 7599 · Letzter Preis-Check: 7599 · Anzahl aktivierte Preisalarme: 7599 ",
+        "· Zuletzt erstellter Preisalarm: 7599"
+      ];
+
+      expect(stringArray).to.deep.equal(trueStringArray);
     });
   });
 });

@@ -230,3 +230,26 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 
 	return shopLocaleShortCode !== undefined ? supportedShopLocaleTitles[shopLocaleShortCode] : undefined;
 };
+
+/*
+* Returns a string array with truncated string (by length and separator)
+*
+*/
+exports.truncateStringByLengthAndSeparator = function(string, length, separator) {
+	var result = [];
+	var substrings = string.split(separator);
+	var tempString = "";
+	var index = 0;
+	for (var i = 0; i<substrings.length; i++) {
+		tempString += substrings[i] + separator;
+
+		if (tempString.length <= 320) {
+			result[index] = tempString;
+		} else {
+			tempString = "";
+			index++;
+		}
+	}
+
+	return result;
+};

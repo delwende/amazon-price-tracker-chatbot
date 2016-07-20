@@ -401,9 +401,12 @@ function receivedMessage(event) {
               }
             } else {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
-                responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
-                'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
-                ' 6"\n- "list" to show your price watches');
+                // responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
+                // 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
+                // ' 6"\n- "list" to show your price watches');
+                responseText = gt.dgettext(parseUserLanguage, 'Lost? Use one or two words to tell me what product do you search. For ' +
+                'example, you could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”. Or, if you want to see your price watches, ' +
+                ' just type list.');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');

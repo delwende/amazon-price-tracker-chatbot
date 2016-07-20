@@ -1023,7 +1023,7 @@ function receivedPostback(event) {
 
                   var responseTexts = helpers.splitStringIntoChunks(responseText, 320);
 
-                  sendTextMessage(senderID, responseTexts[i]);
+                  sendTextMessage(senderID, responseTexts[0]);
 
               }, function(error) {
                 console.log("Error: " + error);

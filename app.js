@@ -33,6 +33,7 @@ const
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
   routes = require('./routes/index'),
+  purpose = require('./routes/purpose'),
   privacy = require('./routes/privacy'),
   terms = require('./routes/terms'),
   faq = require('./routes/faq'),
@@ -61,6 +62,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
+app.use('/purpose', purpose);
 app.use('/privacy', privacy);
 app.use('/terms', terms);
 app.use('/faq', faq);

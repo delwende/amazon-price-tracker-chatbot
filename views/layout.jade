@@ -52,7 +52,7 @@ html(lang='en')
             span.sr-only Toggle navigation
             |  Menu
             i.fa.fa-bars
-          a.navbar-brand(href='#page-top')= headerTitle
+          a.navbar-brand(href='/')= headerTitle
         // Collect the nav links, forms, and other content for toggling
         #bs-example-navbar-collapse-1.collapse.navbar-collapse
           ul.nav.navbar-nav.navbar-right
@@ -67,23 +67,21 @@ html(lang='en')
         // /.navbar-collapse
       // /.container-fluid
     // Header
-    header
-      .container
-        .row
-          .col-lg-12.text-center
-            h2= headerTitle
-            h3= headerSubtitle
-            //- hr.star-light
-            p &nbsp;
-        .row
-          .col-lg-4.col-lg-offset-2
-            img.img-responsive(src='img/jackthebot-logo.png', alt='')
-          .col-lg-4
-            p &nbsp;
-            p= invitationToChat
-            p &nbsp;
-            .fb-messengermessageus(messenger_app_id='1762377167308903', page_id='854790057954931', color='blue', size='xlarge')
-            
+    //- header
+    //-   .container
+    //-     .row
+    //-       .col-lg-12.text-center
+    //-         h2= headerTitle
+    //-         h3= headerSubtitle
+    //-         p &nbsp;
+    //-     .row
+    //-       .col-lg-4.col-lg-offset-2
+    //-         img.img-responsive(src='img/jackthebot-logo.png', alt='')
+    //-       .col-lg-4
+    //-         p &nbsp;
+    //-         p= invitationToChat
+    //-         p &nbsp;
+    //-         .fb-messengermessageus(messenger_app_id='1762377167308903', page_id='854790057954931', color='blue', size='xlarge')
       //- .container
       //-   .row
       //-     .col-lg-12
@@ -160,9 +158,9 @@ html(lang='en')
     //- section#contact
     //-   .container
     //-     .row
-    //-       .col-lg-12.text-center
-    //-         h3 Contact Me
-    //-         hr.star-primary
+    //-       .col-lg-8.text-center.col-lg-offset-2
+    //-         h3= invitationToSubscribe
+    //-         p &nbsp;
     //-     .row
     //-       .col-lg-8.col-lg-offset-2
     //-         // To configure the contact form email address, go to mail/contact_me.php and update the email address in the PHP file on line 19.
@@ -170,23 +168,13 @@ html(lang='en')
     //-         form#contactForm(name='sentMessage', novalidate='')
     //-           .row.control-group
     //-             .form-group.col-xs-12.floating-label-form-group.controls
-    //-               label Name
-    //-               input#name.form-control(type='text', placeholder='Name', required='', data-validation-required-message='Please enter your name.')
+    //-               label Your Email
+    //-               input#email.form-control(type='email', placeholder='Your Email', required='', data-validation-required-message='Please enter your email address.')
     //-               p.help-block.text-danger
     //-           .row.control-group
     //-             .form-group.col-xs-12.floating-label-form-group.controls
-    //-               label Email Address
-    //-               input#email.form-control(type='email', placeholder='Email Address', required='', data-validation-required-message='Please enter your email address.')
-    //-               p.help-block.text-danger
-    //-           .row.control-group
-    //-             .form-group.col-xs-12.floating-label-form-group.controls
-    //-               label Phone Number
-    //-               input#phone.form-control(type='tel', placeholder='Phone Number', required='', data-validation-required-message='Please enter your phone number.')
-    //-               p.help-block.text-danger
-    //-           .row.control-group
-    //-             .form-group.col-xs-12.floating-label-form-group.controls
-    //-               label Message
-    //-               textarea#message.form-control(rows='5', placeholder='Message', required='', data-validation-required-message='Please enter a message.')
+    //-               label Your Country
+    //-               input#country.form-control(type='text', placeholder='Your Country', required='', data-validation-required-message='Please enter your c.')
     //-               p.help-block.text-danger
     //-           br
     //-           #success
@@ -232,7 +220,15 @@ html(lang='en')
         .container
           .row
             .footer-col.col-md-6
-              | Copyright © JackTheBot 2016
+              ul.list-inline
+                li
+                  a(href='privacy') Privacy Policy
+                li |
+                li
+                  a(href='#') Terms of Service
+                li |
+                li
+                  a(href='#') Faq
             .footer-col.col-md-6
                 .addthis_native_toolbox
     // Scroll to Top Button (Only visible on small and extra-small screen sizes)

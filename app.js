@@ -34,6 +34,7 @@ const
   cookieParser = require('cookie-parser'),
   routes = require('./routes/index'),
   users = require('./routes/users'),
+  privacy = require('./routes/privacy'),
   i18n = require('i18n'); // lightweight translation module with dynamic json storage
 
 var app = express();
@@ -60,6 +61,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/privacy', privacy);
 
 /*
  * Be sure to setup your config values before running this code. You can

@@ -33,8 +33,9 @@ const
   logger = require('morgan'),
   cookieParser = require('cookie-parser'),
   routes = require('./routes/index'),
-  users = require('./routes/users'),
   privacy = require('./routes/privacy'),
+  terms = require('./routes/terms'),
+  faq = require('./routes/faq'),
   i18n = require('i18n'); // lightweight translation module with dynamic json storage
 
 var app = express();
@@ -60,8 +61,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
 app.use('/privacy', privacy);
+app.use('/terms', terms);
+app.use('/faq', faq);
 
 /*
  * Be sure to setup your config values before running this code. You can

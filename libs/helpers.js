@@ -239,3 +239,23 @@ exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
 	var re = new RegExp('.{1,' + chunkSize + '}', 'g');
 	return stringToSplit.match(re);
 };
+
+exports.test = function(string, size) {
+	var stringArray = string.split(" ");
+	var resultArray = [];
+	var chunk = "";
+	var index = 0;
+	for (var i = 0; i<stringArray.length; i++) {
+		chunk += stringArray[i];
+
+		if (chunk.length <= 320) {
+			resultArray[index] += stringArray[i];
+		} else {
+			chunk = "";
+			chunk += stringArray[i];
+			index++;
+		}
+	}
+
+	return resultArray;
+};

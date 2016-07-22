@@ -36,7 +36,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
-    "i18n": "^0.8.3"
+    "i18n": "^0.8.3",
+    "smart-text-snippet": "^1.0.0"
   },
   "engines": {
     "node": "~4.1.2"

@@ -1023,12 +1023,12 @@ function receivedPostback(event) {
                   var sku = fullItem.sku;
                   var salesRank = fullItem.salesRank;
 
-                  var text = gt.dgettext(parseUserLanguage, 'Title: %s · Product group: %s · Category: %s · Manufacturer: %s · Model: %s · Locale: %s · ' +
+                  var text = gt.dgettext(parseUserLanguage, 'Product group: %s · Category: %s · Manufacturer: %s · Model: %s · Locale: %s · ' +
                       'EAN: %s · UPC: %s · SKU: %s · Sales rank: %s · Last update scan: %s · Total people tracking: %s · Last tracked: %s');
-                  var responseText = vsprintf(text, [title, productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
+                  var responseText = vsprintf(text, [productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
                     salesRank, salesRank]);
 
-                  var responseTexts = snippets.chunk(responseText, { len: 300, stopChars: [' '] });
+                  var responseTexts = snippets.chunk(responseText, { len: 300, breakChars: ['·'], stopChars: [' '] });
 
                   for (var i = responseTexts.length-1; i>=0; i--) {
                     sendTextMessage(senderID, responseTexts[i]);

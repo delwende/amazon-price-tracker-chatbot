@@ -37,7 +37,8 @@ const
   privacy = require('./routes/privacy'),
   terms = require('./routes/terms'),
   faq = require('./routes/faq'),
-  i18n = require('i18n'); // lightweight translation module with dynamic json storage
+  i18n = require('i18n'), // Lightweight translation module with dynamic json storage
+  snippets = require('smart-text-snippet'); // Create shortened or chunked text snippets from longer text while leaving sentences intact
 
 var app = express();
 
@@ -1027,7 +1028,7 @@ function receivedPostback(event) {
                   var responseText = vsprintf(text, [title, productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
                     salesRank, salesRank]);
 
-                  var responseTexts = helpers.splitStringIntoChunks(responseText, 320, " · ");
+                  var responseTexts = snippets.chunk(responseText, {len: 320});
 
                   for (var i = responseTexts.length-1; i>=0; i--) {
                     sendTextMessage(senderID, responseTexts[i]);

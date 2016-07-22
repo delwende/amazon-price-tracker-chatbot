@@ -254,6 +254,7 @@ exports.splitStringIntoChunks1 = function(stringToSplit, chunkSize) {
 		} else {
 			chunksArray[index] = chunk;
 			tempChunk = stringArray[i] + " ";
+			chunk = "";
 			index++;
 		}
 	}

@@ -257,4 +257,6 @@ exports.splitStringIntoChunks1 = function(stringToSplit, chunkSize) {
 			index++;
 		}
 	}
+
+	return chunksArray;
 };

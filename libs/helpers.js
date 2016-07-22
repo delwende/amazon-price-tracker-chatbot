@@ -240,22 +240,21 @@ exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
 	return stringToSplit.match(re);
 };
 
-exports.test = function(string, size) {
-	var stringArray = string.split(" ");
-	var resultArray = [];
-	var chunk = "";
+exports.splitStringIntoChunks1 = function(stringToSplit, chunkSize) {
+	var stringArray = stringToSplit.split(" ");
+	var tempChunk = "", chunk = "";
+	var chunksArray = [];
 	var index = 0;
-	for (var i = 0; i<stringArray.length; i++) {
-		chunk += stringArray[i];
 
-		if (chunk.length <= 320) {
-			resultArray[index] += stringArray[i];
+	for (var i = 0; i<stringArray.length; i++) {
+		tempChunk += stringArray[i] + " ";
+
+		if (tempChunk.length <= 320) {
+			chunk = tempChunk;
 		} else {
-			chunk = "";
-			chunk += stringArray[i];
+			chunksArray[index] = tempChunk;
+			tempChunk = stringArray[i] + " ";
 			index++;
 		}
 	}
-
-	return resultArray;
 };

@@ -235,26 +235,21 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 * Splits string into array of chunks and returns it
 *
 */
-exports.splitStringIntoChunks = function(stringToSplit, chunkSize) {
-	var re = new RegExp('.{1,' + chunkSize + '}', 'g');
-	return stringToSplit.match(re);
-};
-
-exports.splitStringIntoChunks1 = function(stringToSplit, chunkSize) {
-	var stringArray = stringToSplit.split(" ");
+exports.splitStringIntoChunks = function(stringToSplit, chunkSize, separator) {
+	var stringArray = stringToSplit.split(separator);
 	var tempChunk = "", chunk = "";
 	var chunksArray = [];
 	var index = 0;
 
 	for (var i = 0; i<stringArray.length; i++) {
-		tempChunk += stringArray[i] + " ";
+		tempChunk += stringArray[i] + separator;
 
 		if (tempChunk.length > 320 || i === stringArray.length-1) {
 
 			if (i === stringArray.length-1) chunk += stringArray[i];
 
 			chunksArray[index] = chunk;
-			tempChunk = stringArray[i] + " ";
+			tempChunk = stringArray[i] + separator;
 			index++;
 		} else {
 			chunk = tempChunk;

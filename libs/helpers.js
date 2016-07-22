@@ -248,16 +248,11 @@ exports.splitStringIntoChunks = function(stringToSplit, chunkSize, separator) {
 
 			if (i === stringArray.length-1) chunk += stringArray[i];
 
-			chunksArray[index] = chunk;
+			chunksArray[index] = chunk.substring(1, chunkSize-separator.length); // Cut off the separator at the end of a chunk
 			tempChunk = stringArray[i] + separator;
 			index++;
 		} else {
-			
-			if (tempChunk.length > 320) {
-				chunk += stringArray[i];
-			} else {
-				chunk = tempChunk;
-			}
+			chunk = tempChunk;
 		}
 	}
 

@@ -1028,7 +1028,7 @@ function receivedPostback(event) {
                   var responseText = vsprintf(text, [title, productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
                     salesRank, salesRank]);
 
-                  var responseTexts = snippets.chunk(responseText, { len: 300 });
+                  var responseTexts = snippets.chunk(responseText, { len: 300, breakChars: [' '], stopChars: ['·'] });
 
                   for (var i = responseTexts.length-1; i>=0; i--) {
                     sendTextMessage(senderID, responseTexts[i]);

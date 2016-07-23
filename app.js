@@ -38,7 +38,7 @@ const
   terms = require('./routes/terms'),
   faq = require('./routes/faq'),
   i18n = require('i18n'), // Lightweight translation module with dynamic json storage
-  snippets = require('smart-text-snippet'); // Create shortened or chunked text snippets from longer text while leaving sentences intact
+  truncate = require('truncate'); // Truncate text and keep urls safe
 
 var app = express();
 
@@ -327,7 +327,7 @@ function receivedAuthentication(event) {
   // to let them know it was successful.
   responseText = gt.dgettext(parseUserLanguage, 'Hi there, let’s get started. I’ll alert you when prices drop on Amazon. ' +
   'If you get lost, just type help. Or, use a few words to tell me what product you are searching for. For example, you  ' +
-  'could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”.');
+  'could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”.');
   sendTextMessage(senderID, responseText);
 }
 
@@ -401,8 +401,8 @@ function receivedMessage(event) {
                     var examplePrice = user.customPriceInputExamplePrice;
 
                     // Give to the user instructions on how to enter a valid price
-                    responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero.\n\nPlease enter ' +
-                      'a valid price, e.g. %s');
+                    responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
+                      'a valid price. For example, you could type %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
                   } else {
                     // Show to the user some valid price suggestions
@@ -419,7 +419,7 @@ function receivedMessage(event) {
                 // 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
                 // ' 6"\n- "list" to show your price watches');
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use one or two words to tell me what product you are searching for. ' +
-                ' For example, you could type “iPhone 6”, “Kindle Paperwhite”, or “Xbox One”. Or, if you want to see your price watches, ' +
+                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, if you want to see your price watches, ' +
                 ' just type list.');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
@@ -547,13 +547,12 @@ function receivedPostback(event) {
         var validFrom = json.entities.validFrom;
         var timeDiff = validFrom !== undefined ? moment().diff(validFrom, 'minutes') : undefined; // Calculate time difference between validFrom and now
 
-        // Check if validity is still given. If timeDiff is
-        // undefined, validity check is not required
-        if (timeDiff !== undefined && timeDiff > 5) {
+        // Check if validity is still given
+        if (timeDiff > 5) {
 
           // Inform the user that price and availability information may have changed
           responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
-            'to create a price watch for this item, type \[product name\] again.');
+            'to create a price watch for this item, please search for it again.');
           sendTextMessage(senderID, responseText);
 
         } else {
@@ -579,7 +578,7 @@ function receivedPostback(event) {
 
                   // Inform the user about the item he/she is creating a price alert for
                   responseText = gt.dgettext(parseUserLanguage, 'Create price watch for: %s');
-                  sendTextMessage(senderID, sprintf(responseText, fullItem.title));
+                  sendTextMessage(senderID, sprintf(responseText, truncate(fullItem.title, 250)));
 
                   // Query products
                   var Product = Parse.Object.extend("Product");
@@ -765,7 +764,7 @@ function receivedPostback(event) {
                     console.log("Updated key-value pair created with key: user:" + senderID);
 
                     // Give to the user instructions on how to enter a valid price
-                    responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price, e.g. %s');
+                    responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price. For example, you could type %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
                   }
                 });
@@ -1023,16 +1022,10 @@ function receivedPostback(event) {
                   var sku = fullItem.sku;
                   var salesRank = fullItem.salesRank;
 
-                  var text = gt.dgettext(parseUserLanguage, 'Product group: %s · Category: %s · Manufacturer: %s · Model: %s · Locale: %s · ' +
-                      'EAN: %s · UPC: %s · SKU: %s · Sales rank: %s · Last update scan: %s · Total people tracking: %s · Last tracked: %s');
-                  var responseText = vsprintf(text, [productGroup, category, manufacturer, model, locale, ean, upc, sku, salesRank, salesRank,
-                    salesRank, salesRank]);
+                  sendMenu2ButtonMessage(senderID, user, item);
 
-                  var responseTexts = snippets.chunk(responseText, { len: 160, breakChars: ['·'], stopChars: [' '] });
-
-                  for (var i = responseTexts.length-1; i>=0; i--) {
-                    sendTextMessage(senderID, responseTexts[i]);
-                  }
+                  responseText = truncate(title, 317);
+                  sendTextMessage(senderID, responseText);
 
               }, function(error) {
                 console.log("Error: " + error);
@@ -1041,7 +1034,7 @@ function receivedPostback(event) {
               break;
 
             case 'searchProduct':
-              responseText = gt.dgettext(parseUserLanguage, 'What’re you searching for? Use one or two  words to tell me what product you are searching for. ' +
+              responseText = gt.dgettext(parseUserLanguage, 'What’re you searching for? Use one or two words to tell me what product you are searching for. ' +
                 'For example, you could type “iPhone 6” or “Kindle Paperwhite”.');
               sendTextMessage(senderID, responseText);
 
@@ -1580,7 +1573,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price.'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1602,7 +1595,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price.'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1734,7 +1727,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           var currentPriceFormatted = helpers.formatPriceByUserLocale(currentPrice, awsLocale);
           var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, awsLocale);
 
-          var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Desired price: %s');
+          var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Your Desired price: %s');
 
           buttons = [{
             type: "postback",
@@ -1807,8 +1800,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           id: recipientId
         },
         message: {
-          text: gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Begin tracking products typing ' +
-            '\[product name\], e.g. "iphone 6".')
+          text: gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Use one or two words to tell me what ' +
+            'product you are searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”')
         }
       };
 
@@ -2069,6 +2062,54 @@ function sendMenu1ButtonMessage(recipientId, user) {
             title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
             payload: JSON.stringify({
               "intent": "listPriceWatches",
+              "entities": {
+                "pageNumber": 1
+              }
+            })
+          }]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Menu2 button message using the Send API.
+ *
+ */
+function sendMenu2ButtonMessage(recipientId, user, item) {
+  var parseUserLanguage = user.parseUserLanguage;
+  var parseUserAwsLocale = user.parseUserAwsLocale;
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: gt.dgettext(parseUserLanguage, 'What next?'),
+          buttons:[{
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Create price watch'),
+            payload: JSON.stringify({
+              "intent": "activatePriceAlert",
+              "entities": {
+                "item": item,
+                "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
+                // product search and price alert activation
+                "validFrom": moment() // Time the element was created
+              }
+            })
+          }, {
+            type: "postback",
+            title: gt.dgettext(parseUserLanguage, 'Popular products'),
+            payload: JSON.stringify({
+              "intent": "listPopularProducts",
               "entities": {
                 "pageNumber": 1
               }

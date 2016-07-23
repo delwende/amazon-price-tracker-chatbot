@@ -230,31 +230,3 @@ exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopL
 
 	return shopLocaleShortCode !== undefined ? supportedShopLocaleTitles[shopLocaleShortCode] : undefined;
 };
-
-/*
-* Splits string into array of chunks and returns it
-*
-*/
-exports.splitStringIntoChunks = function(stringToSplit, chunkSize, separator) {
-	var stringArray = stringToSplit.split(separator);
-	var tempChunk = "", chunk = "";
-	var chunksArray = [];
-	var index = 0;
-
-	for (var i = 0; i<stringArray.length; i++) {
-		tempChunk += stringArray[i] + separator;
-
-		if (tempChunk.length > 320 || i === stringArray.length-1) {
-
-			if (i === stringArray.length-1) chunk += stringArray[i];
-
-			chunksArray[index] = chunk;
-			tempChunk = stringArray[i] + separator;
-			index++;
-		} else {
-			chunk = tempChunk;
-		}
-	}
-
-	return chunksArray;
-};

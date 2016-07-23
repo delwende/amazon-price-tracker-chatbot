@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-23 18:30+0200\n"
-"PO-Revision-Date: 2016-07-23 18:32+0200\n"
+"POT-Creation-Date: 2016-07-23 20:47+0200\n"
+"PO-Revision-Date: 2016-07-23 20:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -40,121 +40,121 @@ msgstr ""
 msgid "help"
 msgstr "help"
 
-#: app.js:421 app.js:1073
+#: app.js:418
 msgid ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see your price watches,  just type list."
+"if you want to see the main menu,  just type menu."
 msgstr ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see your price watches,  just type list."
+"if you want to see the main menu,  just type menu."
 
-#: app.js:425 app.js:426
+#: app.js:422 app.js:423
 msgid "search "
 msgstr "search "
 
-#: app.js:428
+#: app.js:425
 msgid "list"
 msgstr "list"
 
-#: app.js:430
+#: app.js:427
 msgid "hi"
 msgstr "hi"
 
-#: app.js:430
+#: app.js:427
 msgid "hello"
 msgstr "hello"
 
-#: app.js:441 app.js:1929
+#: app.js:429
 msgid "Pick an option below to get going"
 msgstr "Pick an option below to get going"
 
-#: app.js:449
+#: app.js:437
 msgid "Hi there, let’s get started."
 msgstr "Hi there, let’s get started."
 
-#: app.js:450
+#: app.js:438
 msgid "settings"
 msgstr "settings"
 
-#: app.js:452
+#: app.js:440
 msgid "menu"
 msgstr "menu"
 
-#: app.js:475
-msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
-msgstr "I'm sorry. I'm not yet available in your country. Stay tuned!"
+#: app.js:453
+msgid "I'm sorry, but I'm not yet available in your country."
+msgstr "I'm sorry, but I'm not yet available in your country."
 
-#: app.js:564 app.js:1046 app.js:1982
-msgid "What next?"
-msgstr "What next?"
-
-#: app.js:575
+#: app.js:541
 msgid "Price and availability information for this product may have changed."
 msgstr "Price and availability information for this product may have changed."
 
-#: app.js:600
+#: app.js:566
 #, javascript-format
 msgid "Create price watch for \"%s\""
 msgstr "Create price watch for \"%s\""
 
-#: app.js:737 app.js:812
+#: app.js:703 app.js:778
 msgid "Amazon price"
 msgstr "Amazon price"
 
-#: app.js:738 app.js:813
+#: app.js:704 app.js:779
 msgid "3rd Party New price"
 msgstr "3rd Party New price"
 
-#: app.js:739 app.js:814
+#: app.js:705 app.js:780
 msgid "3rd Party Used price"
 msgstr "3rd Party Used price"
 
-#: app.js:746
+#: app.js:712
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "The current %s for this item is %s"
 
-#: app.js:787
+#: app.js:753
 #, javascript-format
 msgid "Enter a valid price. For example, you could type %s"
 msgstr "Enter a valid price. For example, you could type %s"
 
-#: app.js:838
+#: app.js:804
 #, javascript-format
 msgid "You have tracked the %s for %s"
 msgstr "You have tracked the %s for %s"
 
-#: app.js:847
+#: app.js:813
 msgid "Price watch updated."
 msgstr "Price watch updated."
 
-#: app.js:886
+#: app.js:852
 msgid "Price watch deleted."
 msgstr "Price watch deleted."
 
-#: app.js:964
+#: app.js:930
 #, javascript-format
 msgid "Changed shop locale to: %s"
 msgstr "Changed shop locale to: %s"
 
-#: app.js:972
+#: app.js:938
 #, javascript-format
 msgid "Currently set shop locale: %s"
 msgstr "Currently set shop locale: %s"
 
-#: app.js:997
+#: app.js:963
 #, javascript-format
 msgid "Changed language to: %s"
 msgstr "Changed language to: %s"
 
-#: app.js:1005
+#: app.js:971
 #, javascript-format
 msgid "Currently set language: %s"
 msgstr "Currently set language: %s"
 
-#: app.js:1066 app.js:1081
+#: app.js:1012
+msgid "What next?"
+msgstr "What next?"
+
+#: app.js:1032
 #, fuzzy
 msgid ""
 "What’re you searching for? Use a few words to tell me what product you are "
@@ -163,106 +163,111 @@ msgstr ""
 "What’re you searching for? Use a few words to tell me what product you are "
 "searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
 
-#: app.js:1133 app.js:1225
+#: app.js:1039
+msgid ""
+"Lost? Use a few words to tell me what product you are searching for.  For "
+"example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
+"if you want to see your price watches,  just type list."
+msgstr ""
+"Lost? Use a few words to tell me what product you are searching for.  For "
+"example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
+"if you want to see your price watches,  just type list."
+
+#: app.js:1092 app.js:1185
 msgid "Try again or pick one of the options below:"
 msgstr "Try again or pick one of the options below:"
 
-#: app.js:1142 app.js:1234
+#: app.js:1101 app.js:1194
 msgid "Not sure I understand what you're searching for."
 msgstr "Not sure I understand what you're searching for."
 
-#: app.js:1148
+#: app.js:1107
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:1163 app.js:1164 app.js:1165
+#: app.js:1122 app.js:1123 app.js:1124
 msgid "Not in Stock"
 msgstr "Not in Stock"
 
-#: app.js:1171
+#: app.js:1130
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:1176 app.js:1985 app.js:2070
+#: app.js:1135 app.js:1927
 msgid "Create price watch"
 msgstr "Create price watch"
 
-#: app.js:1188
+#: app.js:1147
 msgid "Details"
 msgstr "Details"
 
-#: app.js:1200 app.js:2086
+#: app.js:1160 app.js:1943
 msgid "Go to Website"
 msgstr "Go to Website"
 
-#: app.js:1238
-#, javascript-format
-msgid "Your search \"%s\" did not match any products."
-msgstr "Your search \"%s\" did not match any products."
-
-#: app.js:1254
+#: app.js:1211
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1255
+#: app.js:1212
 msgid "3rd Party New"
 msgstr "3rd Party New"
 
-#: app.js:1256
+#: app.js:1213
 msgid "3rd Party Used"
 msgstr "3rd Party Used"
 
-#: app.js:1285
+#: app.js:1242
 msgid "Set price type"
 msgstr "Set price type"
 
-#: app.js:1286
+#: app.js:1243
 msgid "What price type do you want to track?"
 msgstr "What price type do you want to track?"
 
-#: app.js:1331 app.js:1385
+#: app.js:1288 app.js:1342
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:1332 app.js:1386
+#: app.js:1289 app.js:1343
 msgid "At what price would you like to receive an alert?"
 msgstr "At what price would you like to receive an alert?"
 
-#: app.js:1337
+#: app.js:1294
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1353
+#: app.js:1310
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1369
+#: app.js:1326
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1391
+#: app.js:1348
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1407
+#: app.js:1364
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1423
+#: app.js:1380
 msgid "Custom Input"
 msgstr "Custom Input"
 
-#: app.js:1464
+#: app.js:1421
 msgid "Pick one of the options below or try again to enter a valid price"
 msgstr "Pick one of the options below or try again to enter a valid price"
 
-#: app.js:1486
+#: app.js:1443
 msgid "Choose the correct one, or try to enter a valid price"
 msgstr "Choose the correct one, or try to enter a valid price"
 
-#: app.js:1572
+#: app.js:1529
 #, javascript-format
 msgid ""
 "Here're your price watches. I'll send you an alert when the current price "
@@ -275,29 +280,29 @@ msgstr ""
 "\n"
 " Price watches %s to %s:"
 
-#: app.js:1586
+#: app.js:1543
 #, javascript-format
 msgid "Price watches %s to %s:"
 msgstr "Price watches %s to %s:"
 
-#: app.js:1617
+#: app.js:1574
 #, javascript-format
 msgid "Current price: %s | Your Desired price: %s"
 msgstr "Current price: %s | Your Desired price: %s"
 
-#: app.js:1621
+#: app.js:1578
 msgid "Change desired price"
 msgstr "Change desired price"
 
-#: app.js:1632
+#: app.js:1589
 msgid "Delete price watch"
 msgstr "Delete price watch"
 
-#: app.js:1645
+#: app.js:1602
 msgid "More price watches"
 msgstr "More price watches"
 
-#: app.js:1690
+#: app.js:1647
 msgid ""
 "You haven't created any price watches yet. Use a few words to tell me what "
 "product you are searching for. For example, you could type “iPhone 6” or "
@@ -307,69 +312,71 @@ msgstr ""
 "product you are searching for. For example, you could type “iPhone 6” or "
 "“Kindle Paperwhite”"
 
-#: app.js:1721
-msgid "Menu"
-msgstr "Menu"
+#: app.js:1678
+msgid "Main Menu"
+msgstr "Main Menu"
 
-#: app.js:1722 app.js:1770 app.js:1819 app.js:1870
-msgid "Please choose one of the following options"
-msgstr "Please choose one of the following options"
+#: app.js:1679
+msgid "Pick one of the options below:"
+msgstr "Pick one of the options below:"
 
-#: app.js:1727 app.js:1949 app.js:2045
+#: app.js:1684 app.js:1902
 msgid "Your Price Watches"
 msgstr "Your Price Watches"
 
-#: app.js:1736 app.js:2058
-msgid "Change Settings"
-msgstr "Change Settings"
-
-#: app.js:1769
+#: app.js:1693 app.js:1726
 msgid "Settings"
 msgstr "Settings"
 
-#: app.js:1775 app.js:1869
+#: app.js:1727 app.js:1776 app.js:1827
+msgid "Please choose one of the following options"
+msgstr "Please choose one of the following options"
+
+#: app.js:1732 app.js:1826
 msgid "Change Shop Locale"
 msgstr "Change Shop Locale"
 
-#: app.js:1784 app.js:1818
+#: app.js:1741 app.js:1775
 msgid "Change Language"
 msgstr "Change Language"
 
-#: app.js:1824
+#: app.js:1781
 msgid "German"
 msgstr "German"
 
-#: app.js:1834
+#: app.js:1791
 msgid "English"
 msgstr "English"
 
-#: app.js:1875
+#: app.js:1832
 msgid "Amazon Germany"
 msgstr "Amazon Germany"
 
-#: app.js:1885
+#: app.js:1842
 msgid "Amazon UK"
 msgstr "Amazon UK"
 
-#: app.js:1895
+#: app.js:1852
 msgid "Amazon US"
 msgstr "Amazon US"
 
-#: app.js:1932 app.js:2032
+#: app.js:1889
 msgid "Search product"
 msgstr "Search product"
 
-#: app.js:1940 app.js:1997
-msgid "Popular products"
-msgstr "Popular products"
+#: app.js:1915
+msgid "Change Settings"
+msgstr "Change Settings"
 
-#: app.js:2093
+#: app.js:1950
 msgid "Help"
 msgstr "Help"
 
-#: app.js:2105
-msgid "Search product again"
-msgstr ""
+#~ msgid "Menu"
+#~ msgstr "Menu"
+
+#~ msgid "I'm sorry. I'm not yet available in your country. Stay tuned!"
+#~ msgstr "I'm sorry. I'm not yet available in your country. Stay tuned!"
 
 #~ msgid ""
 #~ "Price and availability information for this product may have changed. Try "
@@ -377,6 +384,15 @@ msgstr ""
 #~ msgstr ""
 #~ "Price and availability information for this product may have changed. Try "
 #~ "again to search for it."
+
+#~ msgid "Search product again"
+#~ msgstr "Search product again"
+
+#~ msgid "Popular products"
+#~ msgstr "Popular products"
+
+#~ msgid "Your search \"%s\" did not match any products."
+#~ msgstr "Your search \"%s\" did not match any products."
 
 #~ msgid ""
 #~ "Price and availability information for this product may have changed. In "

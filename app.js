@@ -416,8 +416,8 @@ function receivedMessage(event) {
             } else {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
-                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, if you want to see your price watches, ' +
-                ' just type list.');
+                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, if you want to see the main menu, ' +
+                ' just type menu.');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
                 var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
@@ -438,7 +438,12 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 sendSettingsGenericMessage(senderID, user);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
-                sendMenuGenericMessage(senderID, user);
+                responseText = gt.dgettext(parseUserLanguage, 'To be faster the next time, you could type one of the following shortcuts below:\n' +
+                  'list, to');
+                sendTextMessage(senderID, responseText);
+                sendMainMenuGenericMessage(senderID, user);
+
+                
               } else {
                 var keywords = messageText;
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
@@ -450,7 +455,7 @@ function receivedMessage(event) {
           }
 
         } else {
-          responseText = gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not yet available in your country. Stay tuned!');
+          responseText = gt.dgettext(parseUserLanguage, 'I\'m sorry, but I\'m not yet available in your country.');
           sendTextMessage(senderID, responseText);
         }
 
@@ -801,7 +806,7 @@ function receivedPostback(event) {
                         // the price alert
                         if (timeDiff !== undefined) {
                           // Inform the user that the price alert is created
-                          responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
+                          responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for "%s"');
                           sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
 
                           // Update product
@@ -1659,10 +1664,10 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 }
 
 /*
- * Send a Menu Structured Message (Generic Message type) using the Send API.
+ * Send a Main Menu Structured Message (Generic Message type) using the Send API.
  *
  */
-function sendMenuGenericMessage(recipientId, user) {
+function sendMainMenuGenericMessage(recipientId, user) {
   var parseUserLanguage = user.parseUserLanguage;
 
   var messageData = {
@@ -1675,8 +1680,8 @@ function sendMenuGenericMessage(recipientId, user) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Menu'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+            title: gt.dgettext(parseUserLanguage, 'Main Menu'),
+            subtitle: gt.dgettext(parseUserLanguage, 'Pick one of the options below:'),
             item_url: "",
             image_url: "",
             buttons: [{
@@ -1690,9 +1695,17 @@ function sendMenuGenericMessage(recipientId, user) {
               })
             }, {
               type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Change Settings'),
+              title: gt.dgettext(parseUserLanguage, 'Settings'),
               payload: JSON.stringify({
                 "intent": "showSettings",
+                "entities": {
+                }
+              })
+            }, {
+              type: "postback",
+              title: gt.dgettext(parseUserLanguage, 'Help'),
+              payload: JSON.stringify({
+                "intent": "showHelpInstructions",
                 "entities": {
                 }
               })

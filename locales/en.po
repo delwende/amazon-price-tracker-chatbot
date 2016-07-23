@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-23 20:47+0200\n"
-"PO-Revision-Date: 2016-07-23 20:47+0200\n"
+"POT-Creation-Date: 2016-07-23 22:54+0200\n"
+"PO-Revision-Date: 2016-07-23 22:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -40,15 +40,21 @@ msgstr ""
 msgid "help"
 msgstr "help"
 
-#: app.js:418
+#: app.js:418 app.js:1039
 msgid ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see the main menu,  just type menu."
+"just type one of the shortcuts below:\n"
+"\n"
+"  • list - to see your price watches\n"
+"  • settings - to see your settings"
 msgstr ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see the main menu,  just type menu."
+"just type one of the shortcuts below:\n"
+"\n"
+"  • list - to see your price watches\n"
+"  • settings - to see your settings"
 
 #: app.js:422 app.js:423
 msgid "search "
@@ -119,8 +125,8 @@ msgstr "Enter a valid price. For example, you could type %s"
 
 #: app.js:804
 #, javascript-format
-msgid "You have tracked the %s for %s"
-msgstr "You have tracked the %s for %s"
+msgid "You have tracked the %s for \"%s\""
+msgstr "You have tracked the %s for \"%s\""
 
 #: app.js:813
 msgid "Price watch updated."
@@ -163,16 +169,6 @@ msgstr ""
 "What’re you searching for? Use a few words to tell me what product you are "
 "searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
 
-#: app.js:1039
-msgid ""
-"Lost? Use a few words to tell me what product you are searching for.  For "
-"example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see your price watches,  just type list."
-msgstr ""
-"Lost? Use a few words to tell me what product you are searching for.  For "
-"example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"if you want to see your price watches,  just type list."
-
 #: app.js:1092 app.js:1185
 msgid "Try again or pick one of the options below:"
 msgstr "Try again or pick one of the options below:"
@@ -195,7 +191,7 @@ msgstr "Not in Stock"
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:1135 app.js:1927
+#: app.js:1135 app.js:1935
 msgid "Create price watch"
 msgstr "Create price watch"
 
@@ -203,7 +199,7 @@ msgstr "Create price watch"
 msgid "Details"
 msgstr "Details"
 
-#: app.js:1160 app.js:1943
+#: app.js:1160 app.js:1951
 msgid "Go to Website"
 msgstr "Go to Website"
 
@@ -320,57 +316,93 @@ msgstr "Main Menu"
 msgid "Pick one of the options below:"
 msgstr "Pick one of the options below:"
 
-#: app.js:1684 app.js:1902
+#: app.js:1684 app.js:1910
 msgid "Your Price Watches"
 msgstr "Your Price Watches"
 
-#: app.js:1693 app.js:1726
+#: app.js:1693 app.js:1734
 msgid "Settings"
 msgstr "Settings"
 
-#: app.js:1727 app.js:1776 app.js:1827
+#: app.js:1701 app.js:1958
+msgid "Help"
+msgstr "Help"
+
+#: app.js:1735 app.js:1784 app.js:1835
 msgid "Please choose one of the following options"
 msgstr "Please choose one of the following options"
 
-#: app.js:1732 app.js:1826
+#: app.js:1740 app.js:1834
 msgid "Change Shop Locale"
 msgstr "Change Shop Locale"
 
-#: app.js:1741 app.js:1775
+#: app.js:1749 app.js:1783
 msgid "Change Language"
 msgstr "Change Language"
 
-#: app.js:1781
+#: app.js:1789
 msgid "German"
 msgstr "German"
 
-#: app.js:1791
+#: app.js:1799
 msgid "English"
 msgstr "English"
 
-#: app.js:1832
+#: app.js:1840
 msgid "Amazon Germany"
 msgstr "Amazon Germany"
 
-#: app.js:1842
+#: app.js:1850
 msgid "Amazon UK"
 msgstr "Amazon UK"
 
-#: app.js:1852
+#: app.js:1860
 msgid "Amazon US"
 msgstr "Amazon US"
 
-#: app.js:1889
+#: app.js:1897
 msgid "Search product"
 msgstr "Search product"
 
-#: app.js:1915
+#: app.js:1923
 msgid "Change Settings"
 msgstr "Change Settings"
 
-#: app.js:1950
-msgid "Help"
-msgstr "Help"
+#~ msgid ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, just type one of the shortcuts below:\n"
+#~ "\n"
+#~ "  • list - to show your price watches\n"
+#~ "  • settings - to show your settings"
+#~ msgstr ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, just type one of the shortcuts below:\n"
+#~ "\n"
+#~ "  • list - to show your price watches\n"
+#~ "  • settings - to show your settings"
+
+#~ msgid ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, if you want to see your price watches,  just type list."
+#~ msgstr ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, if you want to see your price watches,  just type list."
+
+#~ msgid ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, if you want to see the main menu,  just type menu."
+#~ msgstr ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, if you want to see the main menu,  just type menu."
+
+#~ msgid "You have tracked the %s for %s"
+#~ msgstr "You have tracked the %s for %s"
 
 #~ msgid "Menu"
 #~ msgstr "Menu"

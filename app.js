@@ -401,8 +401,8 @@ function receivedMessage(event) {
                     var examplePrice = user.customPriceInputExamplePrice;
 
                     // Give to the user instructions on how to enter a valid price
-                    responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. Please enter ' +
-                      'a valid price. For example, you could type %s');
+                    responseText = gt.dgettext(parseUserLanguage, 'The price must be a number greater than or equal to zero. ' +
+                      'For example, you could type %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
                   } else {
                     // Show to the user some valid price suggestions
@@ -418,7 +418,7 @@ function receivedMessage(event) {
                 // responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
                 // 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
                 // ' 6"\n- "list" to show your price watches');
-                responseText = gt.dgettext(parseUserLanguage, 'Lost? Use one or two words to tell me what product you are searching for. ' +
+                responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, if you want to see your price watches, ' +
                 ' just type list.');
                 sendTextMessage(senderID, responseText);
@@ -816,7 +816,7 @@ function receivedPostback(event) {
                         if (timeDiff !== undefined) {
                           // Inform the user that the price alert is created
                           responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for %s');
-                          sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, itemTitle]));
+                          sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
 
                           // Update product
                           var product = result.get("product");
@@ -1034,7 +1034,7 @@ function receivedPostback(event) {
               break;
 
             case 'searchProduct':
-              responseText = gt.dgettext(parseUserLanguage, 'What’re you searching for? Use one or two words to tell me what product you are searching for. ' +
+              responseText = gt.dgettext(parseUserLanguage, 'What’re you searching for? Use a few words to tell me what product you are searching for. ' +
                 'For example, you could type “iPhone 6” or “Kindle Paperwhite”.');
               sendTextMessage(senderID, responseText);
 
@@ -1573,7 +1573,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one, or try to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1595,7 +1595,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one or try to enter a valid price'),
+      text: gt.dgettext(parseUserLanguage, 'Choose the correct one, or try to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1800,7 +1800,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           id: recipientId
         },
         message: {
-          text: gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Use one or two words to tell me what ' +
+          text: gt.dgettext(parseUserLanguage, 'You haven\'t created any price watches yet. Use a few words to tell me what ' +
             'product you are searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”')
         }
       };

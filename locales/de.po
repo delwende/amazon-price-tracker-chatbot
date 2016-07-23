@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-23 00:18+0200\n"
-"PO-Revision-Date: 2016-07-23 00:18+0200\n"
+"POT-Creation-Date: 2016-07-23 09:42+0200\n"
+"PO-Revision-Date: 2016-07-23 09:42+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -23,18 +23,18 @@ msgid ""
 "Paperwhite” or “Xbox One”."
 msgstr ""
 "Hallo, los geht’s. Ich sende dir eine Benachrichtigung, wenn die Preise auf "
-"Amazon sinken. Wenn du Hilfe benötigst, tippe “hilfe”. Ansonsten verwende "
-"ein oder zwei Worte um mir zu sagen, welches Produkt du suchst. Tippe zum "
-"Beispiel “iPhone 6”, “Kindle Paperwhite” oder “Xbox One”."
+"Amazon sinken. Wenn du Hilfe benötigst, tippe hilfe. Ansonsten verwende "
+"einige Worte, um mir zu sagen, welches Produkt du suchst. Tippe zum Beispiel "
+"“iPhone 6”, “Kindle Paperwhite” oder “Xbox One”."
 
 #: app.js:404
 #, javascript-format
 msgid ""
-"The price must be a number greater than or equal to zero. Please enter a "
-"valid price. For example, you could type %s"
+"The price must be a number greater than or equal to zero. For example, you "
+"could type %s"
 msgstr ""
-"Der Preis muss eine Zahl größer oder gleich Null sein. Bitte gib einen "
-"gültigen Preis ein. Tippe z.B. %s"
+"Der Preis muss eine Zahl größer oder gleich Null sein. Tippe beispielsweise "
+"%s"
 
 #: app.js:417
 msgid "help"
@@ -42,13 +42,13 @@ msgstr "hilfe"
 
 #: app.js:421
 msgid ""
-"Lost? Use one or two words to tell me what product you are searching for.  "
-"For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
-"Or, if you want to see your price watches,  just type list."
+"Lost? Use a few words to tell me what product you are searching for.  For "
+"example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
+"if you want to see your price watches,  just type list."
 msgstr ""
-"Hilfe benötigt? Verwende ein oder zwei Worte, um mir zu sagen, welches "
-"Produkt du suchst. Tippe zum Beispiel “iPhone 6”, “Kindle Paperwhite” oder "
-"“Xbox One”. Wenn du deine Preisalarme sehen möchtest, tippe einfach “liste”."
+"Hilfe benötigt? Verwende einige Worte, um mir zu sagen, welches Produkt du "
+"suchst. Tippe zum Beispiel “iPhone 6”, “Kindle Paperwhite” oder “Xbox One”. "
+"Wenn du deine Preisalarme sehen möchtest, tippe einfach liste."
 
 #: app.js:425 app.js:426
 msgid "search "
@@ -117,7 +117,7 @@ msgstr "Der aktuelle %s für diesen Artikel beträgt %s"
 #: app.js:767
 #, javascript-format
 msgid "Please enter a valid price. For example, you could type %s"
-msgstr "Gib bitte einen gültigen Preis ein. Tippe z.B. %s"
+msgstr "Gib bitte einen gültigen Preis ein. Tippe beispielsweise %s"
 
 #: app.js:818
 #, javascript-format
@@ -154,12 +154,11 @@ msgstr "Aktuell festgelegte Sprache: %s"
 
 #: app.js:1037
 msgid ""
-"What’re you searching for? Use one or two words to tell me what product you "
-"are searching for. For example, you could type “iPhone 6” or “Kindle "
-"Paperwhite”."
+"What’re you searching for? Use a few words to tell me what product you are "
+"searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
 msgstr ""
-"Was suchst du? Verwende ein oder zwei Worte, um mir zu sagen, welches "
-"Produkt du suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle Paperwhite”."
+"Was suchst du? Verwende einige Worte, um mir zu sagen, welches Produkt du "
+"suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle Paperwhite”."
 
 #: app.js:1264 app.js:1348
 #, javascript-format
@@ -252,9 +251,9 @@ msgid "Custom Input"
 msgstr "Individuelle Eingabe"
 
 #: app.js:1576 app.js:1598
-msgid "Choose the correct one or try to enter a valid price"
+msgid "Choose the correct one, or try to enter a valid price"
 msgstr ""
-"Wähle den richtigen Preis aus oder versuche erneut einen gültigen einzugeben"
+"Wähle den richtigen Preis aus, oder versuche erneut einen gültigen einzugeben"
 
 #: app.js:1684
 #, javascript-format
@@ -295,13 +294,13 @@ msgstr "Weitere Preisalarme"
 
 #: app.js:1803
 msgid ""
-"You haven't created any price watches yet. Use one or two words to tell me "
-"what product you are searching for. For example, you could type “iPhone 6” "
-"or “Kindle Paperwhite”"
+"You haven't created any price watches yet. Use a few words to tell me what "
+"product you are searching for. For example, you could type “iPhone 6” or "
+"“Kindle Paperwhite”"
 msgstr ""
-"Du hast noch keinen Preisalarm erstellt. Verwende ein oder zwei Worte, um "
-"mir zu sagen, welches Produkt du suchst. Tippe zum Beispiel “iPhone 6” oder "
-"“Kindle Paperwhite”."
+"Du hast noch keinen Preisalarm erstellt. Verwende einige Worte, um mir zu "
+"sagen, welches Produkt du suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle "
+"Paperwhite”."
 
 #: app.js:1834
 msgid "Menu"
@@ -366,6 +365,45 @@ msgstr "Beliebte Produkte"
 #: app.js:2095
 msgid "What next?"
 msgstr "Was als nächstes?"
+
+#~ msgid ""
+#~ "You haven't created any price watches yet. Use one or two words to tell "
+#~ "me what product you are searching for. For example, you could type "
+#~ "“iPhone 6” or “Kindle Paperwhite”"
+#~ msgstr ""
+#~ "Du hast noch keinen Preisalarm erstellt. Verwende ein oder zwei Worte, um "
+#~ "mir zu sagen, welches Produkt du suchst. Tippe zum Beispiel “iPhone 6” "
+#~ "oder “Kindle Paperwhite”."
+
+#~ msgid "Choose the correct one or try to enter a valid price"
+#~ msgstr ""
+#~ "Wähle den richtigen Preis aus oder versuche erneut einen gültigen "
+#~ "einzugeben"
+
+#~ msgid ""
+#~ "What’re you searching for? Use one or two words to tell me what product "
+#~ "you are searching for. For example, you could type “iPhone 6” or “Kindle "
+#~ "Paperwhite”."
+#~ msgstr ""
+#~ "Was suchst du? Verwende ein oder zwei Worte, um mir zu sagen, welches "
+#~ "Produkt du suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle Paperwhite”."
+
+#~ msgid ""
+#~ "Lost? Use one or two words to tell me what product you are searching "
+#~ "for.  For example, you could type “iPhone 6”, “Kindle Paperwhite” or "
+#~ "“Xbox One”. Or, if you want to see your price watches,  just type list."
+#~ msgstr ""
+#~ "Hilfe benötigt? Verwende ein oder zwei Worte, um mir zu sagen, welches "
+#~ "Produkt du suchst. Tippe zum Beispiel “iPhone 6”, “Kindle Paperwhite” "
+#~ "oder “Xbox One”. Wenn du deine Preisalarme sehen möchtest, tippe einfach "
+#~ "“liste”."
+
+#~ msgid ""
+#~ "The price must be a number greater than or equal to zero. Please enter a "
+#~ "valid price. For example, you could type %s"
+#~ msgstr ""
+#~ "Der Preis muss eine Zahl größer oder gleich Null sein. Bitte gib einen "
+#~ "gültigen Preis ein. Tippe z.B. %s"
 
 #~ msgid "Create price watch for:"
 #~ msgstr "Erstelle einen Preisalarm für:"

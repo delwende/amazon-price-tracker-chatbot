@@ -415,9 +415,6 @@ function receivedMessage(event) {
               }
             } else {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
-                // responseText = gt.dgettext(parseUserLanguage, 'Hi there. So I monitor millions of products on Amazon and can alert you ' +
-                // 'when prices drop, helping you decide when to buy. Tell me things like the following:\n- \[product name\], e.g. "iphone ' +
-                // ' 6"\n- "list" to show your price watches');
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, if you want to see your price watches, ' +
                 ' just type list.');
@@ -428,19 +425,10 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
                 sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
-                // var greetings = [
-                //   gt.dgettext(parseUserLanguage, 'Hi %s!'),
-                //   gt.dgettext(parseUserLanguage, 'Oh, hello %s!'),
-                //   gt.dgettext(parseUserLanguage, 'Oh, hi. I didn\'t see you there.')
-                // ];
-                //
-                // var greeting = helpers.randomElementFromArray(greetings);
-                // sendTextMessage(senderID, sprintf(greeting, user.parseUserFirstName));
-
                 // Generate dynamic menu
                 var text = gt.dgettext(parseUserLanguage, 'Pick an option below to get going');
                 var payload = JSON.stringify({
-                  "intents": ["searchProduct", "listPriceWatches", "showSettings"],
+                  "intents": ["searchProduct", "listPriceWatches", "showHelpInstructions"],
                   "entities": {
                   }
                 });
@@ -454,16 +442,6 @@ function receivedMessage(event) {
               } else {
                 var keywords = messageText;
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
-                // var helpInstructions = [
-                //   gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m not sure I understand. Try typing "search \[product name\]" to ' +
-                //   'search a product or type "help".'),
-                //   gt.dgettext(parseUserLanguage, 'So, I\'m good at alerting you when prices on Amazon drop. Other stuff, not so good. ' +
-                //   'If you need help just enter "help".'),
-                //   gt.dgettext(parseUserLanguage, 'Oops, I didn\'t catch that. For things I can help you with, type "help".')
-                // ];
-                //
-                // var helpInstruction = helpers.randomElementFromArray(helpInstructions);
-                // sendTextMessage(senderID, sprintf(helpInstruction));
               }
             }
 
@@ -560,8 +538,7 @@ function receivedPostback(event) {
         if (timeDiff > 5) {
 
           // Inform the user that price and availability information may have changed
-          responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this item may have changed. In order ' +
-            'to create a price watch for this item, please search for it again.');
+          responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this product may have changed.');
           sendTextMessage(senderID, responseText);
 
         } else {
@@ -585,8 +562,8 @@ function receivedPostback(event) {
 
                   fullItem = helpers.extractAmazonItem(result, true);
 
-                  // Inform the user about the item he/she is creating a price alert for
-                  responseText = gt.dgettext(parseUserLanguage, 'Create price watch for: %s');
+                  // Inform the user about the item he/she is creating a price watch for
+                  responseText = gt.dgettext(parseUserLanguage, 'Create price watch for "%s"');
                   sendTextMessage(senderID, sprintf(responseText, truncate(fullItem.title, 250)));
 
                   // Query products
@@ -773,7 +750,7 @@ function receivedPostback(event) {
                     console.log("Updated key-value pair created with key: user:" + senderID);
 
                     // Give to the user instructions on how to enter a valid price
-                    responseText = gt.dgettext(parseUserLanguage, 'Please enter a valid price. For example, you could type %s');
+                    responseText = gt.dgettext(parseUserLanguage, 'Enter a valid price. For example, you could type %s');
                     sendTextMessage(senderID, sprintf(responseText, examplePrice));
                   }
                 });
@@ -1121,8 +1098,8 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       sendDynamicMenuButtonMessage(recipientId, user, text, payload);
 
       // Inform the user that the search for this keywords did not match any products
-      responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products.');
-      sendTextMessage(recipientId, sprintf(responseText, keywords));
+      responseText = gt.dgettext(parseUserLanguage, 'Not sure I understand what you\'re searching for.');
+      sendTextMessage(recipientId, responseText);
     } else {
       console.log("Successfully retrieved " + results.length + " items.");
 
@@ -1160,20 +1137,21 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
                 "intent": "activatePriceAlert",
                 "entities": {
                   "item": item,
-                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
+                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale must be saved temporarily, because user could change awsLocale between
                   // product search and price alert activation
                   "validFrom": moment() // Time the element was created
                 }
               })
             }, {
               type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Get product details'),
+              title: gt.dgettext(parseUserLanguage, 'Details'),
               payload: JSON.stringify({
                 "intent": "showProductDetails",
                 "entities": {
                   "item": item,
-                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
+                  "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale must be saved temporarily, because user could change awsLocale between
                   // product search and price alert activation
+                  "validFrom": moment() // Time the element was created
                 }
               })
             }, {
@@ -1212,8 +1190,9 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
         });
         sendDynamicMenuButtonMessage(recipientId, user, text, payload);
 
-      // Inform the user that the search for this keywords did not match any products
-      responseText = gt.dgettext(parseUserLanguage, 'Your search "%s" did not match any products.');
+        // Inform the user that the search for this keywords did not match any products
+        responseText = gt.dgettext(parseUserLanguage, 'Not sure I understand what you\'re searching for.');
+        sendTextMessage(recipientId, responseText);
       }
     }
   });
@@ -1439,7 +1418,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   if (priceSuggestions.length === 1) {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one, or try to enter a valid price'),
+      text: gt.dgettext(parseUserLanguage, 'Pick one of the options below or try again to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1547,9 +1526,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
       // Inform the user that his/her price watches are shown below
       var from, to, messageData;
       if (pageNumber === 1) {
-        var text = gt.dgettext(parseUserLanguage, 'Here are the products I\'m tracking for you. I\'ll send you an alert when ' +
-        'the current price for any of the products you are watching falls below your desired price.\n\n Price watches %s ' +
-        'to %s:');
+        var text = gt.dgettext(parseUserLanguage, 'Here\'re your price watches. I\'ll send you an alert when the current' +
+        ' price for any of the products you are watching falls below your desired price.\n\n Price watches %s to %s:');
         from = 1;
         to = results.length > 10 ? 10 : results.length;
         messageData = {
@@ -1890,106 +1868,6 @@ function sendChangeShopLocaleGenericMessage(recipientId, user) {
 }
 
 /*
- * Send a Menu1 button message using the Send API.
- *
- */
-function sendMenu1ButtonMessage(recipientId, user) {
-  var parseUserLanguage = user.parseUserLanguage;
-
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "button",
-          text: gt.dgettext(parseUserLanguage, 'Pick an option below to get going'),
-          buttons:[{
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Search product'),
-            payload: JSON.stringify({
-              "intent": "searchProduct",
-              "entities": {
-              }
-            })
-          }, {
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Popular products'),
-            payload: JSON.stringify({
-              "intent": "listPopularProducts",
-              "entities": {
-                "pageNumber": 1
-              }
-            })
-          }, {
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
-            payload: JSON.stringify({
-              "intent": "listPriceWatches",
-              "entities": {
-                "pageNumber": 1
-              }
-            })
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
-}
-
-/*
- * Send a Menu2 button message using the Send API.
- *
- */
-function sendMenu2ButtonMessage(recipientId, user, item) {
-  var parseUserLanguage = user.parseUserLanguage;
-  var parseUserAwsLocale = user.parseUserAwsLocale;
-
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "button",
-          text: gt.dgettext(parseUserLanguage, 'What next?'),
-          buttons:[{
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Create price watch'),
-            payload: JSON.stringify({
-              "intent": "activatePriceAlert",
-              "entities": {
-                "item": item,
-                "awsLocale": parseUserAwsLocale, // Important: parseUserAwsLocale has to be temporarily saved, because user could change awsLocale between
-                // product search and price alert activation
-                "validFrom": moment() // Time the element was created
-              }
-            })
-          }, {
-            type: "postback",
-            title: gt.dgettext(parseUserLanguage, 'Popular products'),
-            payload: JSON.stringify({
-              "intent": "listPopularProducts",
-              "entities": {
-                "pageNumber": 1
-              }
-            })
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
-}
-
-/*
  * Send a Dynamic Menu button message using the Send API.
  *
  */
@@ -2006,7 +1884,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
 
     switch (intents[i]) {
       case 'searchProduct':
-
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Search product'),
@@ -2033,7 +1910,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         break;
 
       case 'showSettings':
-
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Change Settings'),
@@ -2046,7 +1922,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         break;
 
       case 'activatePriceAlert':
-
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Create price watch'),
@@ -2062,7 +1937,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         break;
 
       case 'goToWebsite':
-
         buttons.push({
           type: "web_url",
           url: entities.item.detailPageUrl,
@@ -2071,7 +1945,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         break;
 
       case 'showHelpInstructions':
-
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Help'),

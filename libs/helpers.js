@@ -208,7 +208,7 @@ exports.calculateDesiredPriceExamples = function(price) {
 * Returns language title by language short code.
 *
 */
-exports.languageTitleByLanguageShortCode = function(parseUserLanguage, languageShortCode) {
+exports.languageByLanguageShortCode = function(parseUserLanguage, languageShortCode) {
 	var supportedLanguages = {
 		"de": gt.dgettext(parseUserLanguage, 'German'),
 		"en": gt.dgettext(parseUserLanguage, 'English')
@@ -221,12 +221,12 @@ exports.languageTitleByLanguageShortCode = function(parseUserLanguage, languageS
 * Returns shop locale title by shop locale short code.
 *
 */
-exports.shopLocaleTitleByShopLocaleShortCode = function(parseUserLanguage, shopLocaleShortCode) {
-	var supportedShopLocaleTitles = {
-		"de_DE": gt.dgettext(parseUserLanguage, 'Amazon Germany'),
-		"en_GB": gt.dgettext(parseUserLanguage, 'Amazon UK'),
-		"en_US": gt.dgettext(parseUserLanguage, 'Amazon US')
+exports.countryByAwsLocaleShortCode = function(parseUserLanguage, awsLocaleShortCode) {
+	var supportedCountries = {
+		"de_DE": gt.dgettext(parseUserLanguage, 'Germany'),
+		"en_GB": gt.dgettext(parseUserLanguage, 'United Kingdom'),
+		"en_US": gt.dgettext(parseUserLanguage, 'United States')
 	};
 
-	return shopLocaleShortCode !== undefined ? supportedShopLocaleTitles[shopLocaleShortCode] : undefined;
+	return awsLocaleShortCode !== undefined ? supportedCountries[awsLocaleShortCode] : undefined;
 };

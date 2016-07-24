@@ -417,11 +417,8 @@ function receivedMessage(event) {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the shortcuts ' +
-                'below:\n\n  • list - to see your price watches\n  • settings - to see your settings');
+                'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
                 sendTextMessage(senderID, responseText);
-              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'search '))) {
-                var keywords = messageText.replace(gt.dgettext(parseUserLanguage, 'search '), '');
-                sendListSearchResultsGenericMessage(senderID, user, keywords);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
                 sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
@@ -436,9 +433,18 @@ function receivedMessage(event) {
 
                 sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
-                sendSettingsGenericMessage(senderID, user);
-              } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'menu'))) {
-                sendMainMenuGenericMessage(senderID, user);
+                // Generate dynamic menu
+                var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s');
+
+                var amazonShop = helpers.countryByAwsLocaleShortCode(parseUserLanguage, parseUserAwsLocale);
+                var language = helpers.languageByLanguageShortCode(parseUserLanguage, parseUserLanguage);
+
+                var payload = JSON.stringify({
+                  "intents": ["changeSettingAmazonShop", "changeSettingLanguage"],
+                  "entities": {
+                  }
+                });
+                sendDynamicMenuButtonMessage(senderID, user, vsprintf(text, [amazonShop, language]), payload);
               } else {
                 var keywords = messageText;
                 sendListSearchResultsGenericMessage(senderID, user, keywords);
@@ -1038,7 +1044,7 @@ function receivedPostback(event) {
             case 'showHelpInstructions':
               responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the shortcuts ' +
-                'below:\n\n  • list - to see your price watches\n  • settings - to see your settings');
+                'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
               sendTextMessage(senderID, responseText);
 
               break;
@@ -1440,7 +1446,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   } else {
     var payload = {
       template_type: "button",
-      text: gt.dgettext(parseUserLanguage, 'Choose the correct one, or try to enter a valid price'),
+      text: gt.dgettext(parseUserLanguage, 'Pick one of the options below or try again to enter a valid price'),
       buttons:[{
         type: "postback",
         title: helpers.formatPriceByCurrencyCode(priceSuggestions[0], awsLocale),
@@ -1658,222 +1664,166 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   });
 }
 
-/*
- * Send a Main Menu Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendMainMenuGenericMessage(recipientId, user) {
-  var parseUserLanguage = user.parseUserLanguage;
+// /*
+//  * Send a Settings Structured Message (Generic Message type) using the Send API.
+//  *
+//  */
+// function sendSettingsGenericMessage(recipientId, user) {
+//   var parseUserLanguage = user.parseUserLanguage;
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Main Menu'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Pick one of the options below:'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
-              payload: JSON.stringify({
-                "intent": "listPriceWatches",
-                "entities": {
-                  "pageNumber": 1
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Settings'),
-              payload: JSON.stringify({
-                "intent": "showSettings",
-                "entities": {
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Help'),
-              payload: JSON.stringify({
-                "intent": "showHelpInstructions",
-                "entities": {
-                }
-              })
-            }],
-          }]
-        }
-      }
-    }
-  };
+//   var messageData = {
+//     recipient: {
+//       id: recipientId
+//     },
+//     message: {
+//       attachment: {
+//         type: "template",
+//         payload: {
+//           template_type: "generic",
+//           elements: [{
+//             title: gt.dgettext(parseUserLanguage, 'Settings'),
+//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+//             item_url: "",
+//             image_url: "",
+//             buttons: [{
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "awsLocale"
+//                 }
+//               })
+//             }, {
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'Change Language'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "language"
+//                 }
+//               })
+//             }],
+//           }]
+//         }
+//       }
+//     }
+//   };
 
-  callSendAPI(messageData);
-}
+//   callSendAPI(messageData);
+// }
 
-/*
- * Send a Settings Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendSettingsGenericMessage(recipientId, user) {
-  var parseUserLanguage = user.parseUserLanguage;
+// /*
+//  * Send a Change Language Structured Message (Generic Message type) using the Send API.
+//  *
+//  */
+// function sendChangeLanguageGenericMessage(recipientId, user) {
+//   var parseUserLanguage = user.parseUserLanguage;
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Settings'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "awsLocale"
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Change Language'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "language"
-                }
-              })
-            }],
-          }]
-        }
-      }
-    }
-  };
+//   var messageData = {
+//     recipient: {
+//       id: recipientId
+//     },
+//     message: {
+//       attachment: {
+//         type: "template",
+//         payload: {
+//           template_type: "generic",
+//           elements: [{
+//             title: gt.dgettext(parseUserLanguage, 'Change Language'),
+//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+//             item_url: "",
+//             image_url: "",
+//             buttons: [{
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'German'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "language",
+//                   "languageShortCode": "de"
+//                 }
+//               })
+//             }, {
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'English'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "language",
+//                   "languageShortCode": "en"
+//                 }
+//               })
+//             }],
+//           }]
+//         }
+//       }
+//     }
+//   };
 
-  callSendAPI(messageData);
-}
+//   callSendAPI(messageData);
+// }
 
-/*
- * Send a Change Language Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendChangeLanguageGenericMessage(recipientId, user) {
-  var parseUserLanguage = user.parseUserLanguage;
+// /*
+//  * Send a Change Shop Locale Structured Message (Generic Message type) using the Send API.
+//  *
+//  */
+// function sendChangeShopLocaleGenericMessage(recipientId, user) {
+//   var parseUserLanguage = user.parseUserLanguage;
 
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Change Language'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'German'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "language",
-                  "languageShortCode": "de"
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'English'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "language",
-                  "languageShortCode": "en"
-                }
-              })
-            }],
-          }]
-        }
-      }
-    }
-  };
+//   var messageData = {
+//     recipient: {
+//       id: recipientId
+//     },
+//     message: {
+//       attachment: {
+//         type: "template",
+//         payload: {
+//           template_type: "generic",
+//           elements: [{
+//             title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
+//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
+//             item_url: "",
+//             image_url: "",
+//             buttons: [{
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'Amazon Germany'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "awsLocale",
+//                   "awsLocale": "de_DE"
+//                 }
+//               })
+//             }, {
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'Amazon UK'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "awsLocale",
+//                   "awsLocale": "en_GB"
+//                 }
+//               })
+//             }, {
+//               type: "postback",
+//               title: gt.dgettext(parseUserLanguage, 'Amazon US'),
+//               payload: JSON.stringify({
+//                 "intent": "changeSettings",
+//                 "entities": {
+//                   "settingToChange": "awsLocale",
+//                   "awsLocale": "en_US"
+//                 }
+//               })
+//             }],
+//           }]
+//         }
+//       }
+//     }
+//   };
 
-  callSendAPI(messageData);
-}
-
-/*
- * Send a Change Shop Locale Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendChangeShopLocaleGenericMessage(recipientId, user) {
-  var parseUserLanguage = user.parseUserLanguage;
-
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
-            subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-            item_url: "",
-            image_url: "",
-            buttons: [{
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Amazon Germany'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "awsLocale",
-                  "awsLocale": "de_DE"
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Amazon UK'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "awsLocale",
-                  "awsLocale": "en_GB"
-                }
-              })
-            }, {
-              type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'Amazon US'),
-              payload: JSON.stringify({
-                "intent": "changeSettings",
-                "entities": {
-                  "settingToChange": "awsLocale",
-                  "awsLocale": "en_US"
-                }
-              })
-            }],
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
-}
+//   callSendAPI(messageData);
+// }
 
 /*
  * Send a Dynamic Menu button message using the Send API.
@@ -1959,6 +1909,32 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
           payload: JSON.stringify({
             "intent": "showHelpInstructions",
             "entities": {
+            }
+          })
+        });
+        break;
+
+      case 'changeSettingAmazonShop':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Change Amazon Shop'),
+          payload: JSON.stringify({
+            "intent": "changeSettings",
+            "entities": {
+              "settingToChange": "awsLocale"
+            }
+          })
+        });
+        break;
+
+      case 'changeSettingLanguage':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Change Language'),
+          payload: JSON.stringify({
+            "intent": "changeSettings",
+            "entities": {
+              "settingToChange": "language"
             }
           })
         });

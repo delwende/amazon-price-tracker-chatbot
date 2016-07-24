@@ -939,8 +939,9 @@ function receivedPostback(event) {
                     var title = gt.dgettext(parseUserLanguage, 'Change Amazon Shop');
                     var subtitle = gt.dgettext(parseUserLanguage, 'Pick an option below');
                     var payload1 = {
-                      intent: ["changeSettingAwsLocale"],
+                      intent: "changeSetting",
                       entities: {
+                        setting: setting,
                         options: helpers.getSupportedCountries(parseUserLanguage)
                       }
                     };
@@ -950,6 +951,40 @@ function receivedPostback(event) {
                   break;
 
                 case 'language':
+                  var language = json.entities.language;
+
+                  if (language !== undefined) {
+
+                    // Update key-value pair with key user:senderID
+                      redisClient.hmset('user:' + senderID, {
+                        'parseUserLanguage': language
+                      }, function(error, reply) {
+                        if (error) {
+                          console.log("Error: " + error);
+                        } else {
+                          console.log("Updated key-value pair created with key: user:" + senderID);
+
+                          // Inform the user that the language has been successfully changed
+                          var language1 = helpers.languageByLanguageShortCode(language, language);
+                          responseText = gt.dgettext(language, 'Great. You have changed the language to %s. From now on the only language' +
+                            ' I understand is %s.');
+                          sendTextMessage(senderID, vsprintf(responseText, [language1, language1]));
+                        }
+                      });
+
+                  } else {
+                    // Generate dynamic menu
+                    var title = gt.dgettext(parseUserLanguage, 'Change Language');
+                    var subtitle = gt.dgettext(parseUserLanguage, 'Pick an option below');
+                    var payload1 = {
+                      intent: "changeSetting",
+                      entities: {
+                        setting: setting,
+                        options: helpers.getSupportedLanguages(parseUserLanguage)
+                      }
+                    };
+                    sendDynamicSettingOptionsGenericMessage(senderID, user, title, subtitle, payload1);
+                  }
                   break;
 
                   default:
@@ -1739,8 +1774,9 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Change Language'),
           payload: JSON.stringify({
-            "intent": "showHelpInstructions",
+            "intent": "changeSetting",
             "entities": {
+              "setting": "language"
             }
           })
         });
@@ -1777,24 +1813,39 @@ function sendDynamicSettingOptionsGenericMessage(recipientId, user, title, subti
   var parseUserLanguage = user.parseUserLanguage;
 
   var intent = payload.intent;
+  var setting = payload.entities.setting;
   var options = payload.entities.options;
   var numberOptions = Object.keys(options).length;
   var elements = [];
   var buttons = [];
   var ctr = 0;
 
+  var buttonTitle = "";
+
   for (var key in options) {
 
     ++ctr;
 
+    switch (setting) {
+      case 'awsLocale':
+        buttonTitle = helpers.countryByAwsLocaleShortCode(parseUserLanguage, key);
+        break;
+      case 'language':
+        buttonTitle = helpers.languageByLanguageShortCode(parseUserLanguage, key);
+        break;
+
+      default:
+    }
+
     buttons.push({
       type: "postback",
-      title: helpers.countryByAwsLocaleShortCode(parseUserLanguage, key),
+      title: buttonTitle,
       payload: JSON.stringify({
-        "intent": "changeSetting",
+        "intent": intent,
         "entities": {
-          "setting": "awsLocale",
-          "awsLocale": key
+          "setting": setting,
+          "awsLocale": setting === "awsLocale" ? key : undefined,
+          "language": setting === "language" ? key : undefined
         }
       }),
     });

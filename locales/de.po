@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-24 19:34+0200\n"
-"PO-Revision-Date: 2016-07-24 19:34+0200\n"
+"POT-Creation-Date: 2016-07-24 22:18+0200\n"
+"PO-Revision-Date: 2016-07-24 22:18+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "help"
 msgstr "hilfe"
 
-#: app.js:418 app.js:1016
+#: app.js:418 app.js:1051
 msgid ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
@@ -159,19 +159,32 @@ msgstr ""
 "einem Produkt suchst, durchsuche ich für dich  den Amazon-Shop %s. Um diese "
 "Einstellung rückgängig zu machen, tippe einfach Einstellungen."
 
-#: app.js:939 app.js:1727
+#: app.js:939 app.js:1762
 msgid "Change Amazon Shop"
 msgstr "Amazon-Shop wechseln"
 
-#: app.js:940
+#: app.js:940 app.js:978
 msgid "Pick an option below"
 msgstr "Wähle eine der nachfolgenden Optionen"
 
-#: app.js:989
+#: app.js:969
+#, javascript-format
+msgid ""
+"Great. You have changed the language to %s. From now on the only language I "
+"understand is %s."
+msgstr ""
+"Großartig. Du hast die Sprache zu %s geändert. Von jetzt an verstehe ich nur "
+"noch %s."
+
+#: app.js:977 app.js:1775
+msgid "Change Language"
+msgstr "Sprache ändern"
+
+#: app.js:1024
 msgid "What next?"
 msgstr "Wie möchtest du fortfahren?"
 
-#: app.js:1009
+#: app.js:1044
 msgid ""
 "What’re you searching for? Use a few words to tell me what product you are "
 "searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
@@ -179,99 +192,99 @@ msgstr ""
 "Was suchst du? Verwende einige Worte, um mir zu sagen, welches Produkt du "
 "suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle Paperwhite”."
 
-#: app.js:1069 app.js:1162
+#: app.js:1104 app.js:1197
 msgid "Try again or pick one of the options below:"
 msgstr "Versuche es erneut oder wähle eine der nachfolgenden Optionen:"
 
-#: app.js:1078 app.js:1171
+#: app.js:1113 app.js:1206
 msgid "Not sure I understand what you're searching for."
 msgstr "Ich bin mir nicht sicher, ob ich verstanden habe, was du suchst."
 
-#: app.js:1084
+#: app.js:1119
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Suchergebnisse für \"%s\""
 
-#: app.js:1099 app.js:1100 app.js:1101
+#: app.js:1134 app.js:1135 app.js:1136
 msgid "Not in Stock"
 msgstr "Vergriffen"
 
-#: app.js:1107
+#: app.js:1142
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | Drittanb. Neu: %s | Drittanb. Gebraucht: %s"
 
-#: app.js:1112 app.js:1692
+#: app.js:1147 app.js:1727
 msgid "Create price watch"
 msgstr "Preisalarm erstellen"
 
-#: app.js:1124
+#: app.js:1159
 msgid "Details"
 msgstr "Siehe Details"
 
-#: app.js:1137 app.js:1708
+#: app.js:1172 app.js:1743
 msgid "Go to Website"
 msgstr "Zur Webseite gehen"
 
-#: app.js:1188
+#: app.js:1223
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1189
+#: app.js:1224
 msgid "3rd Party New"
 msgstr "Drittanb. Neu"
 
-#: app.js:1190
+#: app.js:1225
 msgid "3rd Party Used"
 msgstr "Drittanb. Gebrauch"
 
-#: app.js:1219
+#: app.js:1254
 msgid "Set price type"
 msgstr "Preistyp festlegen"
 
-#: app.js:1220
+#: app.js:1255
 msgid "What price type do you want to track?"
 msgstr "Welchen Preistyp möchtest du verfolgen?"
 
-#: app.js:1265 app.js:1319
+#: app.js:1300 app.js:1354
 msgid "Set desired price"
 msgstr "Wunschpreis festlegen"
 
-#: app.js:1266 app.js:1320
+#: app.js:1301 app.js:1355
 msgid "At what price would you like to receive an alert?"
 msgstr "Bei welchem Preis möchtest du eine Benachrichtigung erhalten?"
 
-#: app.js:1271
+#: app.js:1306
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1287
+#: app.js:1322
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1303
+#: app.js:1338
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1325
+#: app.js:1360
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1341
+#: app.js:1376
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1357
+#: app.js:1392
 msgid "Custom Input"
 msgstr "Individuelle Eingabe"
 
-#: app.js:1398 app.js:1420
+#: app.js:1433 app.js:1455
 msgid "Pick one of the options below or try again to enter a valid price"
 msgstr ""
 "Wähle eine der nachfolgenden Optionen oder versuche erneut einen gültigen "
 "Preis einzugeben"
 
-#: app.js:1506
+#: app.js:1541
 #, javascript-format
 msgid ""
 "Here're your price watches. I'll send you an alert when the current price "
@@ -284,29 +297,29 @@ msgstr ""
 "\n"
 "Preisalarme %s bis %s:"
 
-#: app.js:1520
+#: app.js:1555
 #, javascript-format
 msgid "Price watches %s to %s:"
 msgstr "Preisalarme %s bis %s:"
 
-#: app.js:1551
+#: app.js:1586
 #, javascript-format
 msgid "Current price: %s | Your Desired price: %s"
 msgstr "Aktueller Preis: %s | Dein Wunschpreis: %s"
 
-#: app.js:1555
+#: app.js:1590
 msgid "Change desired price"
 msgstr "Wunschpreis ändern"
 
-#: app.js:1566
+#: app.js:1601
 msgid "Delete price watch"
 msgstr "Preisalarm löschen"
 
-#: app.js:1579
+#: app.js:1614
 msgid "More price watches"
 msgstr "Weitere Preisalarme"
 
-#: app.js:1624
+#: app.js:1659
 msgid ""
 "You haven't created any price watches yet. Use a few words to tell me what "
 "product you are searching for. For example, you could type “iPhone 6” or "
@@ -316,25 +329,21 @@ msgstr ""
 "sagen, welches Produkt du suchst. Tippe zum Beispiel “iPhone 6” oder “Kindle "
 "Paperwhite”."
 
-#: app.js:1655
+#: app.js:1690
 msgid "Search product"
 msgstr "Produkt suchen"
 
-#: app.js:1667
+#: app.js:1702
 msgid "Your Price Watches"
 msgstr "Deine Preisalarme"
 
-#: app.js:1680
+#: app.js:1715
 msgid "Change Settings"
 msgstr "Einstellungen ändern"
 
-#: app.js:1715
+#: app.js:1750
 msgid "Help"
 msgstr "Hilfe"
-
-#: app.js:1740
-msgid "Change Language"
-msgstr "Sprache ändern"
 
 #: libs/helpers.js:213
 msgid "German"
@@ -355,6 +364,22 @@ msgstr "Vereinigtes Königreich"
 #: libs/helpers.js:228
 msgid "United States"
 msgstr "USA"
+
+#~ msgid ""
+#~ "Great. You have changed the language to %s. From now on the only language "
+#~ "I understand is %s. To reverse this setting, just type settings."
+#~ msgstr ""
+#~ "Großartig. Du hast die Sprache zu %s geändert. Von jetzt an verstehe ich "
+#~ "nur noch %s. Um diese Einstellung rückgängig zu machen, tippe einfach "
+#~ "Einstellungen."
+
+#~ msgid ""
+#~ "Great. You have changed the language to %s. If you're now speaking with "
+#~ "me, I solely understand %s. To reverse this setting, just type settings."
+#~ msgstr ""
+#~ "Großartig. Du hast die Sprache zu %s geändert. Wenn du künftig mit mir "
+#~ "sprichst, spreche ausschließlich %s. Um diese Einstellung rückgängig zu "
+#~ "machen, tippe einfach Einstellungen."
 
 #~ msgid ""
 #~ "Great. You have changed the Amazon shop to %s. If you\re now searching "

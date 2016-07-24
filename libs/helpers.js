@@ -205,28 +205,48 @@ exports.calculateDesiredPriceExamples = function(price) {
 };
 
 /*
-* Returns language title by language short code.
+* Returns supported languages as a JSON object.
 *
 */
-exports.languageByLanguageShortCode = function(parseUserLanguage, languageShortCode) {
+exports.getSupportedLanguages = function(parseUserLanguage) {
 	var supportedLanguages = {
 		"de": gt.dgettext(parseUserLanguage, 'German'),
 		"en": gt.dgettext(parseUserLanguage, 'English')
 	};
 
-	return languageShortCode !== undefined ? supportedLanguages[languageShortCode] : undefined;
+	return supportedLanguages;
 };
 
 /*
-* Returns shop locale title by shop locale short code.
+* Returns supported countries as a JSON object
 *
 */
-exports.countryByAwsLocaleShortCode = function(parseUserLanguage, awsLocaleShortCode) {
+exports.getSupportedCountries = function(parseUserLanguage) {
 	var supportedCountries = {
 		"de_DE": gt.dgettext(parseUserLanguage, 'Germany'),
 		"en_GB": gt.dgettext(parseUserLanguage, 'United Kingdom'),
 		"en_US": gt.dgettext(parseUserLanguage, 'United States')
 	};
+
+	return supportedCountries;
+};
+
+/*
+* Returns language by language short code.
+*
+*/
+exports.languageByLanguageShortCode = function(parseUserLanguage, languageShortCode) {
+	var supportedLanguages = this.getSupportedLanguages(parseUserLanguage);
+
+	return languageShortCode !== undefined ? supportedLanguages[languageShortCode] : undefined;
+};
+
+/*
+* Returns country by AWS locale short code.
+*
+*/
+exports.countryByAwsLocaleShortCode = function(parseUserLanguage, awsLocaleShortCode) {
+	var supportedCountries = this.getSupportedCountries(parseUserLanguage);
 
 	return awsLocaleShortCode !== undefined ? supportedCountries[awsLocaleShortCode] : undefined;
 };

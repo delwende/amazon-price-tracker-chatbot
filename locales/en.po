@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-24 10:29+0200\n"
-"PO-Revision-Date: 2016-07-24 10:35+0200\n"
+"POT-Creation-Date: 2016-07-24 19:34+0200\n"
+"PO-Revision-Date: 2016-07-24 19:34+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -14,6 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: app.js\n"
+"X-Poedit-SearchPath-1: libs/helpers.js\n"
 
 #: app.js:328
 msgid ""
@@ -40,18 +41,18 @@ msgstr ""
 msgid "help"
 msgstr "help"
 
-#: app.js:418 app.js:1041
+#: app.js:418 app.js:1016
 msgid ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"just type one of the shortcuts below:\n"
+"just type one of the words below:\n"
 "\n"
 "  • list - to show your price watches\n"
 "  • settings - to see your settings"
 msgstr ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
-"just type one of the shortcuts below:\n"
+"just type one of the words below:\n"
 "\n"
 "  • list - to show your price watches\n"
 "  • settings - to see your settings"
@@ -86,86 +87,89 @@ msgid ""
 "You're wondering about your settings?\n"
 "\n"
 "Amazon Shop: %s\n"
-"Language: %s"
+"Language: %s\n"
+"\n"
+"To change any setting, just pick an option below:"
 msgstr ""
 "You're wondering about your settings?\n"
 "\n"
 "Amazon Shop: %s\n"
-"Language: %s"
+"Language: %s\n"
+"\n"
+"To change any setting, just pick an option below:"
 
-#: app.js:455
+#: app.js:460
 msgid "I'm sorry, but I'm not yet available in your country."
 msgstr "I'm sorry, but I'm not yet available in your country."
 
-#: app.js:543
+#: app.js:548
 msgid "Price and availability information for this product may have changed."
 msgstr "Price and availability information for this product may have changed."
 
-#: app.js:568
+#: app.js:573
 #, javascript-format
 msgid "Create price watch for \"%s\""
 msgstr "Create price watch for \"%s\""
 
-#: app.js:705 app.js:780
+#: app.js:710 app.js:785
 msgid "Amazon price"
 msgstr "Amazon price"
 
-#: app.js:706 app.js:781
+#: app.js:711 app.js:786
 msgid "3rd Party New price"
 msgstr "3rd Party New price"
 
-#: app.js:707 app.js:782
+#: app.js:712 app.js:787
 msgid "3rd Party Used price"
 msgstr "3rd Party Used price"
 
-#: app.js:714
+#: app.js:719
 #, javascript-format
 msgid "The current %s for this item is %s"
 msgstr "The current %s for this item is %s"
 
-#: app.js:755
+#: app.js:760
 #, javascript-format
 msgid "Enter a valid price. For example, you could type %s"
 msgstr "Enter a valid price. For example, you could type %s"
 
-#: app.js:806
+#: app.js:811
 #, javascript-format
 msgid "You have tracked the %s for \"%s\""
 msgstr "You have tracked the %s for \"%s\""
 
-#: app.js:815
+#: app.js:820
 msgid "Price watch updated."
 msgstr "Price watch updated."
 
-#: app.js:854
+#: app.js:859
 msgid "Price watch deleted."
 msgstr "Price watch deleted."
 
-#: app.js:932
+#: app.js:931
 #, javascript-format
-msgid "Changed shop locale to: %s"
-msgstr "Changed shop locale to: %s"
+msgid ""
+"Great. You have changed the Amazon shop to %s. If you're now searching for a "
+"product, I search for you the Amazon shop %s. To reverse this setting, just "
+"type settings."
+msgstr ""
+"Great. You have changed the Amazon shop to %s. If you're now searching for a "
+"product, I search for you the Amazon shop %s. To reverse this setting, just "
+"type settings."
+
+#: app.js:939 app.js:1727
+msgid "Change Amazon Shop"
+msgstr "Change Amazon Shop"
 
 #: app.js:940
-#, javascript-format
-msgid "Currently set shop locale: %s"
-msgstr "Currently set shop locale: %s"
+msgid "Pick an option below"
+msgstr "Pick an option below"
 
-#: app.js:965
-#, javascript-format
-msgid "Changed language to: %s"
-msgstr "Changed language to: %s"
-
-#: app.js:973
-#, javascript-format
-msgid "Currently set language: %s"
-msgstr "Currently set language: %s"
-
-#: app.js:1014
+#: app.js:989
 msgid "What next?"
 msgstr "What next?"
 
-#: app.js:1034
+#: app.js:1009
 #, fuzzy
 msgid ""
 "What’re you searching for? Use a few words to tell me what product you are "
@@ -174,97 +178,97 @@ msgstr ""
 "What’re you searching for? Use a few words to tell me what product you are "
 "searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
 
-#: app.js:1094 app.js:1187
+#: app.js:1069 app.js:1162
 msgid "Try again or pick one of the options below:"
 msgstr "Try again or pick one of the options below:"
 
-#: app.js:1103 app.js:1196
+#: app.js:1078 app.js:1171
 msgid "Not sure I understand what you're searching for."
 msgstr "Not sure I understand what you're searching for."
 
-#: app.js:1109
+#: app.js:1084
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:1124 app.js:1125 app.js:1126
+#: app.js:1099 app.js:1100 app.js:1101
 msgid "Not in Stock"
 msgstr "Not in Stock"
 
-#: app.js:1132
+#: app.js:1107
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:1137 app.js:1881
+#: app.js:1112 app.js:1692
 msgid "Create price watch"
 msgstr "Create price watch"
 
-#: app.js:1149
+#: app.js:1124
 msgid "Details"
 msgstr "Details"
 
-#: app.js:1162 app.js:1897
+#: app.js:1137 app.js:1708
 msgid "Go to Website"
 msgstr "Go to Website"
 
-#: app.js:1213
+#: app.js:1188
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1214
+#: app.js:1189
 msgid "3rd Party New"
 msgstr "3rd Party New"
 
-#: app.js:1215
+#: app.js:1190
 msgid "3rd Party Used"
 msgstr "3rd Party Used"
 
-#: app.js:1244
+#: app.js:1219
 msgid "Set price type"
 msgstr "Set price type"
 
-#: app.js:1245
+#: app.js:1220
 msgid "What price type do you want to track?"
 msgstr "What price type do you want to track?"
 
-#: app.js:1290 app.js:1344
+#: app.js:1265 app.js:1319
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:1291 app.js:1345
+#: app.js:1266 app.js:1320
 msgid "At what price would you like to receive an alert?"
 msgstr "At what price would you like to receive an alert?"
 
-#: app.js:1296
+#: app.js:1271
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1312
+#: app.js:1287
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1328
+#: app.js:1303
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1350
+#: app.js:1325
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1366
+#: app.js:1341
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1382
+#: app.js:1357
 msgid "Custom Input"
 msgstr "Custom Input"
 
-#: app.js:1423 app.js:1445
+#: app.js:1398 app.js:1420
 msgid "Pick one of the options below or try again to enter a valid price"
 msgstr "Pick one of the options below or try again to enter a valid price"
 
-#: app.js:1531
+#: app.js:1506
 #, javascript-format
 msgid ""
 "Here're your price watches. I'll send you an alert when the current price "
@@ -277,29 +281,29 @@ msgstr ""
 "\n"
 " Price watches %s to %s:"
 
-#: app.js:1545
+#: app.js:1520
 #, javascript-format
 msgid "Price watches %s to %s:"
 msgstr "Price watches %s to %s:"
 
-#: app.js:1576
+#: app.js:1551
 #, javascript-format
 msgid "Current price: %s | Your Desired price: %s"
 msgstr "Current price: %s | Your Desired price: %s"
 
-#: app.js:1580
+#: app.js:1555
 msgid "Change desired price"
 msgstr "Change desired price"
 
-#: app.js:1591
+#: app.js:1566
 msgid "Delete price watch"
 msgstr "Delete price watch"
 
-#: app.js:1604
+#: app.js:1579
 msgid "More price watches"
 msgstr "More price watches"
 
-#: app.js:1649
+#: app.js:1624
 msgid ""
 "You haven't created any price watches yet. Use a few words to tell me what "
 "product you are searching for. For example, you could type “iPhone 6” or "
@@ -309,61 +313,143 @@ msgstr ""
 "product you are searching for. For example, you could type “iPhone 6” or "
 "“Kindle Paperwhite”"
 
-#: app.js:1680
-msgid "Settings"
-msgstr "Settings"
-
-#: app.js:1681 app.js:1730 app.js:1781
-msgid "Please choose one of the following options"
-msgstr "Please choose one of the following options"
-
-#: app.js:1686 app.js:1780
-msgid "Change Shop Locale"
-msgstr "Change Shop Locale"
-
-#: app.js:1695 app.js:1729 app.js:1929
-msgid "Change Language"
-msgstr "Change Language"
-
-#: app.js:1735
-msgid "German"
-msgstr "German"
-
-#: app.js:1745
-msgid "English"
-msgstr "English"
-
-#: app.js:1786
-msgid "Amazon Germany"
-msgstr "Amazon Germany"
-
-#: app.js:1796
-msgid "Amazon UK"
-msgstr "Amazon UK"
-
-#: app.js:1806
-msgid "Amazon US"
-msgstr "Amazon US"
-
-#: app.js:1843
+#: app.js:1655
 msgid "Search product"
 msgstr "Search product"
 
-#: app.js:1856
+#: app.js:1667
 msgid "Your Price Watches"
 msgstr "Your Price Watches"
 
-#: app.js:1869
+#: app.js:1680
 msgid "Change Settings"
 msgstr "Change Settings"
 
-#: app.js:1904
+#: app.js:1715
 msgid "Help"
 msgstr "Help"
 
-#: app.js:1916
-msgid "Change Amazon Shop"
-msgstr "Change Amazon Shop"
+#: app.js:1740
+msgid "Change Language"
+msgstr "Change Language"
+
+#: libs/helpers.js:213
+msgid "German"
+msgstr "German"
+
+#: libs/helpers.js:214
+msgid "English"
+msgstr "English"
+
+#: libs/helpers.js:226
+msgid "Germany"
+msgstr "Germany"
+
+#: libs/helpers.js:227
+msgid "United Kingdom"
+msgstr "United Kingdom"
+
+#: libs/helpers.js:228
+msgid "United States"
+msgstr "United States"
+
+#~ msgid ""
+#~ "Great. You have changed the Amazon shop to %s. If you\re now searching "
+#~ "for a product, I search for you the Amazon shop %s. To reverse this "
+#~ "setting, just type settings."
+#~ msgstr ""
+#~ "Great. You have changed the Amazon shop to %s. If you\re now searching "
+#~ "for a product, I search for you the Amazon shop %s. To reverse this "
+#~ "setting, just type settings."
+
+#~ msgid ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, just type one of the shortcuts below:\n"
+#~ "\n"
+#~ "  • list - to show your price watches\n"
+#~ "  • settings - to see your settings"
+#~ msgstr ""
+#~ "Lost? Use a few words to tell me what product you are searching for.  For "
+#~ "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. "
+#~ "Or, just type one of the shortcuts below:\n"
+#~ "\n"
+#~ "  • list - to show your price watches\n"
+#~ "  • settings - to see your settings"
+
+#~ msgid "Great. Your Amazon shop is now %s."
+#~ msgstr "Great. Your Amazon shop is now %s."
+
+#~ msgid ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s\n"
+#~ "\n"
+#~ "To change a setting, just pick any option below:"
+#~ msgstr ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s\n"
+#~ "\n"
+#~ "To change a setting, just pick any option below:"
+
+#~ msgid ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s\n"
+#~ "\n"
+#~ "Pick an option below to change any setting:"
+#~ msgstr ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s\n"
+#~ "\n"
+#~ "Pick an option below to change any setting:"
+
+#~ msgid ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s"
+#~ msgstr ""
+#~ "You're wondering about your settings?\n"
+#~ "\n"
+#~ "Amazon Shop: %s\n"
+#~ "Language: %s"
+
+#~ msgid "Changed shop locale to: %s"
+#~ msgstr "Changed shop locale to: %s"
+
+#~ msgid "Currently set shop locale: %s"
+#~ msgstr "Currently set shop locale: %s"
+
+#~ msgid "Changed language to: %s"
+#~ msgstr "Changed language to: %s"
+
+#~ msgid "Currently set language: %s"
+#~ msgstr "Currently set language: %s"
+
+#~ msgid "Settings"
+#~ msgstr "Settings"
+
+#~ msgid "Please choose one of the following options"
+#~ msgstr "Please choose one of the following options"
+
+#~ msgid "Change Shop Locale"
+#~ msgstr "Change Shop Locale"
+
+#~ msgid "Amazon Germany"
+#~ msgstr "Amazon Germany"
+
+#~ msgid "Amazon UK"
+#~ msgstr "Amazon UK"
+
+#~ msgid "Amazon US"
+#~ msgstr "Amazon US"
 
 #~ msgid ""
 #~ "Lost? Use a few words to tell me what product you are searching for.  For "

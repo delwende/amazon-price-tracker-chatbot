@@ -416,34 +416,35 @@ function receivedMessage(event) {
             } else {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
-                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the shortcuts ' +
-                'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
+                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the words below:' +
+                '\n\n  • list - to show your price watches\n  • settings - to see your settings');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
                 sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'hi')) || messageText.startsWith(gt.dgettext(parseUserLanguage, 'hello'))) {
                 // Generate dynamic menu
                 var text = gt.dgettext(parseUserLanguage, 'Pick an option below to get going');
-                var payload = JSON.stringify({
-                  "intents": ["searchProduct", "listPriceWatches", "showHelpInstructions"],
-                  "entities": {
+                var payload = {
+                  intents: ["searchProduct", "listPriceWatches", "showHelpInstructions"],
+                  entities: {
                   }
-                });
+                };
                 sendDynamicMenuButtonMessage(senderID, user, text, payload);
 
                 sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 // Generate dynamic menu
-                var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s');
+                var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s\n\n' + 
+                  'To change any setting, just pick an option below:');
 
                 var amazonShop = helpers.countryByAwsLocaleShortCode(parseUserLanguage, parseUserAwsLocale);
                 var language = helpers.languageByLanguageShortCode(parseUserLanguage, parseUserLanguage);
 
-                var payload = JSON.stringify({
-                  "intents": ["changeSettingAmazonShop", "changeSettingLanguage"],
-                  "entities": {
+                var payload = {
+                  intents: ["changeSettingAwsLocale", "changeSettingLanguage"],
+                  entities: {
                   }
-                });
+                };
                 sendDynamicMenuButtonMessage(senderID, user, vsprintf(text, [amazonShop, language]), payload);
               } else {
                 var keywords = messageText;
@@ -907,86 +908,56 @@ function receivedPostback(event) {
               sendListPriceWatchesGenericMessage(senderID, user, pageNumber);
               break;
 
-            case 'showSettings':
-              sendSettingsGenericMessage(senderID, user);
+            case 'changeSetting':
+              var setting = json.entities.setting;
 
-              break;
-
-            case 'changeSettings':
-              var settingToChange = json.entities.settingToChange;
-
-              switch (settingToChange) {
+              switch (setting) {
                 case 'awsLocale':
                   var awsLocale = json.entities.awsLocale;
-                  var shopLocaleTitle;
 
                   if (awsLocale !== undefined) {
+
                     // Update key-value pair with key user:senderID
-                    redisClient.hmset('user:' + senderID, {
-                      'parseUserAwsLocale': awsLocale
-                    }, function(error, reply) {
-                      if (error) {
-                        console.log("Error: " + error);
-                      } else {
-                        console.log("Updated key-value pair created with key: user:" + senderID);
+                      redisClient.hmset('user:' + senderID, {
+                        'parseUserAwsLocale': awsLocale
+                      }, function(error, reply) {
+                        if (error) {
+                          console.log("Error: " + error);
+                        } else {
+                          console.log("Updated key-value pair created with key: user:" + senderID);
 
-                        // Inform the user that he/she has successfully changed the locale
-                        shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage,
-                          awsLocale);
-                        responseText = gt.dgettext(parseUserLanguage, 'Changed shop locale to: %s');
-                        sendTextMessage(senderID, sprintf(responseText, shopLocaleTitle));
-                      }
-                    });
+                          // Inform the user that AWS locale has been successfully changed
+                          var country = helpers.countryByAwsLocaleShortCode(parseUserLanguage, awsLocale);
+                          responseText = gt.dgettext(parseUserLanguage, 'Great. You have changed the Amazon shop to %s. If you\'re now searching for a product, ' +
+                            'I search for you the Amazon shop %s. To reverse this setting, just type settings.');
+                          sendTextMessage(senderID, vsprintf(responseText, [country, country]));
+                        }
+                      });
+
                   } else {
-                    // Inform the user about the currently set language
-                    shopLocaleTitle = helpers.shopLocaleTitleByShopLocaleShortCode(parseUserLanguage,
-                      parseUserAwsLocale);
-                    responseText = gt.dgettext(parseUserLanguage, 'Currently set shop locale: %s');
-                    sendTextMessage(senderID, sprintf(responseText, shopLocaleTitle));
-
-                    sendChangeShopLocaleGenericMessage(senderID, user);
+                    // Generate dynamic menu
+                    var title = gt.dgettext(parseUserLanguage, 'Change Amazon Shop');
+                    var subtitle = gt.dgettext(parseUserLanguage, 'Pick an option below');
+                    var payload1 = {
+                      intent: ["changeSettingAwsLocale"],
+                      entities: {
+                        options: helpers.getSupportedCountries(parseUserLanguage)
+                      }
+                    };
+                    sendDynamicSettingOptionsGenericMessage(senderID, user, title, subtitle, payload1);
                   }
 
                   break;
 
                 case 'language':
-                  var languageShortCode = json.entities.languageShortCode;
-                  var languageTitle;
-
-                  if (languageShortCode !== undefined) {
-                    // Update key-value pair with key user:senderID
-                    redisClient.hmset('user:' + senderID, {
-                      'parseUserLanguage': languageShortCode
-                    }, function(error, reply) {
-                      if (error) {
-                        console.log("Error: " + error);
-                      } else {
-                        console.log("Updated key-value pair created with key: user:" + senderID);
-
-                        // Inform the user that he/she has sucessfully changed the language
-                        languageTitle = helpers.languageTitleByLanguageShortCode(parseUserLanguage,
-                          languageShortCode);
-                        responseText = gt.dgettext(parseUserLanguage, 'Changed language to: %s');
-                        sendTextMessage(senderID, sprintf(responseText, languageTitle));
-                      }
-                    });
-                  } else {
-                    // Inform the user about the currently set language
-                    languageTitle = helpers.languageTitleByLanguageShortCode(parseUserLanguage,
-                          parseUserLanguage);
-                    responseText = gt.dgettext(parseUserLanguage, 'Currently set language: %s');
-                    sendTextMessage(senderID, sprintf(responseText, languageTitle));
-
-                    sendChangeLanguageGenericMessage(senderID, user);
-                  }
-
                   break;
+
+                  default:
               }
 
               break;
 
             case 'showProductDetails':
-
               var item = json.entities.item;
               var awsLocale = json.entities.awsLocale;
 
@@ -1016,13 +987,13 @@ function receivedPostback(event) {
 
                   // Generate dynamic menu
                   var text = gt.dgettext(parseUserLanguage, 'What next?');
-                  var payload = JSON.stringify({
-                    "intents": ["activatePriceAlert", "goToWebsite"],
-                    "entities": {
-                      "item": item,
-                      "awsLocale": awsLocale
+                  var payload = {
+                    intents: ["activatePriceAlert", "goToWebsite"],
+                    entities: {
+                      item: item,
+                      awsLocale: awsLocale
                     }
-                  });
+                  };
                   sendDynamicMenuButtonMessage(senderID, user, text, payload);
 
                   responseText = truncate(title, 317);
@@ -1043,7 +1014,7 @@ function receivedPostback(event) {
 
             case 'showHelpInstructions':
               responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
-                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the shortcuts ' +
+                ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the words ' +
                 'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
               sendTextMessage(senderID, responseText);
 
@@ -1096,11 +1067,11 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
 
       // Generate dynamic menu
       var text = gt.dgettext(parseUserLanguage, 'Try again or pick one of the options below:');
-      var payload = JSON.stringify({
-        "intents": ["searchProduct", "showHelpInstructions"],
-        "entities": {
+      var payload = {
+        intents: ["searchProduct", "showHelpInstructions"],
+        entities: {
         }
-      });
+      };
       sendDynamicMenuButtonMessage(recipientId, user, text, payload);
 
       // Inform the user that the search for this keywords did not match any products
@@ -1189,11 +1160,11 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       } else {
         // Generate dynamic menu
         var text = gt.dgettext(parseUserLanguage, 'Try again or pick one of the options below:');
-        var payload = JSON.stringify({
-          "intents": ["searchProduct", "showHelpInstructions"],
-          "entities": {
+        var payload = {
+          intents: ["searchProduct", "showHelpInstructions"],
+          entities: {
           }
-        });
+        };
         sendDynamicMenuButtonMessage(recipientId, user, text, payload);
 
         // Inform the user that the search for this keywords did not match any products
@@ -1664,167 +1635,6 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
   });
 }
 
-// /*
-//  * Send a Settings Structured Message (Generic Message type) using the Send API.
-//  *
-//  */
-// function sendSettingsGenericMessage(recipientId, user) {
-//   var parseUserLanguage = user.parseUserLanguage;
-
-//   var messageData = {
-//     recipient: {
-//       id: recipientId
-//     },
-//     message: {
-//       attachment: {
-//         type: "template",
-//         payload: {
-//           template_type: "generic",
-//           elements: [{
-//             title: gt.dgettext(parseUserLanguage, 'Settings'),
-//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-//             item_url: "",
-//             image_url: "",
-//             buttons: [{
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "awsLocale"
-//                 }
-//               })
-//             }, {
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'Change Language'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "language"
-//                 }
-//               })
-//             }],
-//           }]
-//         }
-//       }
-//     }
-//   };
-
-//   callSendAPI(messageData);
-// }
-
-// /*
-//  * Send a Change Language Structured Message (Generic Message type) using the Send API.
-//  *
-//  */
-// function sendChangeLanguageGenericMessage(recipientId, user) {
-//   var parseUserLanguage = user.parseUserLanguage;
-
-//   var messageData = {
-//     recipient: {
-//       id: recipientId
-//     },
-//     message: {
-//       attachment: {
-//         type: "template",
-//         payload: {
-//           template_type: "generic",
-//           elements: [{
-//             title: gt.dgettext(parseUserLanguage, 'Change Language'),
-//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-//             item_url: "",
-//             image_url: "",
-//             buttons: [{
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'German'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "language",
-//                   "languageShortCode": "de"
-//                 }
-//               })
-//             }, {
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'English'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "language",
-//                   "languageShortCode": "en"
-//                 }
-//               })
-//             }],
-//           }]
-//         }
-//       }
-//     }
-//   };
-
-//   callSendAPI(messageData);
-// }
-
-// /*
-//  * Send a Change Shop Locale Structured Message (Generic Message type) using the Send API.
-//  *
-//  */
-// function sendChangeShopLocaleGenericMessage(recipientId, user) {
-//   var parseUserLanguage = user.parseUserLanguage;
-
-//   var messageData = {
-//     recipient: {
-//       id: recipientId
-//     },
-//     message: {
-//       attachment: {
-//         type: "template",
-//         payload: {
-//           template_type: "generic",
-//           elements: [{
-//             title: gt.dgettext(parseUserLanguage, 'Change Shop Locale'),
-//             subtitle: gt.dgettext(parseUserLanguage, 'Please choose one of the following options'),
-//             item_url: "",
-//             image_url: "",
-//             buttons: [{
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'Amazon Germany'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "awsLocale",
-//                   "awsLocale": "de_DE"
-//                 }
-//               })
-//             }, {
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'Amazon UK'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "awsLocale",
-//                   "awsLocale": "en_GB"
-//                 }
-//               })
-//             }, {
-//               type: "postback",
-//               title: gt.dgettext(parseUserLanguage, 'Amazon US'),
-//               payload: JSON.stringify({
-//                 "intent": "changeSettings",
-//                 "entities": {
-//                   "settingToChange": "awsLocale",
-//                   "awsLocale": "en_US"
-//                 }
-//               })
-//             }],
-//           }]
-//         }
-//       }
-//     }
-//   };
-
-//   callSendAPI(messageData);
-// }
-
 /*
  * Send a Dynamic Menu button message using the Send API.
  *
@@ -1832,10 +1642,8 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
   var parseUserLanguage = user.parseUserLanguage;
 
-  var json = JSON.parse(payload);
-
-  var intents = json.intents;
-  var entities = json.entities;
+  var intents = payload.intents;
+  var entities = payload.entities;
   var buttons = [];
 
   for (var i = 0; i<intents.length; i++) {
@@ -1854,7 +1662,6 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         break;
 
       case 'listPriceWatches':
-
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Your Price Watches'),
@@ -1914,14 +1721,14 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
         });
         break;
 
-      case 'changeSettingAmazonShop':
+      case 'changeSettingAwsLocale':
         buttons.push({
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Change Amazon Shop'),
           payload: JSON.stringify({
-            "intent": "changeSettings",
+            "intent": "changeSetting",
             "entities": {
-              "settingToChange": "awsLocale"
+              "setting": "awsLocale"
             }
           })
         });
@@ -1932,9 +1739,8 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
           type: "postback",
           title: gt.dgettext(parseUserLanguage, 'Change Language'),
           payload: JSON.stringify({
-            "intent": "changeSettings",
+            "intent": "showHelpInstructions",
             "entities": {
-              "settingToChange": "language"
             }
           })
         });
@@ -1959,6 +1765,68 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
       }
     }
   };
+
+  callSendAPI(messageData);
+}
+
+/*
+ * Send a Dynamic Setting Options Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendDynamicSettingOptionsGenericMessage(recipientId, user, title, subtitle, payload) {
+  var parseUserLanguage = user.parseUserLanguage;
+
+  var intent = payload.intent;
+  var options = payload.entities.options;
+  var numberOptions = Object.keys(options).length;
+  var elements = [];
+  var buttons = [];
+  var ctr = 0;
+
+  for (var key in options) {
+
+    ++ctr;
+
+    buttons.push({
+      type: "postback",
+      title: helpers.countryByAwsLocaleShortCode(parseUserLanguage, key),
+      payload: JSON.stringify({
+        "intent": "changeSetting",
+        "entities": {
+          "setting": "awsLocale",
+          "awsLocale": key
+        }
+      }),
+    });
+
+    if ((ctr !== 0 && ctr % 3 === 0) || ctr === numberOptions) {
+      elements.push({
+        title: title,
+        subtitle: subtitle,
+        item_url: "",               
+        image_url: "",
+        buttons: buttons
+      });
+
+      buttons = [];
+    }
+
+  }
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: elements
+        }
+      }
+    }
+  };  
 
   callSendAPI(messageData);
 }

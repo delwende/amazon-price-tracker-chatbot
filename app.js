@@ -918,21 +918,21 @@ function receivedPostback(event) {
                   if (awsLocale !== undefined) {
 
                     // Update key-value pair with key user:senderID
-                      redisClient.hmset('user:' + senderID, {
-                        'parseUserAwsLocale': awsLocale
-                      }, function(error, reply) {
-                        if (error) {
-                          console.log("Error: " + error);
-                        } else {
-                          console.log("Updated key-value pair created with key: user:" + senderID);
+                    redisClient.hmset('user:' + senderID, {
+                      'parseUserAwsLocale': awsLocale
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
+                      } else {
+                        console.log("Updated key-value pair created with key: user:" + senderID);
 
-                          // Inform the user that AWS locale has been successfully changed
-                          var country = helpers.countryByAwsLocaleShortCode(parseUserLanguage, awsLocale);
-                          responseText = gt.dgettext(parseUserLanguage, 'Great. You have changed the Amazon shop to %s. If you\'re now searching for a product, ' +
-                            'I search for you the Amazon shop %s. To reverse this setting, just type settings.');
-                          sendTextMessage(senderID, vsprintf(responseText, [country, country]));
-                        }
-                      });
+                        // Inform the user that AWS locale has been successfully changed
+                        var country = helpers.countryByAwsLocaleShortCode(parseUserLanguage, awsLocale);
+                        responseText = gt.dgettext(parseUserLanguage, 'Great. You have changed the Amazon shop to %s. If you\'re now searching for a product, ' +
+                          'I search for you the Amazon shop %s. To reverse this setting, just type settings.');
+                        sendTextMessage(senderID, vsprintf(responseText, [country, country]));
+                      }
+                    });
 
                   } else {
                     // Generate dynamic menu
@@ -956,21 +956,31 @@ function receivedPostback(event) {
                   if (language !== undefined) {
 
                     // Update key-value pair with key user:senderID
-                      redisClient.hmset('user:' + senderID, {
-                        'parseUserLanguage': language
-                      }, function(error, reply) {
-                        if (error) {
-                          console.log("Error: " + error);
-                        } else {
-                          console.log("Updated key-value pair created with key: user:" + senderID);
+                    redisClient.hmset('user:' + senderID, {
+                      'parseUserLanguage': language
+                    }, function(error, reply) {
+                      if (error) {
+                        console.log("Error: " + error);
+                      } else {
+                        console.log("Updated key-value pair created with key: user:" + senderID);
 
-                          // Inform the user that the language has been successfully changed
-                          var language1 = helpers.languageByLanguageShortCode(language, language);
-                          responseText = gt.dgettext(language, 'Great. You have changed the language to %s. From now on the only language' +
-                            ' I understand is %s.');
-                          sendTextMessage(senderID, vsprintf(responseText, [language1, language1]));
-                        }
-                      });
+                        // Generate dynamic menu
+                        var text = gt.dgettext(parseUserLanguage, 'Do you want to retain the change of the language setting?');
+                        var payload = {
+                          intents: ["retainLanguageSettings", "revertLanguageSettings"],
+                          entities: {
+                            languageOld: parseUserLanguage,
+                            languageNew: language
+                          }
+                        };
+                        sendDynamicMenuButtonMessage(senderID, user, text, payload);
+
+                        // Inform the user that the language has been successfully changed
+                        var language1 = helpers.languageByLanguageShortCode(language, language);
+                        responseText = gt.dgettext(language, 'Great. You have changed the language to %s.');
+                        sendTextMessage(senderID, vsprintf(responseText, [language1, language1]));
+                      }
+                    });
 
                   } else {
                     // Generate dynamic menu
@@ -1053,6 +1063,32 @@ function receivedPostback(event) {
                 'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
               sendTextMessage(senderID, responseText);
 
+              break;
+
+            case 'retainLanguageSettings':
+              var languageNew = json.entities.languageNew;
+              responseText = gt.dgettext(parseUserLanguage, 'Ok! From now on the only language I understand is %s. If you want to ' + 
+                'revert this setting, just type settings.');
+              sendTextMessage(senderID, sprintf(responseText, languageNew));
+              break;
+
+            case 'revertLanguageSettings':
+              // Update key-value pair with key user:senderID
+              redisClient.hmset('user:' + senderID, {
+                'parseUserLanguage': json.entities.languageOld
+              }, function(error, reply) {
+                if (error) {
+                  console.log("Error: " + error);
+                } else {
+                  console.log("Updated key-value pair created with key: user:" + senderID);
+
+                  // Inform the user that the language setting has been reverted
+                  var languageOld = json.entities.languageOld;
+                  var languageOld1 = helpers.languageByLanguageShortCode(languageOld, languageOld);
+                  responseText = gt.dgettext(languageOld, 'Ok! The language has been reverted to %s.');
+                  sendTextMessage(senderID, sprintf(responseText, languageOld1));
+                }
+              });
               break;
 
             default:
@@ -1777,6 +1813,32 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
             "intent": "changeSetting",
             "entities": {
               "setting": "language"
+            }
+          })
+        });
+        break;
+
+      case 'retainLanguageSettings':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Yes'),
+          payload: JSON.stringify({
+            "intent": "retainLanguageSettings",
+            "entities": {
+              "languageNew": helpers.languageByLanguageShortCode(entities.languageNew, entities.languageNew)
+            }
+          })
+        });
+        break;
+
+      case 'revertLanguageSettings':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'No'),
+          payload: JSON.stringify({
+            "intent": "revertLanguageSettings",
+            "entities": {
+              "languageOld": entities.languageOld
             }
           })
         });

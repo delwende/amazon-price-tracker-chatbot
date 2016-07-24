@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-24 22:05+0200\n"
-"PO-Revision-Date: 2016-07-24 22:05+0200\n"
+"POT-Creation-Date: 2016-07-24 23:49+0200\n"
+"PO-Revision-Date: 2016-07-24 23:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "help"
 msgstr "help"
 
-#: app.js:418 app.js:1051
+#: app.js:418 app.js:1061
 msgid ""
 "Lost? Use a few words to tell me what product you are searching for.  For "
 "example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, "
@@ -157,32 +157,32 @@ msgstr ""
 "product, I search for you the Amazon shop %s. To reverse this setting, just "
 "type settings."
 
-#: app.js:939 app.js:1762
+#: app.js:939 app.js:1782
 msgid "Change Amazon Shop"
 msgstr "Change Amazon Shop"
 
-#: app.js:940 app.js:978
+#: app.js:940 app.js:988
 msgid "Pick an option below"
 msgstr "Pick an option below"
 
-#: app.js:969
-#, javascript-format
-msgid ""
-"Great. You have changed the language to %s. From now on the only language I "
-"understand is %s."
-msgstr ""
-"Great. You have changed the language to %s. From now on the only language I "
-"understand is %s."
+#: app.js:968
+msgid "Do you want to retain the change of the language setting?"
+msgstr "Do you want to retain the change of the language setting?"
 
-#: app.js:977 app.js:1775
+#: app.js:980
+#, javascript-format
+msgid "Great. You have changed the language to %s."
+msgstr "Great. You have changed the language to %s."
+
+#: app.js:987 app.js:1795
 msgid "Change Language"
 msgstr "Change Language"
 
-#: app.js:1024
+#: app.js:1034
 msgid "What next?"
 msgstr "What next?"
 
-#: app.js:1044
+#: app.js:1054
 #, fuzzy
 msgid ""
 "What’re you searching for? Use a few words to tell me what product you are "
@@ -191,97 +191,106 @@ msgstr ""
 "What’re you searching for? Use a few words to tell me what product you are "
 "searching for. For example, you could type “iPhone 6” or “Kindle Paperwhite”."
 
-#: app.js:1104 app.js:1197
+#: app.js:1070
+#, javascript-format
+msgid ""
+"Ok! From now on the only language I understand is %s. If you want to revert "
+"this setting, just type settings."
+msgstr ""
+"Ok! From now on the only language I understand is %s. If you want to revert "
+"this setting, just type settings."
+
+#: app.js:1124 app.js:1217
 msgid "Try again or pick one of the options below:"
 msgstr "Try again or pick one of the options below:"
 
-#: app.js:1113 app.js:1206
+#: app.js:1133 app.js:1226
 msgid "Not sure I understand what you're searching for."
 msgstr "Not sure I understand what you're searching for."
 
-#: app.js:1119
+#: app.js:1139
 #, javascript-format
 msgid "Search results for \"%s\""
 msgstr "Search results for \"%s\""
 
-#: app.js:1134 app.js:1135 app.js:1136
+#: app.js:1154 app.js:1155 app.js:1156
 msgid "Not in Stock"
 msgstr "Not in Stock"
 
-#: app.js:1142
+#: app.js:1162
 #, javascript-format
 msgid "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 msgstr "Amazon: %s | 3rd Party New: %s | 3rd Party Used: %s"
 
-#: app.js:1147 app.js:1727
+#: app.js:1167 app.js:1747
 msgid "Create price watch"
 msgstr "Create price watch"
 
-#: app.js:1159
+#: app.js:1179
 msgid "Details"
 msgstr "Details"
 
-#: app.js:1172 app.js:1743
+#: app.js:1192 app.js:1763
 msgid "Go to Website"
 msgstr "Go to Website"
 
-#: app.js:1223
+#: app.js:1243
 msgid "Amazon"
 msgstr "Amazon"
 
-#: app.js:1224
+#: app.js:1244
 msgid "3rd Party New"
 msgstr "3rd Party New"
 
-#: app.js:1225
+#: app.js:1245
 msgid "3rd Party Used"
 msgstr "3rd Party Used"
 
-#: app.js:1254
+#: app.js:1274
 msgid "Set price type"
 msgstr "Set price type"
 
-#: app.js:1255
+#: app.js:1275
 msgid "What price type do you want to track?"
 msgstr "What price type do you want to track?"
 
-#: app.js:1300 app.js:1354
+#: app.js:1320 app.js:1374
 msgid "Set desired price"
 msgstr "Set desired price"
 
-#: app.js:1301 app.js:1355
+#: app.js:1321 app.js:1375
 msgid "At what price would you like to receive an alert?"
 msgstr "At what price would you like to receive an alert?"
 
-#: app.js:1306
+#: app.js:1326
 msgid "-0,01"
 msgstr "-0,01"
 
-#: app.js:1322
+#: app.js:1342
 msgid "-3%"
 msgstr "-3%"
 
-#: app.js:1338
+#: app.js:1358
 msgid "-5%"
 msgstr "-5%"
 
-#: app.js:1360
+#: app.js:1380
 msgid "-7%"
 msgstr "-7%"
 
-#: app.js:1376
+#: app.js:1396
 msgid "-10%"
 msgstr "-10%"
 
-#: app.js:1392
+#: app.js:1412
 msgid "Custom Input"
 msgstr "Custom Input"
 
-#: app.js:1433 app.js:1455
+#: app.js:1453 app.js:1475
 msgid "Pick one of the options below or try again to enter a valid price"
 msgstr "Pick one of the options below or try again to enter a valid price"
 
-#: app.js:1541
+#: app.js:1561
 #, javascript-format
 msgid ""
 "Here're your price watches. I'll send you an alert when the current price "
@@ -294,29 +303,29 @@ msgstr ""
 "\n"
 " Price watches %s to %s:"
 
-#: app.js:1555
+#: app.js:1575
 #, javascript-format
 msgid "Price watches %s to %s:"
 msgstr "Price watches %s to %s:"
 
-#: app.js:1586
+#: app.js:1606
 #, javascript-format
 msgid "Current price: %s | Your Desired price: %s"
 msgstr "Current price: %s | Your Desired price: %s"
 
-#: app.js:1590
+#: app.js:1610
 msgid "Change desired price"
 msgstr "Change desired price"
 
-#: app.js:1601
+#: app.js:1621
 msgid "Delete price watch"
 msgstr "Delete price watch"
 
-#: app.js:1614
+#: app.js:1634
 msgid "More price watches"
 msgstr "More price watches"
 
-#: app.js:1659
+#: app.js:1679
 msgid ""
 "You haven't created any price watches yet. Use a few words to tell me what "
 "product you are searching for. For example, you could type “iPhone 6” or "
@@ -326,21 +335,29 @@ msgstr ""
 "product you are searching for. For example, you could type “iPhone 6” or "
 "“Kindle Paperwhite”"
 
-#: app.js:1690
+#: app.js:1710
 msgid "Search product"
 msgstr "Search product"
 
-#: app.js:1702
+#: app.js:1722
 msgid "Your Price Watches"
 msgstr "Your Price Watches"
 
-#: app.js:1715
+#: app.js:1735
 msgid "Change Settings"
 msgstr "Change Settings"
 
-#: app.js:1750
+#: app.js:1770
 msgid "Help"
 msgstr "Help"
+
+#: app.js:1808
+msgid "Yes"
+msgstr "Yes"
+
+#: app.js:1821
+msgid "No"
+msgstr "No"
 
 #: libs/helpers.js:213
 msgid "German"
@@ -361,6 +378,22 @@ msgstr "United Kingdom"
 #: libs/helpers.js:228
 msgid "United States"
 msgstr "United States"
+
+#~ msgid "Ok! From now on the only language I understand is %s."
+#~ msgstr "Ok! From now on the only language I understand is %s."
+
+#~ msgid "Retain Language"
+#~ msgstr "Retain Language"
+
+#~ msgid "Revert Language"
+#~ msgstr "Revert Language"
+
+#~ msgid ""
+#~ "Great. You have changed the language to %s. From now on the only language "
+#~ "I understand is %s."
+#~ msgstr ""
+#~ "Great. You have changed the language to %s. From now on the only language "
+#~ "I understand is %s."
 
 #~ msgid ""
 #~ "Great. You have changed the language to %s. From now on the only language "

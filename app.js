@@ -457,7 +457,16 @@ function receivedMessage(event) {
           }
 
         } else {
-          responseText = gt.dgettext(parseUserLanguage, 'I\'m sorry, but I\'m not yet available in your country.');
+          // Generate dynamic menu
+          var text = gt.dgettext(parseUserLanguage, 'Would you like to receive a notification as soon as I\'m available for your country?');
+          var payload = {
+            intents: ["subscribe", "doNotSubscribe"],
+            entities: {
+            }
+          };
+          sendDynamicMenuButtonMessage(senderID, user, text, payload);
+
+          responseText = gt.dgettext(parseUserLanguage, 'I\'m sorry. I\'m currently not available in your country. Please stay tuned.');
           sendTextMessage(senderID, responseText);
         }
 
@@ -1089,6 +1098,29 @@ function receivedPostback(event) {
                   sendTextMessage(senderID, sprintf(responseText, languageOld1));
                 }
               });
+              break;
+
+            case 'subscribe':
+              // Save subscription
+              var Subscription = Parse.Object.extend("Subscription");
+              var subscription = new Subscription();
+
+              subscription.set("user", {__type: "Pointer", className: "_User", objectId: parseUserObjectId});
+
+              subscription.save().then(function(result) {
+                console.log("New subscription created with objectId: " + result.id);
+
+                responseText = gt.dgettext(parseUserLanguage, 'Thank\'s for your patience. I will soon be there for you. ✌');
+                sendTextMessage(senderID, responseText);
+              }, function(error) {
+                console.log("Error: " + error);
+              });
+              break;
+
+            case 'doNotSubscribe':
+              responseText = gt.dgettext(parseUserLanguage, 'Never mind! You can visit me anytime on www.jackthebot.com to ' +
+                'start a conversation with me. ✌');
+              sendTextMessage(senderID, responseText);
               break;
 
             default:
@@ -1838,6 +1870,30 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
             "intent": "restoreLanguageSettings",
             "entities": {
               "languageOld": entities.languageOld
+            }
+          })
+        });
+        break;
+
+      case 'subscribe':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'Yes sure'),
+          payload: JSON.stringify({
+            "intent": "subscribe",
+            "entities": {
+            }
+          })
+        });
+        break;
+
+      case 'doNotSubscribe':
+        buttons.push({
+          type: "postback",
+          title: gt.dgettext(parseUserLanguage, 'No, thanks'),
+          payload: JSON.stringify({
+            "intent": "doNotSubscribe",
+            "entities": {
             }
           })
         });

@@ -1183,10 +1183,6 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
     } else {
       console.log("Successfully retrieved " + results.length + " items.");
 
-      // Inform the user that search results are displayed below
-      responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
-      sendTextMessage(recipientId, sprintf(responseText, keywords));
-
       // Show to the user the search results
       var elements = [];
       var responseText;
@@ -1259,6 +1255,10 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
       };
 
       if (elements.length > 0) {
+        // Inform the user that search results are displayed below
+        responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
+        sendTextMessage(recipientId, sprintf(responseText, keywords));
+        
         callSendAPI(messageData);
       } else {
         // Generate dynamic menu

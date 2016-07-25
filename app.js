@@ -435,7 +435,7 @@ function receivedMessage(event) {
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 // Generate dynamic menu
                 var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s\n\n' + 
-                  'To change any setting, just pick an option below:');
+                  'To change your settings, pick an option below:');
 
                 var amazonShop = helpers.countryByAwsLocaleShortCode(parseUserLanguage, parseUserAwsLocale);
                 var language = helpers.languageByLanguageShortCode(parseUserLanguage, parseUserLanguage);
@@ -965,9 +965,9 @@ function receivedPostback(event) {
                         console.log("Updated key-value pair created with key: user:" + senderID);
 
                         // Generate dynamic menu
-                        var text = gt.dgettext(parseUserLanguage, 'Do you want to retain the change of the language setting?');
+                        var text = gt.dgettext(parseUserLanguage, 'Do you want to retain this language settings?');
                         var payload = {
-                          intents: ["retainLanguageSettings", "revertLanguageSettings"],
+                          intents: ["retainLanguageSettings", "restoreLanguageSettings"],
                           entities: {
                             languageOld: parseUserLanguage,
                             languageNew: language
@@ -1066,13 +1066,13 @@ function receivedPostback(event) {
               break;
 
             case 'retainLanguageSettings':
-              var languageNew = json.entities.languageNew;
-              responseText = gt.dgettext(parseUserLanguage, 'Ok! From now on the only language I understand is %s. If you want to ' + 
-                'revert this setting, just type settings.');
-              sendTextMessage(senderID, sprintf(responseText, languageNew));
+              var languageNow = helpers.languageByLanguageShortCode(parseUserLanguage, parseUserLanguage);
+              responseText = gt.dgettext(parseUserLanguage, 'Ok! From now on you have to speak %s with me so that ' + 
+                'I understand you correctly. If you want to revert this setting, just type settings.');
+              sendTextMessage(senderID, sprintf(responseText, languageNow));
               break;
 
-            case 'revertLanguageSettings':
+            case 'restoreLanguageSettings':
               // Update key-value pair with key user:senderID
               redisClient.hmset('user:' + senderID, {
                 'parseUserLanguage': json.entities.languageOld
@@ -1085,7 +1085,7 @@ function receivedPostback(event) {
                   // Inform the user that the language setting has been reverted
                   var languageOld = json.entities.languageOld;
                   var languageOld1 = helpers.languageByLanguageShortCode(languageOld, languageOld);
-                  responseText = gt.dgettext(languageOld, 'Ok! The language has been reverted to %s.');
+                  responseText = gt.dgettext(languageOld, 'Ok! The language settings have been reverted to %s.');
                   sendTextMessage(senderID, sprintf(responseText, languageOld1));
                 }
               });
@@ -1575,7 +1575,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
       var from, to, messageData;
       if (pageNumber === 1) {
         var text = gt.dgettext(parseUserLanguage, 'Here\'re your price watches. I\'ll send you an alert when the current' +
-        ' price for any of the products you are watching falls below your desired price.\n\n Price watches %s to %s:');
+        ' price for any of the products you\'re watching falls below your desired price.\n\n Price watches %s to %s:');
         from = 1;
         to = results.length > 10 ? 10 : results.length;
         messageData = {
@@ -1821,22 +1821,21 @@ function sendDynamicMenuButtonMessage(recipientId, user, text, payload) {
       case 'retainLanguageSettings':
         buttons.push({
           type: "postback",
-          title: gt.dgettext(parseUserLanguage, 'Yes'),
+          title: gt.dgettext(parseUserLanguage, 'Retain changes'),
           payload: JSON.stringify({
             "intent": "retainLanguageSettings",
             "entities": {
-              "languageNew": helpers.languageByLanguageShortCode(entities.languageNew, entities.languageNew)
             }
           })
         });
         break;
 
-      case 'revertLanguageSettings':
+      case 'restoreLanguageSettings':
         buttons.push({
           type: "postback",
-          title: gt.dgettext(parseUserLanguage, 'No'),
+          title: gt.dgettext(parseUserLanguage, 'Restore'),
           payload: JSON.stringify({
-            "intent": "revertLanguageSettings",
+            "intent": "restoreLanguageSettings",
             "entities": {
               "languageOld": entities.languageOld
             }

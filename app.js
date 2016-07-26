@@ -325,10 +325,10 @@ function receivedAuthentication(event) {
 
   // When an authentication is received, we'll send a message back to the sender
   // to let them know it was successful.
-  responseText = gt.dgettext(parseUserLanguage, 'Hi there, let’s get started. I’ll alert you when prices drop on Amazon. ' +
-  'If you get lost, just type help. Or, use a few words to tell me what product you are searching for. For example, you  ' +
-  'could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”.');
-  sendTextMessage(senderID, responseText);
+  // responseText = gt.dgettext(parseUserLanguage, 'Hi there, let’s get started. I’ll alert you when prices drop on Amazon. ' +
+  // 'If you get lost, just type help. Or, use a few words to tell me what product you are searching for. For example, you  ' +
+  // 'could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”.');
+  // sendTextMessage(senderID, responseText);
 }
 
 /*

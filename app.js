@@ -364,7 +364,7 @@ function receivedMessage(event) {
   // Save message
   var Message = Parse.Object.extend("Message");
   var message = new Message();
-  message.save({senderId: senderID, text: messageText});
+  // message.save({senderId: senderID, text: messageText});
 
   messageText = messageText.toLowerCase();
 

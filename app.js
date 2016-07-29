@@ -867,8 +867,8 @@ function receivedPostback(event) {
               }).then(function(result) {
                 if (result) {
                   // Inform the user that the price watch has been deleted
-                  responseText = gt.dgettext(parseUserLanguage, 'Price watch "%s" has been deleted.');
-                  sendTextMessage(senderID, sprintf(responseText, itemTitle));
+                  responseText = gt.dgettext(parseUserLanguage, 'Price watch for "%s" has been deleted.');
+                  sendTextMessage(senderID, sprintf(responseText, truncate(itemTitle, 200)));
                 }
               }, function(error) {
                 console.log("Error: " + error);

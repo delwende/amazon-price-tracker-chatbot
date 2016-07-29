@@ -843,15 +843,21 @@ function receivedPostback(event) {
             case 'disactivatePriceAlert':
               var priceAlertObjectId = json.entities.priceAlertObjectId;
 
+              var itemTitle = "", awsLocale = "";
+
               // Query price alert
               var PriceAlert = Parse.Object.extend("PriceAlert");
               var query = new Parse.Query(PriceAlert);
               query.equalTo("objectId", priceAlertObjectId);
+              query.include("product");
               query.find().then(function(results) {
                 console.log("Successfully retrieved " + results.length + " products.");
 
                 if (results.length === 1) {
                   var priceAlert = results[0];
+
+                  awsLocale = priceAlert.get("awsLocale");
+                  itemTitle = priceAlert.get("product").get("title")[awsLocale];
 
                   // Update price alert
                   priceAlert.set("active", false);
@@ -861,8 +867,8 @@ function receivedPostback(event) {
               }).then(function(result) {
                 if (result) {
                   // Inform the user that the price watch has been deleted
-                  responseText = gt.dgettext(parseUserLanguage, 'Price watch deleted.');
-                  sendTextMessage(senderID, responseText);
+                  responseText = gt.dgettext(parseUserLanguage, 'Price watch "%s" has been deleted.');
+                  sendTextMessage(senderID, sprintf(responseText, itemTitle));
                 }
               }, function(error) {
                 console.log("Error: " + error);
@@ -900,7 +906,7 @@ function receivedPostback(event) {
                       sendSetDesiredPriceGenericMessage(senderID, user, item, priceAlert, false);
                     } else {
                       // Inform the user that the price alert has already been deleted
-                      responseText = gt.dgettext(parseUserLanguage, 'Desired price cannot be updated, because the corresponding price alert has already been deleted.');
+                      responseText = gt.dgettext(parseUserLanguage, 'Desired price cannot be changed, because the corresponding price alert has already been deleted.');
                       sendTextMessage(senderID, responseText);
                     }
                   }, function(error) {

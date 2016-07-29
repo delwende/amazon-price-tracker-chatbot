@@ -1658,11 +1658,20 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           var desiredPrice = priceAlert.get("desiredPrice");
 
           var awsLocale = priceAlert.get("awsLocale");
+          var priceType = priceAlert.get("priceType");
 
           var currentPriceFormatted = helpers.formatPriceByUserLocale(currentPrice, awsLocale);
           var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, awsLocale);
 
-          var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Your Desired price: %s');
+          var priceTypeTitles = {
+            "amazonPrice": gt.dgettext(parseUserLanguage, 'Amazon price'),
+            "thirdPartyNewPrice": gt.dgettext(parseUserLanguage, '3rd Party New price'),
+            "thirdPartyUsedPrice": gt.dgettext(parseUserLanguage, '3rd Party Used price')
+          };
+
+          var priceTypeTitle = priceTypeTitles[priceType];
+
+          var subtitle = gt.dgettext(parseUserLanguage, 'Current price: %s | Your Desired price: %s (%s)');
 
           buttons = [{
             type: "postback",
@@ -1703,7 +1712,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
 
           elements.push({
             title: product.get("title")[awsLocale], // Get product title according awsLocale of price alert
-            subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted]),
+            subtitle: vsprintf(subtitle, [currentPriceFormatted, desiredPriceFormatted, priceTypeTitle]),
             item_url: "",
             image_url: "http://" + CLOUD_IMAGE_IO_TOKEN + ".cloudimg.io/s/fit/1200x600/" + product.get("imageUrl"), // Fit image into 1200x600 dimensions using cloudimage.io
             buttons: buttons,

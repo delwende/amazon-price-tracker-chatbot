@@ -817,7 +817,7 @@ function receivedPostback(event) {
                         // Check if user has set desired price for the first time or has updated
                         // the price alert
                         if (timeDiff !== undefined) {
-                          // Inform the user that the price alert is created
+                          // Inform the user that the price alert has been created
                           responseText = gt.dgettext(parseUserLanguage, 'You\'re tracking the %s for "%s"');
                           sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
 
@@ -831,16 +831,16 @@ function receivedPostback(event) {
                           sendTextMessage(senderID, responseText);
                         }
 
-                        // Inform the user at what price he/she will receive a price drop notification
-                        responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
-                        sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
-
                       }
                     });
                   }
 
                 }).then(function(result) {
                   console.log('Updated product with objectId: ' + result.id);
+
+                  // Inform the user at what price he/she will receive a price drop notification
+                  responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
+                  sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
 
                 }, function(error) {
                   console.log("Error: " + error.message);

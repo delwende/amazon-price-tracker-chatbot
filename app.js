@@ -890,6 +890,7 @@ function receivedPostback(event) {
                   var PriceAlert = Parse.Object.extend("PriceAlert");
                   var query = new Parse.Query(PriceAlert);
                   query.equalTo("objectId", priceAlertObjectId);
+                  query.equalTo("active", true);
                   query.find().then(function(results) {
                     console.log("Successfully retrieved " + results.length + " price alerts.");
 
@@ -897,6 +898,10 @@ function receivedPostback(event) {
                       var priceAlert = results[0];
 
                       sendSetDesiredPriceGenericMessage(senderID, user, item, priceAlert, false);
+                    } else {
+                      // Inform the user that the price alert has already been deleted
+                      responseText = gt.dgettext(parseUserLanguage, 'Desired price cannot be updated, because the corresponding price alert has already been deleted.');
+                      sendTextMessage(senderID, responseText);
                     }
                   }, function(error) {
                     console.log("Error: " + error);

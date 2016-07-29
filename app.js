@@ -47,8 +47,22 @@ app.set('port', process.env.PORT || 5000);
 // you will need to use cookieParser to expose cookies to req.cookies
 app.use(cookieParser());
 
-// i18n init parses req for language headers, cookies, etc.
-app.use(i18n.init);
+i18n.configure({
+  // setup some locales - other locales default to en silently
+  locales: ['en', 'de'],
+
+  // where to store json files - defaults to './locales'
+  directory: __dirname + '/locales'
+});
+
+app.configure(function () {
+  // you will need to use cookieParser to expose cookies to req.cookies
+  app.use(express.cookieParser());
+
+  // i18n init parses req for language headers, cookies, etc.
+  app.use(i18n.init);
+
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -172,12 +186,6 @@ gt.addTextdomain("en", langEn);
 
 // Set default language
 gt.textdomain("en");
-
-// Configure i18n
-i18n.configure({
-    locales:['en', 'de'],
-    directory: __dirname + '/locales'
-});
 
 /*
  * Use your own validation token. Check that the token used in the Webhook

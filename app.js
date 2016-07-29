@@ -1679,7 +1679,7 @@ function sendListPriceWatchesGenericMessage(recipientId, user, pageNumber) {
           if (results.length > 10 && (i !== 0 && i % 9 === 0)) {
             buttons.push({
               type: "postback",
-              title: gt.dgettext(parseUserLanguage, 'More price watches'),
+              title: gt.dgettext(parseUserLanguage, 'Show more'),
               payload: JSON.stringify({
                 "intent": "listPriceWatches",
                 "entities": {

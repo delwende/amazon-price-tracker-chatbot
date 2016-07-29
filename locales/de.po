@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-07-29 22:26+0200\n"
-"PO-Revision-Date: 2016-07-29 22:28+0200\n"
+"PO-Revision-Date: 2016-07-29 22:30+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -150,8 +150,7 @@ msgstr "Gib einen gültigen Preis ein. Tippe beispielsweise %s"
 #, javascript-format
 msgid "You'll receive a notification when the price for \"%s\" drops below %s"
 msgstr ""
-"Du wirst eine Benachrichtigung erhalten, sobald der Preis für “%s” unter %s "
-"fällt"
+"Du erhälst eine Benachrichtigung, sobald der Preis für “%s” unter %s fällt"
 
 #: app.js:870
 #, javascript-format

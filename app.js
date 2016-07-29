@@ -821,10 +821,6 @@ function receivedPostback(event) {
                           responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
                           sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
 
-                          // Inform the user that the price alert is created
-                          responseText = gt.dgettext(parseUserLanguage, 'You\'re tracking the %s for "%s"');
-                          sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
-
                           // Update product
                           var product = result.get("product");
                           product.increment("totalNumberTrackedCtr");
@@ -834,6 +830,10 @@ function receivedPostback(event) {
                           responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
                           sendTextMessage(senderID, responseText);
                         }
+
+                        // Inform the user that the price alert is created
+                        responseText = gt.dgettext(parseUserLanguage, 'You\'re tracking the %s for "%s"');
+                        sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
 
                       }
                     });

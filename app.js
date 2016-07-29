@@ -824,6 +824,11 @@ function receivedPostback(event) {
                           // Update product
                           var product = result.get("product");
                           product.increment("totalNumberTrackedCtr");
+
+                          // Inform the user at what price he/she will receive a price drop notification
+                          responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
+                          sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
+
                           return product.save();
                         } else {
                           // Inform the user that the price alert has been updated
@@ -837,10 +842,6 @@ function receivedPostback(event) {
 
                 }).then(function(result) {
                   console.log('Updated product with objectId: ' + result.id);
-
-                  // Inform the user at what price he/she will receive a price drop notification
-                  responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
-                  sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
 
                 }, function(error) {
                   console.log("Error: " + error.message);

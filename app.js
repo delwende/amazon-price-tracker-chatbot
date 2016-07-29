@@ -434,7 +434,7 @@ function receivedMessage(event) {
                 sendTextMessage(senderID, gt.dgettext(parseUserLanguage, 'Hi there, let’s get started.'));
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'settings'))) {
                 // Generate dynamic menu
-                var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s\n\n' + 
+                var text = gt.dgettext(parseUserLanguage, 'You\'re wondering about your settings?\n\nAmazon Shop: %s\nLanguage: %s\n\n' +
                   'To change your settings, pick an option below:');
 
                 var amazonShop = helpers.countryByAwsLocaleShortCode(parseUserLanguage, parseUserAwsLocale);
@@ -743,6 +743,7 @@ function receivedPostback(event) {
               var customPriceInput = json.entities.customPriceInput;
               var customPriceInputExamplePrice = json.entities.customPriceInputExamplePrice;
               var desiredPrice = json.entities.desiredPrice;
+              var desiredPriceFormatted = helpers.formatPriceByUserLocale(desiredPrice, priceAlertAwsLocale);
               var itemTitle = json.entities.itemTitle;
               var priceType = json.entities.priceType;
 
@@ -817,8 +818,12 @@ function receivedPostback(event) {
                         // the price alert
                         if (timeDiff !== undefined) {
                           // Inform the user that the price alert is created
-                          responseText = gt.dgettext(parseUserLanguage, 'You have tracked the %s for "%s"');
+                          responseText = gt.dgettext(parseUserLanguage, 'You\'re tracking the %s for "%s"');
                           sendTextMessage(senderID, vsprintf(responseText, [priceTypeTitle, truncate(itemTitle, 250)]));
+
+                          // Inform the user at what price he/she will receive a price drop notification
+                          responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price drops below %s');
+                          sendTextMessage(senderID, sprintf(responseText, desiredPriceFormatted));
 
                           // Update product
                           var product = result.get("product");
@@ -1076,7 +1081,7 @@ function receivedPostback(event) {
 
             case 'retainLanguageSettings':
               var languageNow = helpers.languageByLanguageShortCode(parseUserLanguage, parseUserLanguage);
-              responseText = gt.dgettext(parseUserLanguage, 'Ok! From now on you have to speak %s with me so that ' + 
+              responseText = gt.dgettext(parseUserLanguage, 'Ok! From now on you have to speak %s with me so that ' +
                 'I understand you correctly. If you want to revert this setting, just type settings.');
               sendTextMessage(senderID, sprintf(responseText, languageNow));
               break;
@@ -1258,7 +1263,7 @@ function sendListSearchResultsGenericMessage(recipientId, user, keywords) {
         // Inform the user that search results are displayed below
         responseText = gt.dgettext(parseUserLanguage, 'Search results for "%s"');
         sendTextMessage(recipientId, sprintf(responseText, keywords));
-        
+
         callSendAPI(messageData);
       } else {
         // Generate dynamic menu
@@ -1492,6 +1497,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
   var itemTitle = user.incompletePriceAlertItemTitle;
   var priceAlertObjectId = user.incompletePriceAlertObjectId;
   var priceAlertCreateAt = user.incompletePriceAlertCreateAt;
+  var priceAlertAwsLocale = user.incompletePriceAlertAwsLocale;
   var priceType = user.incompletePriceAlertPriceType;
   var awsLocale = user.incompletePriceAlertAwsLocale;
 
@@ -1511,6 +1517,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
+            "priceAlertAwsLocale": priceAlertAwsLocale,
             "priceType": priceType,
             "validFrom": moment() // Time the element was created
           }
@@ -1533,6 +1540,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
+            "priceAlertAwsLocale": priceAlertAwsLocale,
             "priceType": priceType,
             "validFrom": moment() // Time the element was created
           }
@@ -1549,6 +1557,7 @@ function sendCustomPriceInputPriceSuggestionsButtonMessage(recipientId, user, pr
             "itemTitle": itemTitle,
             "priceAlertObjectId": priceAlertObjectId,
             "priceAlertCreateAt": priceAlertCreateAt,
+            "priceAlertAwsLocale": priceAlertAwsLocale,
             "priceType": priceType,
             "validFrom": moment() // Time the element was created
           }
@@ -1971,7 +1980,7 @@ function sendDynamicSettingOptionsGenericMessage(recipientId, user, title, subti
       elements.push({
         title: title,
         subtitle: subtitle,
-        item_url: "",               
+        item_url: "",
         image_url: "",
         buttons: buttons
       });
@@ -1994,7 +2003,7 @@ function sendDynamicSettingOptionsGenericMessage(recipientId, user, title, subti
         }
       }
     }
-  };  
+  };
 
   callSendAPI(messageData);
 }

@@ -819,7 +819,7 @@ function receivedPostback(event) {
                         if (timeDiff !== undefined) {
                           // Inform the user that the price alert has been created
                           responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price for "%s" drops below %s');
-                          sendTextMessage(senderID, vsprintf(responseText, [truncate(itemTitle, 250), desiredPriceFormatted]));
+                          sendTextMessage(senderID, vsprintf(responseText, [truncate(itemTitle, 200), desiredPriceFormatted]));
 
                           // Update product
                           var product = result.get("product");

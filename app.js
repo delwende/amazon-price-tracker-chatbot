@@ -814,21 +814,16 @@ function receivedPostback(event) {
                       } else {
                         console.log("Updated key-value pair created with key: user:" + senderID);
 
-                        // Check if user has set desired price for the first time or has updated
-                        // the price alert
-                        if (timeDiff !== undefined) {
-                          // Inform the user that the price alert has been created
-                          responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price for "%s" drops below %s');
-                          sendTextMessage(senderID, vsprintf(responseText, [truncate(itemTitle, 200), desiredPriceFormatted]));
+                        // Inform the user that the price alert has been created
+                        responseText = gt.dgettext(parseUserLanguage, 'You\'ll receive a notification when the price for "%s" drops below %s');
+                        sendTextMessage(senderID, vsprintf(responseText, [truncate(itemTitle, 200), desiredPriceFormatted]));
 
+                        // Check wheter it's a new price alert or an existing one whose price has changed
+                        if (timeDiff !== undefined) {
                           // Update product
                           var product = result.get("product");
                           product.increment("totalNumberTrackedCtr");
                           return product.save();
-                        } else {
-                          // Inform the user that the price alert has been updated
-                          responseText = gt.dgettext(parseUserLanguage, 'Price watch updated.');
-                          sendTextMessage(senderID, responseText);
                         }
 
                       }

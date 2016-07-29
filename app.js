@@ -44,9 +44,6 @@ var app = express();
 
 app.set('port', process.env.PORT || 5000);
 
-// you will need to use cookieParser to expose cookies to req.cookies
-app.use(cookieParser());
-
 i18n.configure({
   // setup some locales - other locales default to en silently
   locales: ['en', 'de'],
@@ -57,7 +54,7 @@ i18n.configure({
 
 app.configure(function () {
   // you will need to use cookieParser to expose cookies to req.cookies
-  app.use(express.cookieParser());
+  app.use(cookieParser());
 
   // i18n init parses req for language headers, cookies, etc.
   app.use(i18n.init);

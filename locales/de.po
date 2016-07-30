@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-29 22:26+0200\n"
-"PO-Revision-Date: 2016-07-29 22:32+0200\n"
+"POT-Creation-Date: 2016-07-30 08:32+0200\n"
+"PO-Revision-Date: 2016-07-30 08:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -114,10 +114,12 @@ msgstr ""
 "etwas Geduld."
 
 #: app.js:557
-msgid "Price and availability information for this product may have changed."
+msgid ""
+"Price and availability information for this product may have changed. Please "
+"search again for it."
 msgstr ""
 "Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
-"Produktes können sich inzwischen geändert haben."
+"Produktes können sich inzwischen geändert haben. Bitte suche erneut danach."
 
 #: app.js:582
 #, javascript-format
@@ -424,6 +426,12 @@ msgstr "Vereinigtes Königreich"
 #: libs/helpers.js:228
 msgid "United States"
 msgstr "USA"
+
+#~ msgid ""
+#~ "Price and availability information for this product may have changed."
+#~ msgstr ""
+#~ "Die Informationen bezüglich des Preises und der Verfügbarkeit dieses "
+#~ "Produktes können sich inzwischen geändert haben."
 
 #~ msgid "You have tracked the %s for \"%s\""
 #~ msgstr "Preisalarm für den %s von “%s” wurde erstellt."

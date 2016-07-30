@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-29 22:25+0200\n"
-"PO-Revision-Date: 2016-07-29 22:26+0200\n"
+"POT-Creation-Date: 2016-07-30 08:32+0200\n"
+"PO-Revision-Date: 2016-07-30 08:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -113,8 +113,12 @@ msgstr ""
 "I'm sorry. I'm currently not available in your country. Please stay tuned."
 
 #: app.js:557
-msgid "Price and availability information for this product may have changed."
-msgstr "Price and availability information for this product may have changed."
+msgid ""
+"Price and availability information for this product may have changed. Please "
+"search again for it."
+msgstr ""
+"Price and availability information for this product may have changed. Please "
+"search again for it."
 
 #: app.js:582
 #, javascript-format
@@ -418,6 +422,11 @@ msgstr "United Kingdom"
 #: libs/helpers.js:228
 msgid "United States"
 msgstr "United States"
+
+#~ msgid ""
+#~ "Price and availability information for this product may have changed."
+#~ msgstr ""
+#~ "Price and availability information for this product may have changed."
 
 #~ msgid "You have tracked the %s for \"%s\""
 #~ msgstr "You have tracked the %s for \"%s\""

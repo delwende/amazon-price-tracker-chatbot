@@ -554,7 +554,7 @@ function receivedPostback(event) {
         if (timeDiff > 5) {
 
           // Inform the user that price and availability information may have changed
-          responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this product may have changed.');
+          responseText = gt.dgettext(parseUserLanguage, 'Price and availability information for this product may have changed. Please search again for it.');
           sendTextMessage(senderID, responseText);
 
         } else {

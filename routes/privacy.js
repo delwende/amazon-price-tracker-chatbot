@@ -8,7 +8,8 @@ router.get('/', function(req, res, next) {
   	pageTitle: i18n.__('JackTheBot - Free Amazon Price Tracking Bot.'),
     headerTitle: i18n.__('JackTheBot'),
     privacyLinkText: res.__('Privacy Policy'),
-    termsLinkText: res.__('Terms of Service')
+    termsLinkText: res.__('Terms of Service'),
+    faqLinkText: res.__('FAQ')
   });
 });
 

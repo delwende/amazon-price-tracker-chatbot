@@ -12,7 +12,8 @@ router.get('/', function(req, res, next) {
     invitationToChat: res.__('We can now chat on Facebook Messenger! Wanna talk about the products you\'re interested on Amazon?'),
     invitationToSubscribe: res.__('Want me in your country? Tell me where you are and I\'ll get there as fast as I can.'),
     privacyLinkText: res.__('Privacy Policy'),
-    termsLinkText: res.__('Terms of Service')
+    termsLinkText: res.__('Terms of Service'),
+    faqLinkText: res.__('FAQ')
   });
 });
 

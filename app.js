@@ -417,7 +417,7 @@ function receivedMessage(event) {
               if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'help'))) {
                 responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the words below:' +
-                '\n\n  • list - to show your price watches\n  • settings - to see your settings');
+                '\n\n  • list - to show your price watches\n  • settings - to change your settings');
                 sendTextMessage(senderID, responseText);
               } else if (messageText.startsWith(gt.dgettext(parseUserLanguage, 'list'))) {
                 sendListPriceWatchesGenericMessage(senderID, user, 1); // Show first page
@@ -1076,7 +1076,7 @@ function receivedPostback(event) {
             case 'showHelpInstructions':
               responseText = gt.dgettext(parseUserLanguage, 'Lost? Use a few words to tell me what product you are searching for. ' +
                 ' For example, you could type “iPhone 6”, “Kindle Paperwhite” or “Xbox One”. Or, just type one of the words ' +
-                'below:\n\n  • list - to show your price watches\n  • settings - to see your settings');
+                'below:\n\n  • list - to show your price watches\n  • settings - to change your settings');
               sendTextMessage(senderID, responseText);
 
               break;

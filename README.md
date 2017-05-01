@@ -1,6 +1,6 @@
 ![Image of JackTheBot](http://www.jackthebot.com/img/jackthebot-logo.png)
 
-World's first Amazon price tracking chatbot:
+Amazon price tracker chatbot for Facebook Messenger:
 
 * http://www.jackthebot.com/
 * https://www.facebook.com/wunschpreisbot/
